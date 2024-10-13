@@ -1,0 +1,40 @@
+package com.devautro.financetracker.feature_payment.data.repository
+
+import com.devautro.financetracker.feature_payment.data.data_source.PaymentDao
+import com.devautro.financetracker.feature_payment.data.mappers.toPayment
+import com.devautro.financetracker.feature_payment.data.mappers.toPaymentEntity
+import com.devautro.financetracker.feature_payment.domain.model.Payment
+import com.devautro.financetracker.feature_payment.domain.repository.PaymentRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
+import javax.inject.Inject
+
+class PaymentRepositoryImpl @Inject constructor(
+    private val dao: PaymentDao
+) : PaymentRepository {
+    override fun getCertainTypeOfPayment(isExpense: Boolean): Flow<List<Payment>> {
+        return dao.getCertainTypeOfPayments(isExpense = isExpense).map { paymentEntities ->
+            paymentEntities
+                .sortedBy { it.date } // the new payment at the bottom of the list !?
+//                Don't need this line, 'cause Room's 'Query' do all the work
+//                .filter { entity -> entity.isExpense == isExpense }
+                .map { entity ->
+                entity.toPayment()
+            }
+        }
+    }
+
+    override suspend fun getPaymentById(id: Long): Payment? {
+        return dao.getPaymentById(id = id)?.toPayment()
+    }
+
+    override suspend fun insertPayment(payment: Payment) {
+        dao.insertPayment(paymentEntity = payment.toPaymentEntity())
+    }
+
+    override suspend fun deletePayment(payment: Payment) {
+        dao.deletePayment(paymentEntity = payment.toPaymentEntity())
+    }
+
+}

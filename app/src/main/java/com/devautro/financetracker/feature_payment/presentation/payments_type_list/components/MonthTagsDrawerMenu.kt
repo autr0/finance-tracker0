@@ -1,0 +1,80 @@
+package com.devautro.financetracker.feature_payment.presentation.payments_type_list.components
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import com.devautro.financetracker.core.util.MonthTags
+import com.devautro.financetracker.ui.theme.AccentBlue
+import com.devautro.financetracker.ui.theme.BackgroundColor
+import com.devautro.financetracker.ui.theme.FinanceTrackerTheme
+import com.devautro.financetracker.ui.theme.OnBackgroundColor
+import com.devautro.financetracker.ui.theme.secondary
+
+@Composable
+fun MonthTagsDrawerMenu(
+    modifier: Modifier = Modifier, // pass the back color via modifier
+    isExpanded: Boolean,
+    onDismissMenu: () -> Unit,
+    selectedItem: String,
+    onSelectedItem: (String) -> Unit
+) {
+    DropdownMenu(
+        expanded = isExpanded,
+        onDismissRequest = {
+            onDismissMenu()
+        },
+        scrollState = rememberScrollState(),
+        modifier = Modifier
+            .fillMaxWidth() // ???
+            .fillMaxHeight(0.3f)
+            .background(secondary)
+    ) {
+        MonthTags.months.forEach { month ->
+
+            DropdownMenuItem(
+                onClick = {
+                    onDismissMenu()
+                    onSelectedItem(month)
+                },
+                text = {
+                    Text(
+                        text = month,
+                        color = if (selectedItem == month) AccentBlue else OnBackgroundColor
+                    )
+                }
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun MonthTagsDrawerMenuPreview() {
+    FinanceTrackerTheme {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+        ) {
+            MonthTagsDrawerMenu(
+                isExpanded = true,
+                onDismissMenu = { /*TODO*/ },
+                onSelectedItem = { },
+                selectedItem = ""
+            )
+        }
+    }
+}
