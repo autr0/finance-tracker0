@@ -10,10 +10,6 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,14 +20,10 @@ import com.devautro.financetracker.ui.theme.UnChosenTextColor
 
 @Composable
 fun TopTabsSorting(
-    modifier: Modifier = Modifier,
     tabItems: List<String>,
-    defaultTabIndex: Int
+    selectedTabIndex: Int,
+    onSelectedTabClick: (Int) -> Unit
 ) {
-    var selectedTabIndex by remember {
-        mutableIntStateOf(defaultTabIndex)
-    }
-
     TabRow(
         modifier = Modifier.clip(RoundedCornerShape(15.dp)),
         selectedTabIndex = selectedTabIndex,
@@ -56,7 +48,7 @@ fun TopTabsSorting(
                     ),
                 selected = index == selectedTabIndex,
                 onClick = {
-                    selectedTabIndex = index
+                    onSelectedTabClick(index)
                 },
                 selectedContentColor = MaterialTheme.colorScheme.primary,
                 unselectedContentColor = UnChosenTextColor

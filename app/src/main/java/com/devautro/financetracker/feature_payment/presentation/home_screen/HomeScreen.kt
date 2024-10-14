@@ -9,35 +9,58 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.devautro.financetracker.core.presentation.components.TopTabsSorting
+import com.devautro.financetracker.core.util.Const
 import com.devautro.financetracker.feature_payment.presentation.home_screen.components.InfoCard
 import com.devautro.financetracker.ui.theme.DarkGreenCircle
 import com.devautro.financetracker.ui.theme.DarkRedCircle
 import com.devautro.financetracker.ui.theme.FinanceTrackerTheme
+import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    modifier: Modifier = Modifier,
+    viewModel: HomeScreenViewModel = hiltViewModel(),
     bottomPadding: PaddingValues,
     navigateToIncomes: () -> Unit,
     navigateToExpenses: () -> Unit
 ) {
+    val state by viewModel.homeState.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
 
-    val tabItems = listOf("DAY", "WEEK", "MONTH")
+    LaunchedEffect(key1 = true) {
+        viewModel.sideEffects.collectLatest { effect ->
+            when(effect) {
+                is HomeScreenSideEffects.IncomesClick -> {
+                    navigateToIncomes()
+                }
+                is HomeScreenSideEffects.ExpensesClick -> {
+                    navigateToExpenses()
+                }
+                is HomeScreenSideEffects.ShowSnackbar -> {
+                    snackbarHostState.showSnackbar(message = effect.message)
+                }
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -54,13 +77,7 @@ fun HomeScreen(
                 )
             )
         },
-        bottomBar = {
-            BottomAppBar(
-                modifier = Modifier.clip(RoundedCornerShape(15.dp))
-            ) {
-
-            }
-        }
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -71,7 +88,13 @@ fun HomeScreen(
                 )
                 .background(MaterialTheme.colorScheme.background),
         ) {
-            TopTabsSorting(tabItems = tabItems, defaultTabIndex = 2)
+            TopTabsSorting(
+                tabItems = Const.filterTags,
+                selectedTabIndex = state.selectedTabIndex,
+                onSelectedTabClick = { tabIndex ->
+                    viewModel.onEvent(HomeScreenEvent.TabClick(tabIndex = tabIndex))
+                }
+            )
             LazyColumn(
                 modifier = Modifier.fillMaxWidth()
 
@@ -79,29 +102,27 @@ fun HomeScreen(
                 item {
                     InfoCard(
                         modifier = Modifier.clickable {
-                            /*TODO: navigate to IncomesScreen*/
-                            navigateToIncomes()
+                            viewModel.onEvent(HomeScreenEvent.IncomesClick)
                         },
                         text = "Incomes",
-                        amount = "2300 $",
+                        amount = state.incomesSum,
                         color = DarkGreenCircle,
                     )
                 }
                 item {
                     InfoCard(
                         modifier = Modifier.clickable {
-                            /*TODO: navigate to ExpensesScreen*/
-                            navigateToExpenses()
+                            viewModel.onEvent(HomeScreenEvent.ExpensesClick)
                         },
                         text = "Expenses",
-                        amount = "1000 $",
+                        amount = state.expensesSum,
                         color = DarkRedCircle
                     )
                 }
                 item {
                     InfoCard(
                         text = "Budget",
-                        amount = "-1300 $",
+                        amount = state.budgetSum,
                         color = MaterialTheme.colorScheme.background
                     )
                 }

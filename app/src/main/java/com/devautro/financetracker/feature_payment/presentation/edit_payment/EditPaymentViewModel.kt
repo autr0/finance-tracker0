@@ -1,4 +1,4 @@
-package com.devautro.financetracker.feature_payment.presentation.add_payment
+package com.devautro.financetracker.feature_payment.presentation.edit_payment
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -6,6 +6,7 @@ import com.devautro.financetracker.feature_moneySource.domain.use_case.MoneySour
 import com.devautro.financetracker.feature_payment.domain.model.InvalidPaymentException
 import com.devautro.financetracker.feature_payment.domain.model.Payment
 import com.devautro.financetracker.feature_payment.domain.use_case.PaymentUseCases
+import com.devautro.financetracker.feature_payment.util.formatDoubleToString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,19 +19,19 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AddPaymentViewModel @Inject constructor(
-    private val paymentUseCases: PaymentUseCases,
-    private val moneySourceUseCases: MoneySourceUseCases
+class EditPaymentViewModel @Inject constructor(
+    private val moneySourceUseCases: MoneySourceUseCases,
+    private val paymentUseCases: PaymentUseCases
 ) : ViewModel() {
 
     // UI state divided in 2 states 'cause we need to pass Payment via UseCase -->
     private val _paymentData = MutableStateFlow(Payment())
     val paymentData: StateFlow<Payment> = _paymentData.asStateFlow()
 
-    private val _paymentState = MutableStateFlow(AddPaymentState())
-    val paymentState: StateFlow<AddPaymentState> = _paymentState.asStateFlow()
+    private val _paymentState = MutableStateFlow(EditPaymentState())
+    val paymentState: StateFlow<EditPaymentState> = _paymentState.asStateFlow()
 
-    private val _sideEffects = MutableSharedFlow<AddPaymentSideEffects>()
+    private val _sideEffects = MutableSharedFlow<EditPaymentSideEffects>()
     val sideEffects = _sideEffects.asSharedFlow()
 
     init {
@@ -44,40 +45,61 @@ class AddPaymentViewModel @Inject constructor(
                     )
                 }
             }
+
         }
     }
 
-    fun onEvent(event: AddPaymentEvent) {
+    fun onEvent(event: EditPaymentEvent) {
         when (event) {
-            is AddPaymentEvent.DateIconClick -> {
+            is EditPaymentEvent.UpdateInitialPayment -> {
+                _paymentData.update { payment ->
+                    payment.copy(
+                        id = event.initialPayment.id,
+                        date = event.initialPayment.date,
+                        monthTag = event.initialPayment.monthTag,
+                        description = event.initialPayment.description,
+                        amountBefore = event.initialPayment.amountNew, // because of updating?
+                        amountNew = event.initialPayment.amountNew,
+                        isExpense = event.initialPayment.isExpense,
+                        sourceId = event.initialPayment.sourceId
+                    )
+                }
+
+                _paymentState.update { state ->
+                    state.copy(
+                        amountInString = formatDoubleToString(event.initialPayment.amountNew!!)
+                    )
+                }
+            }
+            is EditPaymentEvent.DateIconClick -> {
                 _paymentState.update { state ->
                     state.copy(
                         isDatePickerVisible = true
                     )
                 }
             }
-            is AddPaymentEvent.DateSelected -> {
+            is EditPaymentEvent.DateSelected -> {
                 _paymentData.update { payment ->
                     payment.copy(
                         date = event.date
                     )
                 }
             }
-            is AddPaymentEvent.DismissDatePicker -> {
+            is EditPaymentEvent.DismissDatePicker -> {
                 _paymentState.update { state ->
                     state.copy(
                         isDatePickerVisible = false
                     )
                 }
             }
-            is AddPaymentEvent.EnteredDescription -> {
+            is EditPaymentEvent.EnteredDescription -> {
                 _paymentData.update { payment ->
                     payment.copy(
                         description = event.text
                     )
                 }
             }
-            is AddPaymentEvent.EnteredAmount -> {
+            is EditPaymentEvent.EnteredAmount -> {
                 if (event.amount.isNotBlank()) {
                     try {
                         _paymentData.update { payment ->
@@ -88,7 +110,7 @@ class AddPaymentViewModel @Inject constructor(
                     } catch (e: NumberFormatException) {
                         viewModelScope.launch {
                             _sideEffects.emit(
-                                AddPaymentSideEffects.ShowSnackbar(
+                                EditPaymentSideEffects.ShowSnackbar(
                                     message = "Invalid amount input: ${e.message}"
                                 )
                             )
@@ -101,35 +123,35 @@ class AddPaymentViewModel @Inject constructor(
                     )
                 }
             }
-            is AddPaymentEvent.MonthTagIconClick -> {
+            is EditPaymentEvent.MonthTagIconClick -> {
                 _paymentState.update { state ->
                     state.copy(
                         isMonthTagMenuVisible = true
                     )
                 }
             }
-            is AddPaymentEvent.MonthTagSelected -> {
+            is EditPaymentEvent.MonthTagSelected -> {
                 _paymentData.update { payment ->
                     payment.copy(
                         monthTag = event.monthTag
                     )
                 }
             }
-            is AddPaymentEvent.DismissMonthTagMenu -> {
+            is EditPaymentEvent.DismissMonthTagMenu -> {
                 _paymentState.update { state ->
                     state.copy(
                         isMonthTagMenuVisible = false
                     )
                 }
             }
-            is AddPaymentEvent.MoneySourceIconClick -> {
+            is EditPaymentEvent.MoneySourceIconClick -> {
                 _paymentState.update { state ->
                     state.copy(
                         isMoneySourceMenuVisible = true
                     )
                 }
             }
-            is AddPaymentEvent.MoneySourceSelected -> {
+            is EditPaymentEvent.MoneySourceSelected -> {
                 _paymentData.update { payment ->
                     payment.copy(
                         sourceId = event.moneySource.id
@@ -143,39 +165,39 @@ class AddPaymentViewModel @Inject constructor(
                     )
                 }
             }
-            is AddPaymentEvent.DismissMoneySourceMenu -> {
+            is EditPaymentEvent.DismissMoneySourceMenu -> {
                 _paymentState.update { state ->
                     state.copy(
                         isMoneySourceMenuVisible = false
                     )
                 }
             }
-            is AddPaymentEvent.CheckBoxSelected -> {
+            is EditPaymentEvent.CheckBoxSelected -> {
                 _paymentData.update { payment ->
                     payment.copy(
                         isExpense = event.isExpense
                     )
                 }
             }
-            is AddPaymentEvent.AddButtonClick -> {
+            is EditPaymentEvent.SaveButtonClick -> {
                 viewModelScope.launch {
                     try {
-                        paymentUseCases.addPaymentUseCase(
+                        paymentUseCases.editPaymentUseCase(
                             payment = _paymentData.value
                         )
-                        _sideEffects.emit(AddPaymentSideEffects.AddButton)
+                        _sideEffects.emit(EditPaymentSideEffects.SaveButton)
                     } catch (e: InvalidPaymentException) {
                         _sideEffects.emit(
-                            AddPaymentSideEffects.ShowSnackbar(
-                                message = e.message ?: "Couldn't add payment"
+                            EditPaymentSideEffects.ShowSnackbar(
+                                message = e.message ?: "Couldn't update payment"
                             )
                         )
                     }
                 }
             }
-            is AddPaymentEvent.CancelButtonClick -> {
+            is EditPaymentEvent.CancelButtonClick -> {
                 viewModelScope.launch {
-                    _sideEffects.emit(AddPaymentSideEffects.CancelButton)
+                    _sideEffects.emit(EditPaymentSideEffects.CancelButton)
                 }
                 _paymentData.update { payment ->
                     payment.copy(

@@ -14,6 +14,7 @@ import com.devautro.financetracker.feature_payment.data.repository.PaymentReposi
 import com.devautro.financetracker.feature_payment.domain.repository.PaymentRepository
 import com.devautro.financetracker.feature_payment.domain.use_case.AddPaymentUseCase
 import com.devautro.financetracker.feature_payment.domain.use_case.DeletePaymentUseCase
+import com.devautro.financetracker.feature_payment.domain.use_case.EditPaymentUseCase
 import com.devautro.financetracker.feature_payment.domain.use_case.GetExpensesUseCase
 import com.devautro.financetracker.feature_payment.domain.use_case.GetIncomesUseCase
 import com.devautro.financetracker.feature_payment.domain.use_case.GetPaymentUseCase
@@ -58,7 +59,8 @@ object AppModule {
             getExpensesUseCase = GetExpensesUseCase(repository),
             getPaymentUseCase = GetPaymentUseCase(repository),
             addPaymentUseCase = AddPaymentUseCase(repository),
-            deletePaymentUseCase = DeletePaymentUseCase(repository)
+            deletePaymentUseCase = DeletePaymentUseCase(repository),
+            editPaymentUseCase = EditPaymentUseCase(repository)
         )
     }
 

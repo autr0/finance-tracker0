@@ -1,5 +1,9 @@
 package com.devautro.financetracker.feature_payment.presentation.home_screen.components
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.devautro.financetracker.core.presentation.util.AutoResizedText
 import com.devautro.financetracker.ui.theme.AccentBlue
 import com.devautro.financetracker.ui.theme.DarkGreenCircle
 import com.devautro.financetracker.ui.theme.DarkRedCircle
@@ -74,10 +79,18 @@ fun InfoCard(
                 .size(120.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = amount,
-                    color = MaterialTheme.colorScheme.primaryContainer
-                )
+                AnimatedContent(
+                    targetState = amount,
+                    transitionSpec = {
+                        slideInVertically { it } togetherWith slideOutVertically { -it }
+                    },
+                    label = "amount updating animation"
+                ) { amount ->
+                    AutoResizedText(
+                        text = amount,
+                        color = MaterialTheme.colorScheme.primaryContainer
+                    )
+                }
             }
         }
         Spacer(modifier = Modifier.height(30.dp))
@@ -90,7 +103,9 @@ fun InfoCardPreview() {
     FinanceTrackerTheme {
 
         LazyColumn(
-            modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
         ) {
             item {
                 InfoCard(

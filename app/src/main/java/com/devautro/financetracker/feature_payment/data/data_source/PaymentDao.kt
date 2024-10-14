@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.devautro.financetracker.feature_payment.data.model.PaymentEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -22,6 +23,9 @@ interface PaymentDao {
 
     @Delete
     suspend fun deletePayment(paymentEntity: PaymentEntity)
+
+    @Update
+    suspend fun updatePayment(paymentEntity: PaymentEntity)
 
     /* TODO --> Delete all data from the table? */
 }

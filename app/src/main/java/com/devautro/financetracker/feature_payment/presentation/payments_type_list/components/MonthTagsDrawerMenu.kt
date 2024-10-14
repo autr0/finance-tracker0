@@ -9,16 +9,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.devautro.financetracker.core.util.MonthTags
+import com.devautro.financetracker.core.util.Const
 import com.devautro.financetracker.ui.theme.AccentBlue
-import com.devautro.financetracker.ui.theme.BackgroundColor
 import com.devautro.financetracker.ui.theme.FinanceTrackerTheme
 import com.devautro.financetracker.ui.theme.OnBackgroundColor
 import com.devautro.financetracker.ui.theme.secondary
@@ -42,7 +38,7 @@ fun MonthTagsDrawerMenu(
             .fillMaxHeight(0.3f)
             .background(secondary)
     ) {
-        MonthTags.months.forEach { month ->
+        Const.months.forEach { month ->
 
             DropdownMenuItem(
                 onClick = {

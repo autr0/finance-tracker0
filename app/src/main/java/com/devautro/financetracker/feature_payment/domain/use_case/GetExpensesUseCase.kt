@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 /**
  * Add filtering by MONTH_TAG,
- * by month, day, week ??? -->
+ * by month, week ??? -->
  */
 
 class GetExpensesUseCase @Inject constructor(

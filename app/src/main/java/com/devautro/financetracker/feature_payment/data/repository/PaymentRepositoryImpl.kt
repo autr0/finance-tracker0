@@ -16,7 +16,7 @@ class PaymentRepositoryImpl @Inject constructor(
     override fun getCertainTypeOfPayment(isExpense: Boolean): Flow<List<Payment>> {
         return dao.getCertainTypeOfPayments(isExpense = isExpense).map { paymentEntities ->
             paymentEntities
-                .sortedBy { it.date } // the new payment at the bottom of the list !?
+                .sortedByDescending { it.date }
 //                Don't need this line, 'cause Room's 'Query' do all the work
 //                .filter { entity -> entity.isExpense == isExpense }
                 .map { entity ->
@@ -35,6 +35,10 @@ class PaymentRepositoryImpl @Inject constructor(
 
     override suspend fun deletePayment(payment: Payment) {
         dao.deletePayment(paymentEntity = payment.toPaymentEntity())
+    }
+
+    override suspend fun updatePayment(payment: Payment) {
+        dao.updatePayment(paymentEntity = payment.toPaymentEntity())
     }
 
 }

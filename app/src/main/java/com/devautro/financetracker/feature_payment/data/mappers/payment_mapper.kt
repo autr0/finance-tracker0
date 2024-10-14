@@ -19,7 +19,7 @@ fun PaymentEntity.toPayment(): Payment {
 fun Payment.toPaymentEntity(): PaymentEntity {
     return PaymentEntity(
         id = id,
-        date = date ?: 0L,
+        date = date ?: System.currentTimeMillis(),
         monthTag = monthTag,
         description = description,
         amountBefore = amountBefore ?: 0.0,

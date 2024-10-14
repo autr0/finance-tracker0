@@ -1,5 +1,6 @@
 package com.devautro.financetracker.feature_payment.presentation.payments_type_list
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,91 +25,83 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.devautro.financetracker.core.presentation.components.ActionIcon
+import com.devautro.financetracker.feature_payment.presentation.edit_payment.EditPaymentSheet
 import com.devautro.financetracker.feature_payment.presentation.payments_type_list.components.MonthTagsDrawerMenu
 import com.devautro.financetracker.feature_payment.presentation.payments_type_list.components.PaymentTypeCard
 import com.devautro.financetracker.feature_payment.presentation.payments_type_list.components.SelectedMonthContainer
 import com.devautro.financetracker.feature_payment.presentation.payments_type_list.components.SwipeableItem
 import com.devautro.financetracker.feature_payment.presentation.payments_type_list.components.TotalAmountCard
 import com.devautro.financetracker.feature_payment.util.convertMillisToDate
+import com.devautro.financetracker.feature_payment.util.formatDoubleToString
 import com.devautro.financetracker.ui.theme.DarkestColor
-import com.devautro.financetracker.ui.theme.FinanceTrackerTheme
-import com.devautro.financetracker.ui.theme.IncomeGreen
+import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PaymentsTypeList(
+fun PaymentsList(
+    viewModel: PaymentsListViewModel = hiltViewModel(),
     paymentTypeText: String,
     navigateBack: () -> Unit,
     navBarPadding: PaddingValues,
-    cardColor: Color
+    cardColor: Color,
+    isExpense: Boolean
 ) {
-    val onDismissMenu = remember {
-        mutableStateOf(false)
-    }
-    val selectedItem = remember {
-        mutableStateOf("")
+    val state by viewModel.paymentsState.collectAsStateWithLifecycle()
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    val lazyList = rememberLazyListState()
+
+    LaunchedEffect(key1 = true) {
+        viewModel.onEvent(PaymentsListEvent.GetInitialPaymentType(isExpense = isExpense))
+
+        viewModel.sideEffects.collectLatest { effect ->
+            when (effect) {
+                is PaymentsListSideEffects.NavigateBack -> navigateBack()
+                is PaymentsListSideEffects.ShowSnackBar -> {
+                    Log.d("MyLog", "Showing Snackbar: ${effect.message}")
+                    snackbarHostState.showSnackbar(
+                        message = effect.message,
+                        actionLabel = "Undo"
+                    ).let { res ->
+                        if (res == SnackbarResult.ActionPerformed) {
+                            viewModel.onEvent(PaymentsListEvent.RestorePayment)
+                        }
+                    }
+
+                }
+            }
+        }
     }
 
-    val pList = remember {
-        mutableStateListOf(
-            PaymentsListItem(
-                isRevealed = false,
-                id = 0L,
-                description = "pack of chips",
-                amount = 1234.0
-            ),
-            PaymentsListItem(
-                isRevealed = false,
-                id = 1L,
-                description = "A long text to check wtf is happening even know",
-                amount = 234.0
-            ),
-            PaymentsListItem(
-                isRevealed = false,
-                id = 2L,
-                description = "Short desc of pack of chips",
-                amount = 34.0
-            ),
-            PaymentsListItem(
-                isRevealed = false,
-                id = 3L,
-                description = "",
-                amount = 4.9
-            ),
-            PaymentsListItem(
-                isRevealed = false,
-                id = 4L,
-                description = "nice",
-                amount = 12237234.03
-            ),
-            PaymentsListItem(
-                isRevealed = false,
-                id = 5L,
-                description = "loan",
-                amount = 17.99
-            )
-        )
+    LaunchedEffect(key1 = state.paymentItemsList.size) {
+        if (state.paymentItemsList.isNotEmpty()) lazyList.scrollToItem(0)
     }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = {
-                    if (selectedItem.value.isEmpty() || selectedItem.value.isBlank()) {
+                    if (state.selectedMonthTag.isEmpty() || state.selectedMonthTag.isBlank()) {
                         Box(
                             modifier = Modifier.fillMaxWidth(),
                             contentAlignment = Alignment.Center
@@ -116,12 +109,12 @@ fun PaymentsTypeList(
                             Text(text = paymentTypeText)
                         }
                     } else {
-                        SelectedMonthContainer(monthTag = selectedItem.value)
+                        SelectedMonthContainer(monthTag = state.selectedMonthTag)
                     }
                 },
                 navigationIcon = {
-                    IconButton(onClick = { /* TODO -> NavigateBack() */
-                        navigateBack()
+                    IconButton(onClick = {
+                        viewModel.onEvent(PaymentsListEvent.NavigateBack)
                     }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -131,19 +124,18 @@ fun PaymentsTypeList(
                 },
                 actions = {
                     Row(horizontalArrangement = Arrangement.Center) {
-                        if (selectedItem.value.isNotBlank()) {
-                            IconButton(onClick = { /* TODO -> openDrawerEvent() */
-                                onDismissMenu.value = false
-                                selectedItem.value = ""
+                        if (state.selectedMonthTag.isNotBlank()) {
+                            IconButton(onClick = {
+                                viewModel.onEvent(PaymentsListEvent.ClearIconCLick(isExpense = isExpense))
                             }) {
                                 Icon(
                                     imageVector = Icons.Filled.Clear,
-                                    contentDescription = "cancel"
+                                    contentDescription = "clear"
                                 )
                             }
                         }
-                        IconButton(onClick = { /* TODO -> openDrawerEvent() */
-                            onDismissMenu.value = true
+                        IconButton(onClick = {
+                            viewModel.onEvent(PaymentsListEvent.FilterIconClick)
                         }) {
                             Icon(
                                 imageVector = Icons.Filled.FilterAlt,
@@ -151,12 +143,18 @@ fun PaymentsTypeList(
                             )
                         }
                         MonthTagsDrawerMenu(
-                            isExpanded = onDismissMenu.value,
-                            onDismissMenu = { /*TODO*/ onDismissMenu.value = false },
-                            selectedItem = selectedItem.value,
+                            isExpanded = state.isMonthTagMenuVisible,
+                            onDismissMenu = {
+                                viewModel.onEvent(PaymentsListEvent.DismissMonthTagMenu)
+                            },
+                            selectedItem = state.selectedMonthTag,
                             onSelectedItem = { month ->
-                                /*TODO -> SelectMonthEvent()*/
-                                selectedItem.value = month
+                                viewModel.onEvent(
+                                    PaymentsListEvent.MonthTagSelected(
+                                        monthTag = month,
+                                        isExpense = isExpense
+                                    )
+                                )
                             }
                         )
                     }
@@ -179,48 +177,82 @@ fun PaymentsTypeList(
         ) {
             TotalAmountCard(
                 modifier = Modifier.padding(horizontal = 20.dp),
-                amount = pList.map { it.amount }.sumOf { it }.toString()
+                amount = state.totalAmount
             )
             LazyColumn(
                 modifier = Modifier.weight(1f),
-                state = rememberLazyListState(),
+                state = lazyList,
                 reverseLayout = true
             ) {
                 itemsIndexed(
-                    items = pList,
-//                    key = { index, payment -> payment.id } -> 'cause mutable list
-                ) { index, payment ->
+                    items = state.paymentItemsList,
+                    key = { index, paymentItem -> paymentItem.id ?: index }
+                ) { _, payment ->
                     SwipeableItem(
                         modifier = Modifier
                             .fillMaxWidth(0.8f)
-                            .padding(vertical = 16.dp)
-                        ,
+                            .padding(vertical = 16.dp),
                         isRevealed = payment.isRevealed,
                         actions = {
                             ActionIcon(
-                                onClick = { pList[index] = payment.copy(isRevealed = false) },
+                                onClick = {
+                                    viewModel.onEvent(
+                                        PaymentsListEvent.ItemRevealed(
+                                            id = payment.id!!,
+                                            isRevealed = false
+                                        )
+                                    )
+                                    viewModel.onEvent(
+                                        PaymentsListEvent.EditIconClick(
+                                            paymentItem = payment
+                                        )
+                                    )
+                                },
                                 backgroundColor = DarkestColor,
                                 icon = Icons.Default.Edit,
                                 contentDescription = "edit payment",
                                 modifier = Modifier.clip(RoundedCornerShape(15.dp))
                             )
                             ActionIcon(
-                                onClick = { pList[index] = payment.copy(isRevealed = false) },
+                                onClick = {
+                                    viewModel.onEvent(
+                                        PaymentsListEvent.ItemRevealed(
+                                            id = payment.id!!,
+                                            isRevealed = false
+                                        )
+                                    )
+                                    viewModel.onEvent(
+                                        PaymentsListEvent.DeleteIconClick(
+                                            paymentItem = payment
+                                        )
+                                    )
+                                },
                                 backgroundColor = MaterialTheme.colorScheme.errorContainer,
                                 icon = Icons.Default.Delete,
                                 contentDescription = "delete payment",
                                 modifier = Modifier.clip(RoundedCornerShape(15.dp))
                             )
                         },
-                        onExpanded = { pList[index] = payment.copy(isRevealed = true) },
-                        onCollapsed = { pList[index] = payment.copy(isRevealed = false) }
+                        onExpanded = {
+                            viewModel.onEvent(
+                                PaymentsListEvent.ItemRevealed(
+                                    id = payment.id!!,
+                                    isRevealed = true
+                                )
+                            )
+                        },
+                        onCollapsed = {
+                            viewModel.onEvent(
+                                PaymentsListEvent.ItemRevealed(
+                                    id = payment.id!!,
+                                    isRevealed = false
+                                )
+                            )
+                        }
                     ) {
                         PaymentTypeCard(
-//                            modifier = Modifier
-//                                .fillMaxWidth(0.8f)
-//                                .padding(vertical = 16.dp),
                             description = payment.description,
-                            amount = payment.amount.toString(),
+                            amount = formatDoubleToString(payment.amountNew),
                             monthTag = payment.monthTag,
                             date = convertMillisToDate(payment.date),
                             color = cardColor
@@ -228,19 +260,13 @@ fun PaymentsTypeList(
                     }
                 }
             }
+            if (state.isEditBottomSheetVisible) {
+                EditPaymentSheet(
+                    sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+                    navigateBack = { viewModel.onEvent(PaymentsListEvent.ShowEditBottomSheet) },
+                    initialPayment = state.paymentForSheet
+                )
+            }
         }
-    }
-}
-
-@Preview
-@Composable
-fun PaymentsTypeListPreview() {
-    FinanceTrackerTheme {
-        PaymentsTypeList(
-            paymentTypeText = "Incomes",
-            navigateBack = {},
-            navBarPadding = PaddingValues(0.dp),
-            cardColor = IncomeGreen
-        )
     }
 }

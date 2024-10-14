@@ -23,14 +23,13 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -38,12 +37,13 @@ import androidx.navigation.compose.rememberNavController
 import com.devautro.financetracker.core.presentation.TabBarItem
 import com.devautro.financetracker.core.presentation.components.BottomNavigationBar
 import com.devautro.financetracker.feature_payment.presentation.add_payment.AddPaymentBottomSheet
+import com.devautro.financetracker.feature_payment.presentation.edit_payment.EditPaymentSheet
+import com.devautro.financetracker.feature_payment.presentation.edit_payment.EditPaymentViewModel
 import com.devautro.financetracker.feature_payment.presentation.home_screen.HomeScreen
-import com.devautro.financetracker.feature_payment.presentation.payments_type_list.PaymentsTypeList
+import com.devautro.financetracker.feature_payment.presentation.payments_type_list.PaymentsList
 import com.devautro.financetracker.ui.theme.ExpenseRed
 import com.devautro.financetracker.ui.theme.FinanceTrackerTheme
 import com.devautro.financetracker.ui.theme.IncomeGreen
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -77,12 +77,13 @@ fun NavigationScreen() {
     val currentDestination = navBackStackEntry?.destination
 
     showBottomBar = when (navBackStackEntry?.destination?.route) {
-        "oops" -> false
+        "2" -> false
+        "3" -> false
         else -> true
     }
 
     // FAB bottomSheetState ->
-    val showBottomSheet = remember { mutableStateOf(false) }
+    val showBottomSheet = rememberSaveable { mutableStateOf(false) } // to survive configuration changes
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     Scaffold(
@@ -122,8 +123,8 @@ fun NavigationScreen() {
     ) { bottomNavPadding ->
 
         /* TODO -> App Navigation (new type-safe way?) */
-        NavHost(navController = navController, startDestination = "1") {
-            composable(route = "1") {
+        NavHost(navController = navController, startDestination = homeTab.title) {
+            composable(route = homeTab.title) {
                 HomeScreen(
                     bottomPadding = bottomNavPadding,
                     navigateToIncomes = { navController.navigate("2") },
@@ -142,21 +143,41 @@ fun NavigationScreen() {
                 }
             }
             composable(route = "2") {
-                PaymentsTypeList(
-                    paymentTypeText = "IncomesTest",
+                PaymentsList(
+                    paymentTypeText = "Incomes",
                     navigateBack = { navController.navigateUp() },
                     navBarPadding = bottomNavPadding,
-                    cardColor = IncomeGreen
+                    cardColor = IncomeGreen,
+                    isExpense = false
                 )
+
+                if (showBottomSheet.value) {
+                    AddPaymentBottomSheet(
+                        sheetState = sheetState,
+                        navigateBack = {
+                            showBottomSheet.value = false
+                        }
+                    )
+                }
             }
 
             composable(route = "3") {
-                PaymentsTypeList(
-                    paymentTypeText = "ExpensesTest",
+                PaymentsList(
+                    paymentTypeText = "Expenses",
                     navigateBack = { navController.navigateUp() },
                     navBarPadding = bottomNavPadding,
-                    cardColor = ExpenseRed
+                    cardColor = ExpenseRed,
+                    isExpense = true
                 )
+
+                if (showBottomSheet.value) {
+                    AddPaymentBottomSheet(
+                        sheetState = sheetState,
+                        navigateBack = {
+                            showBottomSheet.value = false
+                        }
+                    )
+                }
             }
         }
     }

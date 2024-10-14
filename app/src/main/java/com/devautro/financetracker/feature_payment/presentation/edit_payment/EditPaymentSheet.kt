@@ -1,4 +1,4 @@
-package com.devautro.financetracker.feature_payment.presentation.add_payment
+package com.devautro.financetracker.feature_payment.presentation.edit_payment
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -33,7 +33,6 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -45,33 +44,31 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.devautro.financetracker.core.presentation.components.DualOptionButtonsRow
 import com.devautro.financetracker.core.util.Const
+import com.devautro.financetracker.feature_payment.domain.model.Payment
 import com.devautro.financetracker.feature_payment.presentation.add_payment.components.DatePickerItem
 import com.devautro.financetracker.feature_payment.presentation.add_payment.components.TextFieldComponent
 import com.devautro.financetracker.feature_payment.presentation.add_payment.components.TextFieldWithDropDownMenu
 import com.devautro.financetracker.feature_payment.util.convertMillisToDate
 import com.devautro.financetracker.ui.theme.AccentBlue
 import com.devautro.financetracker.ui.theme.BackgroundColor
-import com.devautro.financetracker.ui.theme.FinanceTrackerTheme
 import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddPaymentBottomSheet(
-    viewModel: AddPaymentViewModel = hiltViewModel(),
+fun EditPaymentSheet(
+    viewModel: EditPaymentViewModel = hiltViewModel(),
     sheetState: SheetState,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
+    initialPayment: Payment
 ) {
     // for auto navigate to next textField & hide keyboard
     val amountFieldFocusRequester = remember { FocusRequester() }
     val monthTagFieldFocusRequester = remember { FocusRequester() }
-//    val keyboardController = LocalSoftwareKeyboardController.current
-//    val focusManager = LocalFocusManager.current
 
     val data by viewModel.paymentData.collectAsStateWithLifecycle()
     val state by viewModel.paymentState.collectAsStateWithLifecycle()
@@ -79,13 +76,17 @@ fun AddPaymentBottomSheet(
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(key1 = true) {
+        viewModel.onEvent(EditPaymentEvent.UpdateInitialPayment(initialPayment = initialPayment))
+
         viewModel.sideEffects.collectLatest { effect ->
-            when (effect) {
-                is AddPaymentSideEffects.ShowSnackbar -> {
-                    snackbarHostState.showSnackbar(message = effect.message)
+            when(effect) {
+                is EditPaymentSideEffects.CancelButton -> navigateBack()
+                is EditPaymentSideEffects.SaveButton -> navigateBack()
+                is EditPaymentSideEffects.ShowSnackbar -> {
+                    snackbarHostState.showSnackbar(
+                        message = effect.message
+                    )
                 }
-                is AddPaymentSideEffects.AddButton -> navigateBack() // navigateUp()
-                is AddPaymentSideEffects.CancelButton -> navigateBack() // navigateUp()
             }
         }
     }
@@ -114,7 +115,7 @@ fun AddPaymentBottomSheet(
                     labelText = "Date",
                     trailingIcon = {
                         IconButton(onClick = {
-                            viewModel.onEvent(AddPaymentEvent.DateIconClick)
+                            viewModel.onEvent(EditPaymentEvent.DateIconClick)
                         }) {
                             Icon(
                                 imageVector = Icons.Default.CalendarMonth,
@@ -134,7 +135,7 @@ fun AddPaymentBottomSheet(
                 )
                 TextFieldComponent(
                     value = data.description,
-                    onValueChange = { viewModel.onEvent(AddPaymentEvent.EnteredDescription(it)) },
+                    onValueChange = { viewModel.onEvent(EditPaymentEvent.EnteredDescription(it)) },
                     labelText = "Description",
                     keyboardOptions = KeyboardOptions.Default.copy(
                         imeAction = ImeAction.Next
@@ -156,7 +157,7 @@ fun AddPaymentBottomSheet(
                 TextFieldComponent(
                     modifier = Modifier.focusRequester(amountFieldFocusRequester),
                     value = state.amountInString,
-                    onValueChange = { viewModel.onEvent(AddPaymentEvent.EnteredAmount(it)) },
+                    onValueChange = { viewModel.onEvent(EditPaymentEvent.EnteredAmount(it)) },
                     labelText = "Amount",
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Number,
@@ -182,15 +183,15 @@ fun AddPaymentBottomSheet(
                     modifier = Modifier.focusRequester(monthTagFieldFocusRequester),
                     itemsList = Const.months,
                     isExpanded = state.isMonthTagMenuVisible,
-                    onDismissMenu = { viewModel.onEvent(AddPaymentEvent.DismissMonthTagMenu) },
+                    onDismissMenu = { viewModel.onEvent(EditPaymentEvent.DismissMonthTagMenu) },
                     selectedItem = data.monthTag,
                     onSelectedItemChange = { selectedMonth ->
-                        viewModel.onEvent(AddPaymentEvent.MonthTagSelected(selectedMonth))
+                        viewModel.onEvent(EditPaymentEvent.MonthTagSelected(selectedMonth))
                     },
                     labelText = "Month Tag",
                     trailingIcon = {
                         IconButton(onClick = {
-                            viewModel.onEvent(event = AddPaymentEvent.MonthTagIconClick)
+                            viewModel.onEvent(event = EditPaymentEvent.MonthTagIconClick)
                         }) {
                             Icon(
                                 imageVector = Icons.Default.Tag,
@@ -210,15 +211,15 @@ fun AddPaymentBottomSheet(
                 TextFieldWithDropDownMenu(
                     itemsList = state.moneySourceList,
                     isExpanded = state.isMoneySourceMenuVisible,
-                    onDismissMenu = { viewModel.onEvent(AddPaymentEvent.DismissMoneySourceMenu) },
+                    onDismissMenu = { viewModel.onEvent(EditPaymentEvent.DismissMoneySourceMenu) },
                     selectedItem = state.selectedMoneySource,
                     onSelectedItemChange = { newMoneySource ->
-                        viewModel.onEvent(AddPaymentEvent.MoneySourceSelected(newMoneySource))
+                        viewModel.onEvent(EditPaymentEvent.MoneySourceSelected(newMoneySource))
                     },
                     labelText = "Money source",
                     trailingIcon = {
                         IconButton(onClick = {
-                            viewModel.onEvent(AddPaymentEvent.DismissMoneySourceMenu)
+                            viewModel.onEvent(EditPaymentEvent.DismissMoneySourceMenu)
                         }) {
                             Icon(
                                 imageVector = Icons.Default.AccountBalanceWallet,
@@ -260,7 +261,7 @@ fun AddPaymentBottomSheet(
                             Checkbox(
                                 checked = !data.isExpense,
                                 onCheckedChange = {
-                                    viewModel.onEvent(AddPaymentEvent.CheckBoxSelected(isExpense = false))
+                                    viewModel.onEvent(EditPaymentEvent.CheckBoxSelected(isExpense = false))
                                 },
                                 colors = CheckboxDefaults.colors(
                                     checkmarkColor = BackgroundColor,
@@ -277,7 +278,7 @@ fun AddPaymentBottomSheet(
                             Checkbox(
                                 checked = data.isExpense,
                                 onCheckedChange = {
-                                    viewModel.onEvent(AddPaymentEvent.CheckBoxSelected(isExpense = true))
+                                    viewModel.onEvent(EditPaymentEvent.CheckBoxSelected(isExpense = true))
                                 },
                                 colors = CheckboxDefaults.colors(
                                     checkmarkColor = BackgroundColor,
@@ -292,9 +293,9 @@ fun AddPaymentBottomSheet(
                 Spacer(modifier = Modifier.weight(1f))
                 DualOptionButtonsRow(
                     dismissText = "Cancel",
-                    approveText = "Add",
-                    onDismiss = { viewModel.onEvent(AddPaymentEvent.CancelButtonClick) },
-                    onApprove = { viewModel.onEvent(AddPaymentEvent.AddButtonClick) },
+                    approveText = "Save",
+                    onDismiss = { viewModel.onEvent(EditPaymentEvent.CancelButtonClick) },
+                    onApprove = { viewModel.onEvent(EditPaymentEvent.SaveButtonClick) },
                     isApproveEnabled = data.date != null && data.monthTag.isNotBlank() && data.amountNew != null &&
                             data.description.isNotBlank()
 //                            && data.sourceId != null
@@ -304,26 +305,14 @@ fun AddPaymentBottomSheet(
                     DatePickerItem(
                         onDateSelected = { dateInMillis ->
                             dateInMillis?.let { millis ->
-                                viewModel.onEvent(AddPaymentEvent.DateSelected(millis))
+                                viewModel.onEvent(EditPaymentEvent.DateSelected(millis))
                             }
                         },
-                        onDismiss = { viewModel.onEvent(AddPaymentEvent.DismissDatePicker) }
+                        onDismiss = { viewModel.onEvent(EditPaymentEvent.DismissDatePicker) }
                     )
                 }
             }
         }
 
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview(showBackground = true)
-@Composable
-fun BottomSheetContentPreview() {
-    FinanceTrackerTheme {
-        AddPaymentBottomSheet(
-            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-            navigateBack = {}
-        )
     }
 }
