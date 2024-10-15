@@ -118,7 +118,8 @@ fun PaymentsList(
                     }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "arrow back"
+                            contentDescription = "arrow back",
+                            tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
                 },
@@ -130,7 +131,8 @@ fun PaymentsList(
                             }) {
                                 Icon(
                                     imageVector = Icons.Filled.Clear,
-                                    contentDescription = "clear"
+                                    contentDescription = "clear",
+                                    tint = MaterialTheme.colorScheme.onBackground
                                 )
                             }
                         }
@@ -139,7 +141,8 @@ fun PaymentsList(
                         }) {
                             Icon(
                                 imageVector = Icons.Filled.FilterAlt,
-                                contentDescription = "filter"
+                                contentDescription = "filter",
+                                tint = MaterialTheme.colorScheme.onBackground
                             )
                         }
                         MonthTagsDrawerMenu(
@@ -208,7 +211,8 @@ fun PaymentsList(
                                         )
                                     )
                                 },
-                                backgroundColor = DarkestColor,
+                                backgroundColor = DarkestColor ,
+                                tint = MaterialTheme.colorScheme.onBackground,
                                 icon = Icons.Default.Edit,
                                 contentDescription = "edit payment",
                                 modifier = Modifier.clip(RoundedCornerShape(15.dp))
@@ -228,6 +232,7 @@ fun PaymentsList(
                                     )
                                 },
                                 backgroundColor = MaterialTheme.colorScheme.errorContainer,
+                                tint = MaterialTheme.colorScheme.onBackground,
                                 icon = Icons.Default.Delete,
                                 contentDescription = "delete payment",
                                 modifier = Modifier.clip(RoundedCornerShape(15.dp))
