@@ -68,9 +68,7 @@ fun TableDataItem(
         // index
         Column(
             modifier = Modifier
-                .weight(0.1f)
-//                .height(sizeInDp.height)
-            ,
+                .weight(0.1f),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -88,8 +86,7 @@ fun TableDataItem(
             modifier = Modifier
                 .weight(0.35f)
                 .padding(10.dp)
-                .then(heightCalculatingModifier)
-            ,
+                .then(heightCalculatingModifier),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -109,9 +106,7 @@ fun TableDataItem(
         Column(
             modifier = Modifier
                 .weight(0.37f)
-                .padding(10.dp)
-//                .height(sizeInDp.height)
-            ,
+                .padding(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
