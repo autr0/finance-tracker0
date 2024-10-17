@@ -1,5 +1,6 @@
 package com.devautro.financetracker.feature_moneySource.presentation.money_sorces
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,6 +16,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircleOutline
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.SwitchLeft
 import androidx.compose.material.icons.filled.SwitchRight
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,17 +40,31 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.devautro.financetracker.core.presentation.components.ActionIcon
 import com.devautro.financetracker.core.util.Const
+import com.devautro.financetracker.feature_moneySource.presentation.money_sorces.components.DeleteDialog
 import com.devautro.financetracker.feature_moneySource.presentation.money_sorces.components.MoneySourceCard
 import com.devautro.financetracker.feature_moneySource.presentation.money_sorces.components.TableDataItem
+import com.devautro.financetracker.core.presentation.components.SwipeableItem
+import com.devautro.financetracker.feature_payment.util.formatDoubleToString
 import com.devautro.financetracker.ui.theme.AccentBlue
 import com.devautro.financetracker.ui.theme.FinanceTrackerTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MoneySources(
-    bottomNavPadding: PaddingValues
+    bottomNavPadding: PaddingValues,
+    navigateToAddEditScreen: () -> Unit
 ) {
+    val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+
     val switchScreenState = remember {
+        mutableStateOf(false)
+    }
+
+    val isItemRevealed = remember {
+        mutableStateOf(false)
+    }
+
+    val showDeleteDialog = remember {
         mutableStateOf(false)
     }
 
@@ -66,7 +83,10 @@ fun MoneySources(
                 ),
                 actions = {
                     ActionIcon(
-                        onClick = { /*TODO*/ },
+                        onClick = {
+                            /*TODO*/
+                            navigateToAddEditScreen()
+                        },
                         backgroundColor = AccentBlue,
                         icon = Icons.Filled.AddCircleOutline,
                         tint = MaterialTheme.colorScheme.background,
@@ -87,7 +107,10 @@ fun MoneySources(
                         },
                         backgroundColor = AccentBlue,
                         tint = MaterialTheme.colorScheme.background,
-                        icon = if (switchScreenState.value) Icons.Filled.SwitchLeft else Icons.Filled.SwitchRight
+                        icon = if (switchScreenState.value || isLandscape) {
+                            Icons.Filled.SwitchLeft
+                        } else Icons.Filled.SwitchRight,
+                        isEnabled = !isLandscape
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                 }
@@ -138,40 +161,95 @@ fun MoneySources(
                 state = rememberLazyListState()
             ) {
                 itemsIndexed(
-                    items = listOf("1", "2", "3", "4"),
+                    items = listOf<MoneySourceItem>(
+                        MoneySourceItem(
+                            id = 0,
+                            name = "Tink Debit card",
+                            amount = 3456.09,
+                            isRevealed = false
+                        ),
+                        MoneySourceItem(
+                            id = 1,
+                            name = "Sber Debit card",
+                            amount = 15000.0,
+                            isRevealed = true
+                        ),
+                        MoneySourceItem(
+                            id = 2,
+                            name = "Vtb Debit card",
+                            amount = 32456.78,
+                            isRevealed = false
+                        ),
+                    ),
                     key = { index, _ -> index },
                 ) { index, item ->
-                    if (switchScreenState.value) {
-                        TableDataItem(
-                            index = index,
-                            sourceName = "Debit card with very long name and also some more text #${item}",
-                            amount = "${item}234.56",
-                            onEditClick = { /*TODO: EditIconClickEvent(navigateToEditScreen) */ },
-                            backgroundColor = Const.sourcePaleColors[index]
-                        )
-                    } else {
-                        MoneySourceCard(
-                            modifier = Modifier.height(220.dp),
-                            cardPaleColor = Const.sourcePaleColors[index],
-                            cardAccentColor = Const.sourceAccentColors[index],
-                            index = index,
-                            sourceName = "Debit card #${item}",
-                            amount = "${item}234.56",
-                            onEditIconClick = { /* TODO: EditIconClickEvent(navigateToEditScreen) */ }
-                        )
+                    SwipeableItem(
+                        isRevealed = item.isRevealed,
+                        actions = {
+                            ActionIcon(
+                                modifier = Modifier.clip(RoundedCornerShape(15.dp)),
+                                onClick = { showDeleteDialog.value = true },
+                                backgroundColor = MaterialTheme.colorScheme.errorContainer,
+                                icon = Icons.Default.Delete,
+                                contentDescription = "delete moneySource",
+                                tint = MaterialTheme.colorScheme.onBackground
+                            )
+                        },
+                        onExpanded = {
+                            isItemRevealed.value = true
+                            // update value of the item
+                        },
+                        onCollapsed = {
+                            isItemRevealed.value = false
+                            // update value of the item
+                        }
+                    ) {
+                        if (switchScreenState.value || isLandscape) {
+                            TableDataItem(
+                                index = index,
+                                sourceName = item.name,
+                                amount = formatDoubleToString(item.amount),
+                                onEditClick = {
+                                    /*TODO: EditIconClickEvent(navigateToEditScreen) */
+                                    navigateToAddEditScreen()
+                                },
+                                backgroundColor = Const.sourcePaleColors[index]
+                            )
+                        } else {
+                            MoneySourceCard(
+                                modifier = Modifier.height(220.dp),
+                                cardPaleColor = Const.sourcePaleColors[index],
+                                cardAccentColor = Const.sourceAccentColors[index],
+                                index = index,
+                                sourceName = item.name,
+                                amount = formatDoubleToString(item.amount),
+                                onEditIconClick = {
+                                    /* TODO: EditIconClickEvent(navigateToEditScreen) */
+                                    navigateToAddEditScreen()
+                                }
+                            )
+                        }
                     }
                 }
 
             }
-
+            if (showDeleteDialog.value) {
+                DeleteDialog(
+                    onConfirmClick = {
+                        /*TODO*/
+                        showDeleteDialog.value = false
+                    },
+                    onDismissClick = { showDeleteDialog.value = false }
+                )
+            }
         }
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun MoneySourcesPreview() {
-    FinanceTrackerTheme {
-        MoneySources(bottomNavPadding = PaddingValues(0.dp))
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun MoneySourcesPreview() {
+//    FinanceTrackerTheme {
+//        MoneySources(bottomNavPadding = PaddingValues(0.dp))
+//    }
+//}

@@ -1,4 +1,4 @@
-package com.devautro.financetracker.feature_payment.presentation.payments_type_list.components
+package com.devautro.financetracker.core.presentation.components
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -99,6 +100,7 @@ fun SwipeableItem(
                         }
                     )
                 },
+            color = MaterialTheme.colorScheme.background,
             shape = RoundedCornerShape(15.dp)
         ) {
             content()

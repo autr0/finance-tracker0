@@ -15,12 +15,14 @@ fun ActionIcon(
     backgroundColor: Color,
     icon: ImageVector,
     tint: Color = Color.White,
-    contentDescription: String? = null
+    contentDescription: String? = null,
+    isEnabled: Boolean = true
 ) {
     IconButton(
         onClick = onClick,
         modifier = modifier
-            .background(backgroundColor)
+            .background(backgroundColor),
+        enabled = isEnabled
     ) {
         Icon(
             imageVector = icon,

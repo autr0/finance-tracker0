@@ -20,7 +20,7 @@ val DarkRedCircle = Color(0xFFAC1F1F)
 
 val OrangePaleCard = Color(0xC5FFC34E) // 77%
 val OrangeAccentCard = Color(0xFFF0A410)
-val PinkPaleCard = Color(0xBDEC59BA) // 74%
+val PinkPaleCard = Color(0xE9F078C7) // 91%
 val PinkAccentCard = Color(0xFFDD1699)
 val GreenPaleCard = Color(0xFF7FD177) // 100%
 val GreenAccentCard = Color(0xFF5CAD54 )

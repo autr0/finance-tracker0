@@ -48,7 +48,7 @@ import com.devautro.financetracker.feature_payment.presentation.edit_payment.Edi
 import com.devautro.financetracker.feature_payment.presentation.payments_type_list.components.MonthTagsDrawerMenu
 import com.devautro.financetracker.feature_payment.presentation.payments_type_list.components.PaymentTypeCard
 import com.devautro.financetracker.feature_payment.presentation.payments_type_list.components.SelectedMonthContainer
-import com.devautro.financetracker.feature_payment.presentation.payments_type_list.components.SwipeableItem
+import com.devautro.financetracker.core.presentation.components.SwipeableItem
 import com.devautro.financetracker.feature_payment.presentation.payments_type_list.components.TotalAmountCard
 import com.devautro.financetracker.feature_payment.util.convertMillisToDate
 import com.devautro.financetracker.feature_payment.util.formatDoubleToString
