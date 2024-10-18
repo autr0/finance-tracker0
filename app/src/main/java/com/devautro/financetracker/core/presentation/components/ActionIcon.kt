@@ -15,6 +15,7 @@ fun ActionIcon(
     backgroundColor: Color,
     icon: ImageVector,
     tint: Color = Color.White,
+    disabledTint: Color = Color.DarkGray,
     contentDescription: String? = null,
     isEnabled: Boolean = true
 ) {
@@ -27,7 +28,7 @@ fun ActionIcon(
         Icon(
             imageVector = icon,
             contentDescription = contentDescription,
-            tint = tint
+            tint = if (isEnabled) tint else disabledTint
         )
     }
 

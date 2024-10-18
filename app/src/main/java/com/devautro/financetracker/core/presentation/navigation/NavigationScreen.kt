@@ -1,5 +1,15 @@
 package com.devautro.financetracker.core.presentation.navigation
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.EaseIn
+import androidx.compose.animation.core.EaseOut
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -30,7 +40,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -42,10 +51,9 @@ import com.devautro.financetracker.core.presentation.components.BottomNavigation
 import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.AddEditMoneySource
 import com.devautro.financetracker.feature_moneySource.presentation.money_sorces.MoneySources
 import com.devautro.financetracker.feature_payment.presentation.add_payment.AddPaymentBottomSheet
-import com.devautro.financetracker.feature_payment.presentation.edit_payment.EditPaymentSheet
-import com.devautro.financetracker.feature_payment.presentation.edit_payment.EditPaymentViewModel
 import com.devautro.financetracker.feature_payment.presentation.home_screen.HomeScreen
-import com.devautro.financetracker.feature_payment.presentation.payments_type_list.PaymentsList
+import com.devautro.financetracker.feature_payment.presentation.payments_type_list.expenses.ExpensesList
+import com.devautro.financetracker.feature_payment.presentation.payments_type_list.incomes.IncomesList
 import com.devautro.financetracker.ui.theme.ExpenseRed
 import com.devautro.financetracker.ui.theme.FinanceTrackerTheme
 import com.devautro.financetracker.ui.theme.IncomeGreen
@@ -94,7 +102,7 @@ fun NavigationScreen() {
 
     Scaffold(
         bottomBar = {
-            if (showBottomBar) {
+            AnimatedVisibility(visible = showBottomBar) {
                 BottomNavigationBar(
                     barItems = barItems,
                     navController = navController,
@@ -129,7 +137,12 @@ fun NavigationScreen() {
     ) { bottomNavPadding ->
 
         /* TODO -> App Navigation (new type-safe way?) */
-        NavHost(navController = navController, startDestination = homeTab.title) {
+        NavHost(
+            navController = navController,
+            startDestination = homeTab.title,
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None }
+        ) {
             composable(route = homeTab.title) {
                 HomeScreen(
                     bottomPadding = bottomNavPadding,
@@ -148,13 +161,32 @@ fun NavigationScreen() {
                     )
                 }
             }
-            composable(route = "2") {
-                PaymentsList(
-                    paymentTypeText = "Incomes",
+            composable(
+                route = "2",
+                enterTransition = {
+                    fadeIn(
+                        animationSpec = tween(
+                            300, easing = LinearEasing
+                        )
+                    ) + slideIntoContainer(
+                        animationSpec = tween(300, easing = EaseIn),
+                        towards = AnimatedContentTransitionScope.SlideDirection.Start
+                    )
+                },
+                exitTransition = {
+                    fadeOut(
+                        animationSpec = tween(
+                            300, easing = LinearEasing
+                        )
+                    ) + slideOutOfContainer(
+                        animationSpec = tween(300, easing = EaseOut),
+                        towards = AnimatedContentTransitionScope.SlideDirection.End
+                    )
+                }
+            ) {
+                IncomesList(
                     navigateBack = { navController.navigateUp() },
-                    navBarPadding = bottomNavPadding,
-                    cardColor = IncomeGreen,
-                    isExpense = false
+                    navBarPadding = bottomNavPadding
                 )
 
                 if (showBottomSheet.value) {
@@ -167,13 +199,32 @@ fun NavigationScreen() {
                 }
             }
 
-            composable(route = "3") {
-                PaymentsList(
-                    paymentTypeText = "Expenses",
+            composable(
+                route = "3",
+                enterTransition = {
+                    fadeIn(
+                        animationSpec = tween(
+                            300, easing = LinearEasing
+                        )
+                    ) + slideIntoContainer(
+                        animationSpec = tween(300, easing = EaseIn),
+                        towards = AnimatedContentTransitionScope.SlideDirection.Start
+                    )
+                },
+                exitTransition = {
+                    fadeOut(
+                        animationSpec = tween(
+                            300, easing = LinearEasing
+                        )
+                    ) + slideOutOfContainer(
+                        animationSpec = tween(300, easing = EaseOut),
+                        towards = AnimatedContentTransitionScope.SlideDirection.End
+                    )
+                }
+            ) {
+                ExpensesList(
                     navigateBack = { navController.navigateUp() },
-                    navBarPadding = bottomNavPadding,
-                    cardColor = ExpenseRed,
-                    isExpense = true
+                    navBarPadding = bottomNavPadding
                 )
 
                 if (showBottomSheet.value) {
@@ -207,8 +258,28 @@ fun NavigationScreen() {
                     ) {
                         type = NavType.IntType
                         defaultValue = -1
-                    },
-                )
+                    }
+                ),
+                enterTransition = {
+                    fadeIn(
+                        animationSpec = tween(
+                            300, easing = LinearEasing
+                        )
+                    ) + slideIntoContainer(
+                        animationSpec = tween(300, easing = EaseIn),
+                        towards = AnimatedContentTransitionScope.SlideDirection.Start
+                    )
+                },
+                exitTransition = {
+                    fadeOut(
+                        animationSpec = tween(
+                            300, easing = LinearEasing
+                        )
+                    ) + slideOutOfContainer(
+                        animationSpec = tween(300, easing = EaseOut),
+                        towards = AnimatedContentTransitionScope.SlideDirection.End
+                    )
+                }
             ) {
                 val paleColor = it.arguments?.getInt("cardColor") ?: -1
                 AddEditMoneySource(

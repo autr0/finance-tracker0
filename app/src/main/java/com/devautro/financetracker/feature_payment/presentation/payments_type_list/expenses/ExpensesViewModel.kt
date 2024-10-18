@@ -1,4 +1,4 @@
-package com.devautro.financetracker.feature_payment.presentation.payments_type_list
+package com.devautro.financetracker.feature_payment.presentation.payments_type_list.expenses
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -6,7 +6,12 @@ import com.devautro.financetracker.feature_payment.domain.model.Payment
 import com.devautro.financetracker.feature_payment.domain.use_case.PaymentUseCases
 import com.devautro.financetracker.feature_payment.presentation.mappers.toPayment
 import com.devautro.financetracker.feature_payment.presentation.mappers.toPaymentItem
+import com.devautro.financetracker.feature_payment.presentation.payments_type_list.PaymentItem
+import com.devautro.financetracker.feature_payment.presentation.payments_type_list.PaymentsListEvent
+import com.devautro.financetracker.feature_payment.presentation.payments_type_list.PaymentsListSideEffects
+import com.devautro.financetracker.feature_payment.presentation.payments_type_list.PaymentsListState
 import com.devautro.financetracker.feature_payment.util.formatDoubleToString
+import com.devautro.financetracker.feature_payment.util.getYearOfTheDate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,8 +24,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class PaymentsListViewModel @Inject constructor(
-    private val paymentUseCases: PaymentUseCases
+class ExpensesViewModel @Inject constructor(
+    private val paymentUseCases: PaymentUseCases,
 ) : ViewModel() {
 
     private val _paymentsState = MutableStateFlow(PaymentsListState())
@@ -31,12 +36,12 @@ class PaymentsListViewModel @Inject constructor(
 
     private var recentlyDeletedPayment: Payment? = null
 
+    init {
+        getInitialData()
+    }
+
     fun onEvent(event: PaymentsListEvent) {
         when (event) {
-            is PaymentsListEvent.GetInitialPaymentType -> {
-                getInitialData(isExpense = event.isExpense)
-            }
-
             is PaymentsListEvent.ShowEditBottomSheet -> {
                 _paymentsState.update { state ->
                     state.copy(
@@ -59,7 +64,13 @@ class PaymentsListViewModel @Inject constructor(
                         selectedMonthTag = event.monthTag
                     )
                 }
-                getFilteredData(isExpense = event.isExpense)
+                getFilteredDataByMonthTag()
+            }
+
+            is PaymentsListEvent.CurrentYearSelected -> {
+                getFilteredDataByMonthTag(
+                    yearIndex = event.yearIndex
+                )
             }
 
             is PaymentsListEvent.DismissMonthTagMenu -> {
@@ -76,7 +87,7 @@ class PaymentsListViewModel @Inject constructor(
                         selectedMonthTag = ""
                     )
                 }
-                getInitialData(isExpense = event.isExpense)
+                getInitialData()
             }
 
             is PaymentsListEvent.EditIconClick -> {
@@ -133,83 +144,54 @@ class PaymentsListViewModel @Inject constructor(
         }
     }
 
-    private fun getFilteredData(
-        isExpense: Boolean,
-//        filterTag: String
+
+    private fun getFilteredDataByMonthTag(
+        yearIndex: Int = -1
     ) {
         viewModelScope.launch {
-            if (isExpense) {
-                paymentUseCases.getExpensesUseCase().collectLatest { expensesList ->
-                    val filteredExpensesList =
-                        expensesList.filter { it.monthTag == _paymentsState.value.selectedMonthTag }
-                    val filteredTotalAmount = filteredExpensesList.mapNotNull { it.amountNew }.sum()
+            paymentUseCases.getExpensesUseCase().collectLatest { expensesList ->
+                val uniqueYears = expensesList.map {
+                    getYearOfTheDate(it.date!!)
+                }.toSet().sorted().toList()
 
-                    _paymentsState.update { state ->
-                        state.copy(
-                            paymentItemsList = filteredExpensesList
-                                .map { payment ->
-                                    payment.toPaymentItem()
-                                },
-                            totalAmount = formatDoubleToString(filteredTotalAmount)
-                        )
-                    }
+                val lastYearIndex = if (yearIndex >= 0) yearIndex else uniqueYears.lastIndex
+
+                val filteredExpensesList = expensesList.filter {
+                    it.monthTag == _paymentsState.value.selectedMonthTag &&
+                            getYearOfTheDate(it.date!!) == uniqueYears[lastYearIndex]
                 }
-            } else {
-                paymentUseCases.getIncomesUseCase().collectLatest { incomesList ->
-                    val filteredIncomesList =
-                        incomesList.filter { it.monthTag == _paymentsState.value.selectedMonthTag }
-                    val filteredTotalAmount = filteredIncomesList.mapNotNull { it.amountNew }.sum()
+                val filteredTotalAmount = filteredExpensesList.mapNotNull { it.amountNew }.sum()
 
-                    _paymentsState.update { state ->
-                        state.copy(
-                            paymentItemsList = filteredIncomesList
-                                .map { payment ->
-                                    payment.toPaymentItem()
-                                },
-                            totalAmount = formatDoubleToString(filteredTotalAmount)
-                        )
-                    }
+                _paymentsState.update { state ->
+                    state.copy(
+                        paymentItemsList = filteredExpensesList
+                            .map { payment ->
+                                payment.toPaymentItem()
+                            },
+                        totalAmount = formatDoubleToString(filteredTotalAmount),
+                        paymentYearsList = uniqueYears,
+                        selectedYearIndex = lastYearIndex
+                    )
                 }
             }
-
         }
     }
 
-    private fun getInitialData(
-        isExpense: Boolean
-    ) {
+    private fun getInitialData() {
         viewModelScope.launch {
-            if (isExpense) {
-                paymentUseCases.getExpensesUseCase().collectLatest { expensesList ->
-                    val totalAmount = expensesList
-                        .mapNotNull { it.amountNew }
-                        .sum()
+            paymentUseCases.getExpensesUseCase().collectLatest { expensesList ->
+                val totalAmount = expensesList
+                    .mapNotNull { it.amountNew }
+                    .sum()
 
-                    _paymentsState.update { state ->
-                        state.copy(
-                            paymentItemsList = expensesList
-                                .map { payment ->
-                                    payment.toPaymentItem()
-                                },
-                            totalAmount = formatDoubleToString(totalAmount)
-                        )
-                    }
-                }
-            } else {
-                paymentUseCases.getIncomesUseCase().collectLatest { incomesList ->
-                    val totalAmount = incomesList
-                        .mapNotNull { it.amountNew }
-                        .sum()
-
-                    _paymentsState.update { state ->
-                        state.copy(
-                            paymentItemsList = incomesList
-                                .map { payment ->
-                                    payment.toPaymentItem()
-                                },
-                            totalAmount = formatDoubleToString(totalAmount)
-                        )
-                    }
+                _paymentsState.update { state ->
+                    state.copy(
+                        paymentItemsList = expensesList
+                            .map { payment ->
+                                payment.toPaymentItem()
+                            },
+                        totalAmount = formatDoubleToString(totalAmount)
+                    )
                 }
             }
         }

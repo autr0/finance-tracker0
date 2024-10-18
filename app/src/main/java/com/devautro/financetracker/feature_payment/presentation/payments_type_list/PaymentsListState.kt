@@ -4,9 +4,12 @@ import com.devautro.financetracker.feature_payment.domain.model.Payment
 
 data class PaymentsListState(
     val paymentItemsList: List<PaymentItem> = emptyList(),
+    val paymentYearsList: List<Int> = emptyList(),
     val totalAmount: String = "0",
     val isMonthTagMenuVisible: Boolean = false,
     val selectedMonthTag: String = "",
+//    val selectedYear: Int = 0,
+    val selectedYearIndex: Int = 0,
     val isEditBottomSheetVisible: Boolean = false,
     val paymentForSheet: Payment = Payment()
 )

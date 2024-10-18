@@ -2,9 +2,10 @@ package com.devautro.financetracker.feature_payment.util
 
 import java.time.Instant
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.Calendar
+import java.util.Date
 
 fun convertMillisToDate(millis: Long): String {
     val localDate = Instant.ofEpochMilli(millis)
@@ -19,4 +20,10 @@ fun convertDateToMillis(dateString: String): Long {
     val localDate = LocalDate.parse(dateString, formatter)
     // convert it with the start of the day value (00:00) ->
     return localDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+}
+
+fun getYearOfTheDate(date: Long): Int {
+    val calendar = Calendar.getInstance()
+    calendar.time = Date(date)
+    return calendar.get(Calendar.YEAR)
 }

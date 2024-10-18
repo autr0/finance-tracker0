@@ -2,14 +2,15 @@ package com.devautro.financetracker.feature_payment.presentation.payments_type_l
 
 sealed class PaymentsListEvent {
     data object FilterIconClick : PaymentsListEvent()
-    data class MonthTagSelected(val monthTag: String, val isExpense: Boolean) : PaymentsListEvent()
+    data class MonthTagSelected(val monthTag: String) : PaymentsListEvent()
+    data class CurrentYearSelected( val yearIndex: Int) : PaymentsListEvent()
     data object DismissMonthTagMenu : PaymentsListEvent()
-    data class ClearIconCLick(val isExpense: Boolean) : PaymentsListEvent()
+    data object ClearIconCLick : PaymentsListEvent()
     data object NavigateBack : PaymentsListEvent()
     data class ItemRevealed(val id: Long, val isRevealed: Boolean) : PaymentsListEvent()
     data class EditIconClick(val paymentItem: PaymentItem) : PaymentsListEvent()
     data class DeleteIconClick(val paymentItem: PaymentItem) : PaymentsListEvent()
-    data class GetInitialPaymentType(val isExpense: Boolean) : PaymentsListEvent()
+//    data class GetInitialPaymentType(val isExpense: Boolean) : PaymentsListEvent()
     data object RestorePayment : PaymentsListEvent()
     data object ShowEditBottomSheet : PaymentsListEvent()
 }

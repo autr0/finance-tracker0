@@ -1,6 +1,6 @@
-package com.devautro.financetracker.feature_payment.presentation.payments_type_list
+package com.devautro.financetracker.feature_payment.presentation.payments_type_list.incomes
 
-import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -39,7 +39,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -49,21 +48,22 @@ import com.devautro.financetracker.feature_payment.presentation.payments_type_li
 import com.devautro.financetracker.feature_payment.presentation.payments_type_list.components.PaymentTypeCard
 import com.devautro.financetracker.feature_payment.presentation.payments_type_list.components.SelectedMonthContainer
 import com.devautro.financetracker.core.presentation.components.SwipeableItem
+import com.devautro.financetracker.feature_payment.presentation.payments_type_list.PaymentsListEvent
+import com.devautro.financetracker.feature_payment.presentation.payments_type_list.PaymentsListSideEffects
 import com.devautro.financetracker.feature_payment.presentation.payments_type_list.components.TotalAmountCard
+import com.devautro.financetracker.feature_payment.presentation.payments_type_list.components.YearPicker
 import com.devautro.financetracker.feature_payment.util.convertMillisToDate
 import com.devautro.financetracker.feature_payment.util.formatDoubleToString
 import com.devautro.financetracker.ui.theme.DarkestColor
+import com.devautro.financetracker.ui.theme.IncomeGreen
 import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PaymentsList(
-    viewModel: PaymentsListViewModel = hiltViewModel(),
-    paymentTypeText: String,
+fun IncomesList(
+    viewModel: IncomesViewModel = hiltViewModel(),
     navigateBack: () -> Unit,
-    navBarPadding: PaddingValues,
-    cardColor: Color,
-    isExpense: Boolean
+    navBarPadding: PaddingValues
 ) {
     val state by viewModel.paymentsState.collectAsStateWithLifecycle()
 
@@ -71,13 +71,10 @@ fun PaymentsList(
     val lazyList = rememberLazyListState()
 
     LaunchedEffect(key1 = true) {
-        viewModel.onEvent(PaymentsListEvent.GetInitialPaymentType(isExpense = isExpense))
-
         viewModel.sideEffects.collectLatest { effect ->
             when (effect) {
                 is PaymentsListSideEffects.NavigateBack -> navigateBack()
                 is PaymentsListSideEffects.ShowSnackBar -> {
-                    Log.d("MyLog", "Showing Snackbar: ${effect.message}")
                     snackbarHostState.showSnackbar(
                         message = effect.message,
                         actionLabel = "Undo"
@@ -86,7 +83,6 @@ fun PaymentsList(
                             viewModel.onEvent(PaymentsListEvent.RestorePayment)
                         }
                     }
-
                 }
             }
         }
@@ -106,10 +102,29 @@ fun PaymentsList(
                             modifier = Modifier.fillMaxWidth(),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text(text = paymentTypeText)
+                            Text(text = "Incomes")
                         }
                     } else {
-                        SelectedMonthContainer(monthTag = state.selectedMonthTag)
+                        Row(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            SelectedMonthContainer(monthTag = state.selectedMonthTag)
+                            AnimatedVisibility(visible = state.paymentYearsList.isNotEmpty()) {
+                                YearPicker(
+                                    yearsList = state.paymentYearsList,
+                                    yearIndex = state.selectedYearIndex,
+                                    onYearChanged = { newIndex ->
+                                        viewModel.onEvent(
+                                            PaymentsListEvent.CurrentYearSelected(
+                                                yearIndex = newIndex
+                                            )
+                                        )
+                                    }
+                                )
+                            }
+                        }
                     }
                 },
                 navigationIcon = {
@@ -127,7 +142,7 @@ fun PaymentsList(
                     Row(horizontalArrangement = Arrangement.Center) {
                         if (state.selectedMonthTag.isNotBlank()) {
                             IconButton(onClick = {
-                                viewModel.onEvent(PaymentsListEvent.ClearIconCLick(isExpense = isExpense))
+                                viewModel.onEvent(PaymentsListEvent.ClearIconCLick)
                             }) {
                                 Icon(
                                     imageVector = Icons.Filled.Clear,
@@ -154,8 +169,7 @@ fun PaymentsList(
                             onSelectedItem = { month ->
                                 viewModel.onEvent(
                                     PaymentsListEvent.MonthTagSelected(
-                                        monthTag = month,
-                                        isExpense = isExpense
+                                        monthTag = month
                                     )
                                 )
                             }
@@ -211,7 +225,7 @@ fun PaymentsList(
                                         )
                                     )
                                 },
-                                backgroundColor = DarkestColor ,
+                                backgroundColor = DarkestColor,
                                 tint = MaterialTheme.colorScheme.onBackground,
                                 icon = Icons.Default.Edit,
                                 contentDescription = "edit payment",
@@ -260,7 +274,7 @@ fun PaymentsList(
                             amount = formatDoubleToString(payment.amountNew),
                             monthTag = payment.monthTag,
                             date = convertMillisToDate(payment.date),
-                            color = cardColor
+                            color = IncomeGreen
                         )
                     }
                 }
