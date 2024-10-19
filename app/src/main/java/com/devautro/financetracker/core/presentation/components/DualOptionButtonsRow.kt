@@ -57,7 +57,7 @@ fun DualOptionButtonsRow(
             enabled = isApproveEnabled,
             onClick = {
                 onApprove()
-                onDismiss()
+//                onDismiss()
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.background,

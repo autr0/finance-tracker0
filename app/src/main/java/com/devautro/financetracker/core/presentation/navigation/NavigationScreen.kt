@@ -10,17 +10,23 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Payments
+import androidx.compose.material.icons.filled.PieChart
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.AccountBalanceWallet
-import androidx.compose.material.icons.outlined.BarChart
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Payments
+import androidx.compose.material.icons.outlined.PieChartOutline
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
@@ -29,70 +35,76 @@ import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import androidx.navigation.NavType
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.devautro.financetracker.core.presentation.TabBarItem
 import com.devautro.financetracker.core.presentation.components.BottomNavigationBar
-import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.AddEditMoneySource
+import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.add_money_source.AddMoneySource
+import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.edit_money_source.EditMoneySource
 import com.devautro.financetracker.feature_moneySource.presentation.money_sorces.MoneySources
 import com.devautro.financetracker.feature_payment.presentation.add_payment.AddPaymentBottomSheet
 import com.devautro.financetracker.feature_payment.presentation.home_screen.HomeScreen
 import com.devautro.financetracker.feature_payment.presentation.payments_type_list.expenses.ExpensesList
 import com.devautro.financetracker.feature_payment.presentation.payments_type_list.incomes.IncomesList
-import com.devautro.financetracker.ui.theme.ExpenseRed
 import com.devautro.financetracker.ui.theme.FinanceTrackerTheme
-import com.devautro.financetracker.ui.theme.IncomeGreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavigationScreen() {
-
-    val homeTab = TabBarItem(
-        title = "Home",
-        selectedIcon = Icons.Filled.Home,
-        unselectedIcon = Icons.Outlined.Home
+    val barItems = listOf(
+        TabBarItem(
+            name = "Payments",
+            route = Home,
+            selectedIcon = Icons.Filled.Payments,
+            unselectedIcon = Icons.Outlined.Payments
+        ),
+        TabBarItem(
+            name = "Charts",
+            route = Charts,
+            selectedIcon = Icons.Filled.PieChart,
+            unselectedIcon = Icons.Outlined.PieChartOutline
+        ),
+        TabBarItem(
+            name = "Accounts",
+            route = Accounts,
+            selectedIcon = Icons.Filled.AccountBalanceWallet,
+            unselectedIcon = Icons.Outlined.AccountBalanceWallet
+        ),
+        TabBarItem(
+            name = "Settings",
+            route = Settings,
+            selectedIcon = Icons.Filled.Settings,
+            unselectedIcon = Icons.Outlined.Settings
+        )
     )
-    val chartsTab = TabBarItem(
-        title = "Charts",
-        selectedIcon = Icons.Filled.BarChart,
-        unselectedIcon = Icons.Outlined.BarChart
-    )
-    val accountsTab = TabBarItem(
-        title = "Accounts",
-        selectedIcon = Icons.Filled.AccountBalanceWallet,
-        unselectedIcon = Icons.Outlined.AccountBalanceWallet
-    )
-    val settingsTab = TabBarItem(
-        title = "Settings",
-        selectedIcon = Icons.Filled.Settings,
-        unselectedIcon = Icons.Outlined.Settings
-    )
-    val barItems = listOf(homeTab, chartsTab, accountsTab, settingsTab)
 
     val navController = rememberNavController()
     var showBottomBar by rememberSaveable { mutableStateOf(true) }
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-    showBottomBar = when (navBackStackEntry?.destination?.route) {
-        "2" -> false
-        "3" -> false
-        "4?noteColor={cardColor}" -> false
+
+    showBottomBar = when {
+        currentDestination?.hasRoute(Expenses::class) == true -> false
+        currentDestination?.hasRoute(Incomes::class) == true -> false
+        currentDestination?.hasRoute(AddAccount::class) == true -> false
+        currentDestination?.hasRoute(EditAccount::class) == true -> false
+//        currentDestination?.hasRoute(AddBottomSheet::class) == true -> false
         else -> true
     }
 
@@ -114,6 +126,7 @@ fun NavigationScreen() {
             if (showBottomBar) {
                 FloatingActionButton(
                     onClick = {
+//                        navController.navigate(AddBottomSheet)
                         showBottomSheet.value = true
                     },
                     containerColor = MaterialTheme.colorScheme.primary,
@@ -139,15 +152,15 @@ fun NavigationScreen() {
         /* TODO -> App Navigation (new type-safe way?) */
         NavHost(
             navController = navController,
-            startDestination = homeTab.title,
+            startDestination = Home,
             enterTransition = { EnterTransition.None },
             exitTransition = { ExitTransition.None }
         ) {
-            composable(route = homeTab.title) {
+            composable<Home> {
                 HomeScreen(
                     bottomPadding = bottomNavPadding,
-                    navigateToIncomes = { navController.navigate("2") },
-                    navigateToExpenses = { navController.navigate("3") }
+                    navigateToIncomes = { navController.navigate(Incomes) },
+                    navigateToExpenses = { navController.navigate(Expenses) }
                 )
 
 
@@ -161,8 +174,15 @@ fun NavigationScreen() {
                     )
                 }
             }
-            composable(
-                route = "2",
+
+//            composable<AddBottomSheet> {
+//                AddPaymentBottomSheet(
+//                    sheetState = sheetState,
+//                    navigateBack = { navController.navigateUp() }
+//                )
+//            }
+
+            composable<Incomes>(
                 enterTransition = {
                     fadeIn(
                         animationSpec = tween(
@@ -189,18 +209,17 @@ fun NavigationScreen() {
                     navBarPadding = bottomNavPadding
                 )
 
-                if (showBottomSheet.value) {
-                    AddPaymentBottomSheet(
-                        sheetState = sheetState,
-                        navigateBack = {
-                            showBottomSheet.value = false
-                        }
-                    )
-                }
+//                if (showBottomSheet.value) {
+//                    AddPaymentBottomSheet(
+//                        sheetState = sheetState,
+//                        navigateBack = {
+//                            showBottomSheet.value = false
+//                        }
+//                    )
+//                }
             }
 
-            composable(
-                route = "3",
+            composable<Expenses>(
                 enterTransition = {
                     fadeIn(
                         animationSpec = tween(
@@ -227,39 +246,43 @@ fun NavigationScreen() {
                     navBarPadding = bottomNavPadding
                 )
 
-                if (showBottomSheet.value) {
-                    AddPaymentBottomSheet(
-                        sheetState = sheetState,
-                        navigateBack = {
-                            showBottomSheet.value = false
-                        }
-                    )
+//                if (showBottomSheet.value) {
+//                    AddPaymentBottomSheet(
+//                        sheetState = sheetState,
+//                        navigateBack = {
+//                            showBottomSheet.value = false
+//                        }
+//                    )
+//                }
+            }
+
+            composable<Charts> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(text = "Coming soon...")
                 }
             }
 
-            composable(route = accountsTab.title) {
+            composable<Accounts> {
                 MoneySources(
                     bottomNavPadding = bottomNavPadding,
-                    navigateToAddEditScreen = { navController.navigate(route = "4") }
+                    navigateToAddScreen = {
+                        navController.navigate(AddAccount)
+                    },
+                    navigateToEditScreen = { id ->
+                        navController.navigate(
+                            EditAccount(id = id)
+                        )
+                    }
                 )
             }
 
-            composable(
-                route = "4?noteColor={cardColor}",
-                arguments = listOf(
-//                    navArgument(
-//                        name = "noteId"
-//                    ) {
-//                        type = NavType.LongType
-//                        defaultValue = -1L
-//                    },
-                    navArgument(
-                        name = "cardColor"
-                    ) {
-                        type = NavType.IntType
-                        defaultValue = -1
-                    }
-                ),
+            composable<AddAccount>(
                 enterTransition = {
                     fadeIn(
                         animationSpec = tween(
@@ -281,129 +304,49 @@ fun NavigationScreen() {
                     )
                 }
             ) {
-                val paleColor = it.arguments?.getInt("cardColor") ?: -1
-                AddEditMoneySource(
-                    cardPaleColor = Color(paleColor),
-                    navigateBack = { navController.navigateUp() },
-                    topBarText = "Add/Edit Money Source",
-                    approveButtonText = "Add/Save"
+                AddMoneySource(
+                    navigateBack = { navController.navigateUp() }
                 )
             }
-        }
-    }
-}
 
-@Preview(showBackground = true)
-@Composable
-fun BottomBarPreview() {
-    FinanceTrackerTheme {
-//        val homeTab = TabBarItem(
-//            title = "Home",
-//            selectedIcon = Icons.Filled.Home,
-//            unselectedIcon = Icons.Outlined.Home
-//        )
-//        val chartsTab = TabBarItem(
-//            title = "Charts",
-//            selectedIcon = Icons.Filled.PieChart,
-//            unselectedIcon = Icons.Outlined.PieChart
-//        )
-//        val accountsTab = TabBarItem(
-//            title = "Accounts",
-//            selectedIcon = Icons.Filled.AccountBalanceWallet,
-//            unselectedIcon = Icons.Outlined.AccountBalanceWallet
-//        )
-//        val settingsTab = TabBarItem(
-//            title = "Settings",
-//            selectedIcon = Icons.Filled.Settings,
-//            unselectedIcon = Icons.Outlined.Settings
-//        )
-//        val barItems = listOf(homeTab, chartsTab, accountsTab, settingsTab)
-//
-//        val navController = rememberNavController()
-//        var showBottomBar by rememberSaveable { mutableStateOf(true) }
-//        val navBackStackEntry by navController.currentBackStackEntryAsState()
-//        val currentDestination = navBackStackEntry?.destination
-//
-//        showBottomBar = when (navBackStackEntry?.destination?.route) {
-//            "oops" -> false
-//            else -> true
-//        }
-////        showBottomBar = false
-//
-//        Scaffold(
-//            bottomBar = {
-//                if (showBottomBar) {
-//                    BottomNavigationBar(
-//                        barItems = barItems,
-//                        navController = navController,
-//                        currentDestination = currentDestination
-//                    )
-//                }
-//            },
-//            floatingActionButton = {
-//                if (showBottomBar) {
-//                    FloatingActionButton(
-//                        onClick = { /*TODO*/ },
-//                        containerColor = MaterialTheme.colorScheme.primary,
-//                        elevation = FloatingActionButtonDefaults.elevation(
-//                            defaultElevation = 6.dp
-//                        ),
-//                        shape = RoundedCornerShape(15.dp),
-//                        modifier = Modifier
-//                            .offset(y = 32.dp)
-//                            .zIndex(1f)
-//                    ) {
-//                        Icon(
-//                            imageVector = Icons.Default.Add,
-//                            contentDescription = "Add",
-//                            tint = MaterialTheme.colorScheme.onBackground
-//                        )
-//                    }
-//                }
-//            },
-//            floatingActionButtonPosition = FabPosition.Center
-//        ) { bottomNavPadding ->
-//            Column(
-//                modifier = Modifier
-//                    .fillMaxSize()
-//                    .background(PinkAccentCard)
-//                    .padding(bottomNavPadding)
-//            ) {
-//                InfoCard(
-//                    modifier = Modifier.clickable {
-//                        /*TODO: navigate to IncomesScreen*/
-//                    },
-//                    text = "Incomes",
-//                    amount = "2300 $",
-//                    color = DarkGreenCircle,
-//                )
-//                InfoCard(
-//                    modifier = Modifier.clickable {
-//                        /*TODO: navigate to IncomesScreen*/
-//                    },
-//                    text = "Incomes",
-//                    amount = "2300 $",
-//                    color = DarkGreenCircle,
-//                )
-//                InfoCard(
-//                    modifier = Modifier.clickable {
-//                        /*TODO: navigate to IncomesScreen*/
-//                    },
-//                    text = "Incomes",
-//                    amount = "2300 $",
-//                    color = DarkGreenCircle,
-//                )
-//                InfoCard(
-//                    modifier = Modifier.clickable {
-//                        /*TODO: navigate to IncomesScreen*/
-//                    },
-//                    text = "Incomes",
-//                    amount = "2300 $",
-//                    color = DarkGreenCircle,
-//                )
-//            }
-//
-//        }
-        NavigationScreen()
+            composable<EditAccount>(
+                enterTransition = {
+                    fadeIn(
+                        animationSpec = tween(
+                            300, easing = LinearEasing
+                        )
+                    ) + slideIntoContainer(
+                        animationSpec = tween(300, easing = EaseIn),
+                        towards = AnimatedContentTransitionScope.SlideDirection.Start
+                    )
+                },
+                exitTransition = {
+                    fadeOut(
+                        animationSpec = tween(
+                            300, easing = LinearEasing
+                        )
+                    ) + slideOutOfContainer(
+                        animationSpec = tween(300, easing = EaseOut),
+                        towards = AnimatedContentTransitionScope.SlideDirection.End
+                    )
+                }
+            ) {
+                EditMoneySource(
+                    navigateBack = { navController.navigateUp() }
+                )
+            }
+
+            composable<Settings> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(text = "Settings")
+                }
+            }
+        }
     }
 }

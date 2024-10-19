@@ -1,4 +1,4 @@
-package com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source
+package com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.add_money_source
 
 import android.content.res.Configuration
 import androidx.compose.animation.Animatable
@@ -29,11 +29,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -43,42 +47,62 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.devautro.financetracker.core.presentation.components.DualOptionButtonsRow
 import com.devautro.financetracker.core.util.Const
+import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.AddEditSourceSideEffects
+import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.AddEditMoneySourceEvent
 import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.components.IncludeInTotalRow
-import com.devautro.financetracker.ui.theme.AccentBlue
-import com.devautro.financetracker.ui.theme.FinanceTrackerTheme
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddEditMoneySource(
-    cardPaleColor: Color?,
-//    cardAccentColor: Color,
-    navigateBack: () -> Unit,
-    topBarText: String,
-    approveButtonText: String
+fun AddMoneySource(
+    viewModel: AddMoneySourceViewModel = hiltViewModel(),
+    navigateBack: () -> Unit
 ) {
+    val state by viewModel.addMoneySourceState.collectAsStateWithLifecycle()
+
     val scope = rememberCoroutineScope()
     val cardBackgroundAnimatable = remember {
-        Animatable(
-            if (cardPaleColor != null) cardPaleColor
-            else AccentBlue
-//                    viewModel.cardColor.value
-        )
+        Animatable(Color(state.paleColor))
     }
-    val switcherInclude = remember {
-        mutableStateOf(false)
+
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(key1 = true) {
+        viewModel.sideEffects.collectLatest { effect ->
+            when (effect) {
+                is AddEditSourceSideEffects.ApproveButtonClicked -> {
+                    navigateBack()
+                }
+
+                is AddEditSourceSideEffects.CancelButtonClicked -> {
+                    navigateBack()
+                }
+
+                is AddEditSourceSideEffects.Showsnackbar -> {
+                    snackbarHostState.showSnackbar(
+                        message = effect.message,
+                        duration = SnackbarDuration.Short
+                    )
+                }
+            }
+        }
     }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = {
                     Text(
-                        text = topBarText,
+                        text = "Add Money Source",
                         color = MaterialTheme.colorScheme.onBackground
                     )
                 },
@@ -99,8 +123,10 @@ fun AddEditMoneySource(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             IncludeInTotalRow(
-                checkedValue = switcherInclude.value,
-                onCheckedChange = { switcherInclude.value = !switcherInclude.value }
+                checkedValue = state.includedInTotal,
+                onCheckedChange = {
+                    viewModel.onEvent(AddEditMoneySourceEvent.IncludeInTotalToggled)
+                }
             )
             Spacer(modifier = Modifier.weight(0.1f))
             Card(
@@ -128,14 +154,18 @@ fun AddEditMoneySource(
                 ) {
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(0.7f),
-                        value = "Debit card Sandy",
-                        onValueChange = { },
+                        value = state.name,
+                        onValueChange = {
+                            viewModel.onEvent(AddEditMoneySourceEvent.SourceNameChanged(name = it))
+                        },
                         singleLine = true,
                         label = {
                             Text(text = "Name of source")
                         },
                         textStyle = MaterialTheme.typography.headlineMedium,
-                        keyboardOptions = KeyboardOptions.Default,
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            imeAction = ImeAction.Next
+                        ),
                         keyboardActions = KeyboardActions(),
                         colors = OutlinedTextFieldDefaults.colors(
                             unfocusedBorderColor = MaterialTheme.colorScheme.primary,
@@ -152,15 +182,21 @@ fun AddEditMoneySource(
                     contentAlignment = Alignment.Center
                 ) {
                     OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(0.7f),
-                        value = "1234.56",
-                        onValueChange = { },
+                        modifier = Modifier
+                            .fillMaxWidth(0.7f),
+                        value = state.amount,
+                        onValueChange = {
+                            viewModel.onEvent(AddEditMoneySourceEvent.SourceAmountChanged(amount = it))
+                        },
                         singleLine = true,
                         label = {
                             Text(text = "Amount of money")
                         },
                         textStyle = MaterialTheme.typography.headlineMedium,
-                        keyboardOptions = KeyboardOptions.Default,
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Done
+                        ),
                         keyboardActions = KeyboardActions(),
                         colors = OutlinedTextFieldDefaults.colors(
                             unfocusedBorderColor = MaterialTheme.colorScheme.primary,
@@ -183,7 +219,7 @@ fun AddEditMoneySource(
                             .fillMaxWidth(0.7f),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Const.sourcePaleColors.forEach { color ->
+                        Const.sourcePaleColors.forEachIndexed { index, color ->
                             val colorInt = color.toArgb()
                             Box(
                                 modifier = Modifier
@@ -193,10 +229,7 @@ fun AddEditMoneySource(
                                     .background(color)
                                     .border(
                                         width = 2.dp,
-                                        color = if (
-//                                        viewModel.cardColor.value == colorInt
-                                            true
-                                        ) {
+                                        color = if (state.paleColor == colorInt) {
                                             MaterialTheme.colorScheme.background
                                         } else Color.Transparent,
                                         shape = CircleShape
@@ -210,7 +243,12 @@ fun AddEditMoneySource(
                                                 )
                                             )
                                         }
-//                                    viewModel.onEvent(AddEditNoteEvent.ChangeColor(colorInt))
+                                        viewModel.onEvent(
+                                            AddEditMoneySourceEvent.NewColorPicked(
+                                                paleColor = colorInt,
+                                                accentColor = Const.sourceAccentColors[index].toArgb()
+                                            )
+                                        )
                                     }
                             )
                         }
@@ -220,31 +258,15 @@ fun AddEditMoneySource(
             Spacer(modifier = Modifier.weight(0.5f))
             DualOptionButtonsRow(
                 dismissText = "Cancel",
-                approveText = approveButtonText,
+                approveText = "Add",
                 onDismiss = {
-                    /*TODO*/
-                    navigateBack()
+                    viewModel.onEvent(AddEditMoneySourceEvent.CancelButtonClicked)
                 },
                 onApprove = {
-                    /*TODO*/
-                    navigateBack()
+                    viewModel.onEvent(AddEditMoneySourceEvent.ApproveButtonClicked)
                 },
-                isApproveEnabled = false
+                isApproveEnabled = state.amount.isNotBlank() && state.name.isNotBlank()
             )
         }
-    }
-}
-
-@Preview
-@Composable
-fun AddMoneySourcePreview() {
-    FinanceTrackerTheme {
-        AddEditMoneySource(
-            cardPaleColor = Const.sourcePaleColors[3],
-//            cardAccentColor = Const.sourceAccentColors[3],
-            navigateBack = {},
-            topBarText = "Top app bar",
-            approveButtonText = "Yeah!"
-        )
     }
 }

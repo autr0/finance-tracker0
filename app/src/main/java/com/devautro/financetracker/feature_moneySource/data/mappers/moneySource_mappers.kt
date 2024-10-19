@@ -8,6 +8,7 @@ fun MoneySourceEntity.toMoneySource(): MoneySource {
         id = id,
         name = name,
         amount = amount,
+        includeInTotal = includeInTotal,
         paleColor = paleColor,
         accentColor = accentColor
     )
@@ -18,6 +19,7 @@ fun MoneySource.toMoneySourceEntity(): MoneySourceEntity {
         id = id,
         name = name,
         amount = amount,
+        includeInTotal = includeInTotal,
         paleColor = paleColor,
         accentColor = accentColor
     )

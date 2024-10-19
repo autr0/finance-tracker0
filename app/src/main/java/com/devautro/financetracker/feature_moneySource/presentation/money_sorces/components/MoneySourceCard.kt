@@ -1,13 +1,13 @@
 package com.devautro.financetracker.feature_moneySource.presentation.money_sorces.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -32,6 +32,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.devautro.financetracker.core.presentation.components.ActionIcon
 import com.devautro.financetracker.core.util.Const
+import com.devautro.financetracker.feature_moneySource.domain.model.MoneySource
+import com.devautro.financetracker.ui.theme.AccentBlue
 import com.devautro.financetracker.ui.theme.FinanceTrackerTheme
 
 @Composable
@@ -41,12 +43,17 @@ fun MoneySourceCard(
     cardAccentColor: Color,
     sourceName: String,
     index: Int,
+//    includedInTotal: Boolean,
     amount: String,
     onEditIconClick: () -> Unit
 ) {
     Card(
-        modifier = modifier.fillMaxWidth().padding(16.dp),
+        modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(15.dp),
+//        border = BorderStroke(
+//            width = 2.dp,
+//            color = if (includedInTotal) AccentBlue else Color.Transparent
+//        ),
         colors = CardDefaults.cardColors(
             contentColor = MaterialTheme.colorScheme.background,
             containerColor = cardPaleColor
@@ -64,7 +71,9 @@ fun MoneySourceCard(
             style = MaterialTheme.typography.headlineMedium
         )
         Row(
-            modifier = Modifier.fillMaxWidth().fillMaxHeight(0.8f),
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.8f),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.End
         ) {
@@ -87,6 +96,7 @@ fun MoneySourceCard(
                         style = MaterialTheme.typography.headlineMedium
                     )
                 }
+
                 Text(
                     text = amount,
                     style = MaterialTheme.typography.headlineMedium,
@@ -109,36 +119,21 @@ fun MoneySourceCard(
         }
         Spacer(modifier = Modifier.height(20.dp))
     }
-
 }
 
-@Preview(showBackground = true)
-@Composable
-fun MoneySourceCardPreview() {
-    FinanceTrackerTheme {
-        Column(
-            modifier = Modifier.fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-        ) {
-            MoneySourceCard(
-                modifier = Modifier.height(220.dp),
-                cardPaleColor = Const.sourcePaleColors[0],
-                cardAccentColor = Const.sourceAccentColors[0],
-                index = 0,
-                sourceName = "#1",
-                amount = "1234.56",
-                onEditIconClick = {}
-            )
-            MoneySourceCard(
-                modifier = Modifier.height(220.dp),
-                cardPaleColor = Const.sourcePaleColors[3],
-                cardAccentColor = Const.sourceAccentColors[3],
-                index = 1,
-                sourceName = "#1",
-                amount = "1234.56",
-                onEditIconClick = {}
-            )
-
-        }
-    }
-}
+//@Preview
+//@Composable
+//fun CardPreview() {
+//    FinanceTrackerTheme {
+//        MoneySourceCard(
+//            cardPaleColor = Const.sourcePaleColors[1],
+//            cardAccentColor = Const.sourceAccentColors[1],
+//            sourceName = "Card #1",
+//            index = 2,
+//            includedInTotal = true,
+//            amount = "17894.89"
+//        ) {
+//
+//        }
+//    }
+//}

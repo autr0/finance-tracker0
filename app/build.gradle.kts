@@ -5,6 +5,7 @@ plugins {
     // plugins -->
     alias(libs.plugins.devtools.ksp)
     alias(libs.plugins.dagger.hilt.plugin)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -92,4 +93,6 @@ dependencies {
     // Kotlin Extensions and Coroutines support for Room
     implementation(libs.room.support)
 
+    //Serialization
+    implementation(libs.kotlinx.serialization.json)
 }

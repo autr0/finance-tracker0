@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.devautro.financetracker.feature_moneySource.data.model.MoneySourceEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -19,6 +20,9 @@ interface MoneySourceDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMoneySource(moneySourceEntity: MoneySourceEntity)
+
+    @Update
+    suspend fun updateMoneySource(moneySourceEntity: MoneySourceEntity)
 
     @Delete
     suspend fun deleteMoneySource(moneySourceEntity: MoneySourceEntity)

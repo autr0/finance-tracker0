@@ -22,6 +22,8 @@ kspPlugin = "1.9.0-1.0.12"
 
 room = "2.6.1"
 
+serialization = "1.6.3"
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -58,9 +60,13 @@ ksp-room = { group = "androidx.room", name = "room-compiler", version.ref = "roo
 # room support
 room-support = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 
+# fro type-safe navigation
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization"}
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 # plugins
 devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "kspPlugin" }
 dagger-hilt-plugin = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

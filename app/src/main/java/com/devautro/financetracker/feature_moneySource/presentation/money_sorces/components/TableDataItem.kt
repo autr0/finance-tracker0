@@ -1,6 +1,7 @@
 package com.devautro.financetracker.feature_moneySource.presentation.money_sorces.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
@@ -34,6 +36,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.devautro.financetracker.core.presentation.components.ActionIcon
 import com.devautro.financetracker.core.util.Const
+import com.devautro.financetracker.ui.theme.AccentBlue
 import com.devautro.financetracker.ui.theme.FinanceTrackerTheme
 
 @Composable
@@ -42,6 +45,7 @@ fun TableDataItem(
     index: Int,
     sourceName: String,
     amount: String,
+//    includedInTotal: Boolean,
     onEditClick: () -> Unit,
     backgroundColor: Color
 ) {
@@ -64,6 +68,11 @@ fun TableDataItem(
             .height(IntrinsicSize.Min)
             .padding(horizontal = 2.dp)
             .clip(RoundedCornerShape(15.dp))
+//            .border(
+//                width = 2.dp,
+//                color = if (includedInTotal) AccentBlue else Color.Transparent,
+//                shape = RoundedCornerShape(15.dp)
+//            )
             .background(backgroundColor),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -164,6 +173,7 @@ fun TableDataItemPreview() {
                 index = 0,
                 sourceName = "Debit cakrfnkcfvnck fbggvv Igooooooooooooor kjfg kfdjjb dfljoc fv dfkkcbn rd Express Bank",
                 amount = "112 236 234 478 487 498.56",
+//                includedInTotal = false,
                 onEditClick = {},
                 backgroundColor = Const.sourcePaleColors[3]
             )

@@ -4,5 +4,6 @@ data class MoneySourceUseCases(
     val getAllMoneySourcesUseCase: GetAllMoneySourcesUseCase,
     val getMoneySourceUseCase: GetMoneySourceUseCase,
     val addMoneySourceUseCase: AddMoneySourceUseCase,
+    val editMoneySourceUseCase: EditMoneySourceUseCase,
     val deleteMoneySourceUseCase: DeleteMoneySourceUseCase
 )

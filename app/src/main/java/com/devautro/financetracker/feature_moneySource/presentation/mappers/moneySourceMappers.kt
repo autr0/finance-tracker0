@@ -8,6 +8,7 @@ fun MoneySource.toMoneySourceItem(): MoneySourceItem {
         id = id,
         name = name,
         amount = amount,
+        includeInTotal = includeInTotal,
         paleColor = paleColor,
         accentColor = accentColor,
         isRevealed = false
@@ -19,6 +20,7 @@ fun MoneySourceItem.toMoneySource(): MoneySource {
         id = id,
         name = name,
         amount = amount,
+        includeInTotal = includeInTotal,
         paleColor = paleColor,
         accentColor = accentColor
     )

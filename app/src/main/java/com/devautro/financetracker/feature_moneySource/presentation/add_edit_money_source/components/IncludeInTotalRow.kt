@@ -35,7 +35,7 @@ fun IncludeInTotalRow(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         AutoResizedText(
-            text = "Do not include in total balance",
+            text = "Include in total balance",
             modifier = Modifier
                 .fillMaxWidth(0.8f),
         )

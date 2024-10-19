@@ -54,27 +54,8 @@ fun YearPicker(
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onBackground,
             fontWeight = FontWeight.SemiBold,
-            text = yearsList[yearIndex].toString()
+            text = if (yearIndex >= 0) yearsList[yearIndex].toString() else ""
         )
-//        AnimatedContent(
-//            modifier = Modifier.width(IntrinsicSize.Max),
-//            targetState = currentIndex,
-//            transitionSpec = {
-//                slideInHorizontally(
-//                    initialOffsetX = {
-//                        -it
-//                    }
-//                ) togetherWith slideOutHorizontally(
-//                    targetOffsetX = {
-//                        it
-//                    }
-//                )
-//            },
-//            label = "year change"
-//        ) { currentIndex ->
-//
-//        }
-
         ActionIcon(
             modifier = Modifier.clip(RoundedCornerShape(15.dp)),
             onClick = {
@@ -89,14 +70,3 @@ fun YearPicker(
         )
     }
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun YearChangingPreview() {
-//    FinanceTrackerTheme {
-//        Column(modifier = Modifier.fillMaxWidth()
-//            .background(MaterialTheme.colorScheme.background)) {
-//            YearPicker(yearsList = listOf(2020, 2021, 2022, 2023, 2024))
-//        }
-//    }
-//}

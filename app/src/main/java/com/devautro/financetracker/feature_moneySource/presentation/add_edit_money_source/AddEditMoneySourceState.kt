@@ -1,16 +1,15 @@
-package com.devautro.financetracker.feature_moneySource.presentation.money_sorces
+package com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source
 
 import androidx.compose.ui.graphics.toArgb
 import com.devautro.financetracker.core.util.Const
 
-data class MoneySourceItem(
+data class AddEditMoneySourceState(
     val id: Long? = null,
     val name: String = "",
-    val amount: Double = 0.0,
-    val includeInTotal: Boolean = true,
+    val amount: String = "",
     val paleColor: Int = paleColors[currentIndex].toArgb(),
     val accentColor: Int = accentColors[currentIndex].toArgb(),
-    val isRevealed: Boolean = false
+    val includedInTotal: Boolean = true
 ) {
     companion object {
         val paleColors = Const.sourcePaleColors

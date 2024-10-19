@@ -6,6 +6,7 @@ import com.devautro.financetracker.feature_moneySource.data.repository.MoneySour
 import com.devautro.financetracker.feature_moneySource.domain.repository.MoneySourceRepository
 import com.devautro.financetracker.feature_moneySource.domain.use_case.AddMoneySourceUseCase
 import com.devautro.financetracker.feature_moneySource.domain.use_case.DeleteMoneySourceUseCase
+import com.devautro.financetracker.feature_moneySource.domain.use_case.EditMoneySourceUseCase
 import com.devautro.financetracker.feature_moneySource.domain.use_case.GetAllMoneySourcesUseCase
 import com.devautro.financetracker.feature_moneySource.domain.use_case.GetMoneySourceUseCase
 import com.devautro.financetracker.feature_moneySource.domain.use_case.MoneySourceUseCases
@@ -71,6 +72,7 @@ object AppModule {
             getAllMoneySourcesUseCase = GetAllMoneySourcesUseCase(repository),
             getMoneySourceUseCase = GetMoneySourceUseCase(repository),
             addMoneySourceUseCase = AddMoneySourceUseCase(repository),
+            editMoneySourceUseCase = EditMoneySourceUseCase(repository),
             deleteMoneySourceUseCase = DeleteMoneySourceUseCase(repository)
         )
     }
