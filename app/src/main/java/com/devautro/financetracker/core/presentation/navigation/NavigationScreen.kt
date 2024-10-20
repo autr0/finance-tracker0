@@ -47,15 +47,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.devautro.financetracker.core.presentation.TabBarItem
 import com.devautro.financetracker.core.presentation.components.BottomNavigationBar
 import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.add_money_source.AddMoneySource
 import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.edit_money_source.EditMoneySource
+import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.edit_money_source.EditMoneySourceViewModel
 import com.devautro.financetracker.feature_moneySource.presentation.money_sorces.MoneySources
 import com.devautro.financetracker.feature_payment.presentation.add_payment.AddPaymentBottomSheet
 import com.devautro.financetracker.feature_payment.presentation.home_screen.HomeScreen
@@ -274,9 +277,12 @@ fun NavigationScreen() {
                     navigateToAddScreen = {
                         navController.navigate(AddAccount)
                     },
-                    navigateToEditScreen = { id ->
+                    navigateToEditScreen = { id, color ->
                         navController.navigate(
-                            EditAccount(id = id)
+                            EditAccount(
+                                id = id,
+                                paleColor = color
+                            )
                         )
                     }
                 )
@@ -332,7 +338,8 @@ fun NavigationScreen() {
                 }
             ) {
                 EditMoneySource(
-                    navigateBack = { navController.navigateUp() }
+                    navigateBack = { navController.navigateUp() },
+                    initialColor = it.toRoute<EditAccount>().paleColor
                 )
             }
 

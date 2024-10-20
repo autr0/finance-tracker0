@@ -218,7 +218,7 @@ fun AddPaymentBottomSheet(
                     labelText = "Money source",
                     trailingIcon = {
                         IconButton(onClick = {
-                            viewModel.onEvent(AddPaymentEvent.DismissMoneySourceMenu)
+                            viewModel.onEvent(AddPaymentEvent.MoneySourceIconClick)
                         }) {
                             Icon(
                                 imageVector = Icons.Default.AccountBalanceWallet,

@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -36,16 +35,16 @@ class EditPaymentViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val moneySourceList = moneySourceUseCases.getAllMoneySourcesUseCase().first()
-            if (moneySourceList.isNotEmpty()) {
-                _paymentState.update { state ->
-                    state.copy(
-                        moneySourceList = moneySourceList,
+            moneySourceUseCases.getAllMoneySourcesUseCase().collect { moneySourceList ->
+                if (moneySourceList.isNotEmpty()) {
+                    _paymentState.update { state ->
+                        state.copy(
+                            moneySourceList = moneySourceList,
 //                        selectedMoneySource = moneySourceList[0] -> empty value is better ?
-                    )
+                        )
+                    }
                 }
             }
-
         }
     }
 
@@ -185,36 +184,44 @@ class EditPaymentViewModel @Inject constructor(
                         paymentUseCases.editPaymentUseCase(
                             payment = _paymentData.value
                         )
-                        _sideEffects.emit(EditPaymentSideEffects.SaveButton)
                     } catch (e: InvalidPaymentException) {
                         _sideEffects.emit(
                             EditPaymentSideEffects.ShowSnackbar(
                                 message = e.message ?: "Couldn't update payment"
                             )
                         )
+                        return@launch
                     }
+                    _sideEffects.emit(EditPaymentSideEffects.SaveButton)
+                    clearSelectedData()
                 }
             }
             is EditPaymentEvent.CancelButtonClick -> {
                 viewModelScope.launch {
                     _sideEffects.emit(EditPaymentSideEffects.CancelButton)
                 }
-                _paymentData.update { payment ->
-                    payment.copy(
-                        date = null,
-                        description = "",
-                        amountNew = null,
-                        monthTag = "",
-                        isExpense = true
-                    )
-                }
-
-                _paymentState.update { state ->
-                    state.copy(
-                        amountInString = ""
-                    )
-                }
+                clearSelectedData()
             }
+        }
+    }
+
+    private fun clearSelectedData() {
+        _paymentData.update { payment ->
+            payment.copy(
+                date = null,
+                description = "",
+                amountNew = null,
+                monthTag = "",
+                isExpense = true,
+                sourceId = null
+            )
+        }
+
+        _paymentState.update { state ->
+            state.copy(
+                amountInString = "",
+                selectedMoneySource = null
+            )
         }
     }
 

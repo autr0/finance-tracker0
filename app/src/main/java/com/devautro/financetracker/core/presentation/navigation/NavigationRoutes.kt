@@ -24,7 +24,7 @@ object Accounts
 object AddAccount
 
 @Serializable
-data class EditAccount(val id: Long)
+data class EditAccount(val id: Long, val paleColor: Int)
 
 @Serializable
 object Settings

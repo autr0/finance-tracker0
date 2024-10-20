@@ -1,6 +1,9 @@
 package com.devautro.financetracker.feature_payment.util
 
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 import java.text.NumberFormat
+import java.text.ParseException
 import java.util.Locale
 
 fun formatDoubleToString(value: Double): String {
@@ -18,3 +21,17 @@ fun toDoubleOrNull(value: String): Double? {
         null
     }
 }
+
+//fun formatDoubleToString(value: Double): String {
+//    val numberFormat = DecimalFormat("#,##0.00", DecimalFormatSymbols.getInstance(Locale.getDefault()))
+//    return numberFormat.format(value)
+//}
+//
+//fun parseStringToDouble(value: String): Double? {
+//    return try {
+//        val numberFormat = DecimalFormat("#,##0.00", DecimalFormatSymbols.getInstance(Locale.getDefault()))
+//        numberFormat.parse(value)?.toDouble()
+//    } catch (e: ParseException) {
+//        null
+//    }
+//}

@@ -62,7 +62,7 @@ fun MoneySources(
     viewModel: MoneySourcesViewModel = hiltViewModel(),
     bottomNavPadding: PaddingValues,
     navigateToAddScreen: () -> Unit,
-    navigateToEditScreen: (Long) -> Unit
+    navigateToEditScreen: (Long, Int) -> Unit
 ) {
     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
 
@@ -78,7 +78,7 @@ fun MoneySources(
                 }
 
                 is MoneySourcesSideEffects.NavigateEditScreen -> {
-                    navigateToEditScreen(effect.id)
+                    navigateToEditScreen(effect.id, effect.paleColor)
                 }
 
                 is MoneySourcesSideEffects.ShowSnackbar -> {
@@ -126,7 +126,7 @@ fun MoneySources(
                             viewModel.onEvent(MoneySourcesEvent.FilterIncludedClick)
                         },
                         backgroundColor = AccentBlue,
-                        icon = if(state.isIncludedOnlyFilter) Icons.Default.FilterAlt else Icons.Default.FilterAltOff,
+                        icon = if (state.isIncludedOnlyFilter) Icons.Default.FilterAlt else Icons.Default.FilterAltOff,
                         tint = MaterialTheme.colorScheme.background
                     )
                     Spacer(modifier = Modifier.width(10.dp))
@@ -195,7 +195,7 @@ fun MoneySources(
             ) {
                 itemsIndexed(
                     items = state.moneySourceList,
-                    key = { index, item -> item.id ?: index},
+                    key = { index, item -> item.id ?: index },
                 ) { index, moneySourceItem ->
                     SwipeableItem(
                         modifier = Modifier.padding(horizontal = 16.dp),
@@ -245,7 +245,12 @@ fun MoneySources(
                                 sourceName = moneySourceItem.name,
                                 amount = formatDoubleToString(moneySourceItem.amount),
                                 onEditClick = {
-                                    viewModel.onEvent(MoneySourcesEvent.EditIconClick(moneySourceItem.id!!))
+                                    viewModel.onEvent(
+                                        MoneySourcesEvent.EditIconClick(
+                                            id = moneySourceItem.id!!,
+                                            paleColor = moneySourceItem.paleColor
+                                        )
+                                    )
                                 },
                                 backgroundColor = Color(moneySourceItem.paleColor)
                             )
@@ -260,7 +265,12 @@ fun MoneySources(
                                 sourceName = moneySourceItem.name,
                                 amount = formatDoubleToString(moneySourceItem.amount),
                                 onEditIconClick = {
-                                    viewModel.onEvent(MoneySourcesEvent.EditIconClick(moneySourceItem.id!!))
+                                    viewModel.onEvent(
+                                        MoneySourcesEvent.EditIconClick(
+                                            id = moneySourceItem.id!!,
+                                            paleColor = moneySourceItem.paleColor
+                                        )
+                                    )
                                 }
                             )
                         }

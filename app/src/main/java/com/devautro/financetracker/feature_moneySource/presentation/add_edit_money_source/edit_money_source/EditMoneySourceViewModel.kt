@@ -5,12 +5,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.devautro.financetracker.core.presentation.navigation.EditAccount
-import com.devautro.financetracker.feature_moneySource.domain.model.MoneySource
 import com.devautro.financetracker.feature_moneySource.domain.use_case.MoneySourceUseCases
 import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.AddEditMoneySourceEvent
 import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.AddEditMoneySourceState
 import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.AddEditSourceSideEffects
+import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.mappers.toMoneySource
 import com.devautro.financetracker.feature_payment.util.formatDoubleToString
+import com.devautro.financetracker.feature_payment.util.toDoubleOrNull
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -64,7 +65,7 @@ class EditMoneySourceViewModel @Inject constructor(
 
                 if (event.amount.isNotBlank()) {
                     try {
-                        event.amount.toDouble()         // test this field !!!
+                        event.amount.toDouble()
                     } catch (e: NumberFormatException) {
                         viewModelScope.launch {
                             _sideEffects.emit(
@@ -92,23 +93,16 @@ class EditMoneySourceViewModel @Inject constructor(
                 viewModelScope.launch {
                     try {
                         moneySourceUseCases.editMoneySourceUseCase(
-                            moneySource = MoneySource(
-                                id = _editMoneySourceState.value.id,
-                                name = _editMoneySourceState.value.name,
-                                amount = _editMoneySourceState.value.amount.toDouble(),
-                                paleColor = _editMoneySourceState.value.paleColor,
-                                accentColor = _editMoneySourceState.value.accentColor,
-                                includeInTotal = _editMoneySourceState.value.includedInTotal
-                            )
+                            moneySource = _editMoneySourceState.value.toMoneySource()
                         )
                     } catch (e: Exception) {
                         _sideEffects.emit(
                             AddEditSourceSideEffects.Showsnackbar(
                                 message = e.message ?: "Couldn't update money source :("
                             ))
-                    } finally {
-                        _sideEffects.emit(AddEditSourceSideEffects.ApproveButtonClicked)
+                        return@launch
                     }
+                    _sideEffects.emit(AddEditSourceSideEffects.ApproveButtonClicked)
                 }
             }
             is AddEditMoneySourceEvent.CancelButtonClicked -> {

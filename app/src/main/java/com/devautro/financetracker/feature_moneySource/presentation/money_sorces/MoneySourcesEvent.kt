@@ -7,6 +7,6 @@ sealed class MoneySourcesEvent {
     data object DeleteApproval : MoneySourcesEvent()
     data object DismissDeleteDialog : MoneySourcesEvent()
     data object FilterIncludedClick : MoneySourcesEvent()
-    data class EditIconClick(val id: Long) : MoneySourcesEvent()
+    data class EditIconClick(val id: Long, val paleColor: Int) : MoneySourcesEvent()
     data class ItemRevealed(val id: Long, val isRevealed: Boolean) : MoneySourcesEvent()
 }

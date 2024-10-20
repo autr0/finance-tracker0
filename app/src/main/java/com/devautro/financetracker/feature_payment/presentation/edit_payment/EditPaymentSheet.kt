@@ -219,7 +219,7 @@ fun EditPaymentSheet(
                     labelText = "Money source",
                     trailingIcon = {
                         IconButton(onClick = {
-                            viewModel.onEvent(EditPaymentEvent.DismissMoneySourceMenu)
+                            viewModel.onEvent(EditPaymentEvent.MoneySourceIconClick)
                         }) {
                             Icon(
                                 imageVector = Icons.Default.AccountBalanceWallet,

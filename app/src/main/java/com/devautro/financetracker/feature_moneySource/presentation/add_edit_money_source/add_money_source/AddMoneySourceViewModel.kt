@@ -7,6 +7,7 @@ import com.devautro.financetracker.feature_moneySource.domain.use_case.MoneySour
 import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.AddEditSourceSideEffects
 import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.AddEditMoneySourceEvent
 import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.AddEditMoneySourceState
+import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.mappers.toMoneySource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -49,7 +50,7 @@ class AddMoneySourceViewModel @Inject constructor(
 
                 if (event.amount.isNotBlank()) {
                     try {
-                        val convertToDouble = event.amount.toDouble()
+                        event.amount.toDouble()
                     } catch (e: NumberFormatException) {
                         viewModelScope.launch {
                             _sideEffects.emit(
@@ -77,22 +78,16 @@ class AddMoneySourceViewModel @Inject constructor(
                 viewModelScope.launch {
                     try {
                         moneySourceUseCases.addMoneySourceUseCase(
-                            moneySource = MoneySource(
-                                name = _addMoneySourceState.value.name,
-                                amount = _addMoneySourceState.value.amount.toDouble(),
-                                includeInTotal = _addMoneySourceState.value.includedInTotal,
-                                paleColor = _addMoneySourceState.value.paleColor,
-                                accentColor = _addMoneySourceState.value.accentColor
-                            )
+                            moneySource = _addMoneySourceState.value.toMoneySource()
                         )
                     } catch (e: Exception) {
                         _sideEffects.emit(
                             AddEditSourceSideEffects.Showsnackbar(
                             message = e.message ?: "Couldn't add money source :("
                         ))
-                    } finally {
-                        _sideEffects.emit(AddEditSourceSideEffects.ApproveButtonClicked)
+                        return@launch
                     }
+                    _sideEffects.emit(AddEditSourceSideEffects.ApproveButtonClicked)
                 }
             }
             is AddEditMoneySourceEvent.CancelButtonClicked -> {

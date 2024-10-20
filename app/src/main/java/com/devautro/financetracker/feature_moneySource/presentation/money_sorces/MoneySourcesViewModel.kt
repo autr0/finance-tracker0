@@ -84,9 +84,13 @@ class MoneySourcesViewModel @Inject constructor(
             }
 
             is MoneySourcesEvent.EditIconClick -> {
-                /*TODO -> navigate to edit Item Click with id*/
                 viewModelScope.launch {
-                    _sideEffects.emit(MoneySourcesSideEffects.NavigateEditScreen(id = event.id))
+                    _sideEffects.emit(
+                        MoneySourcesSideEffects.NavigateEditScreen(
+                            id = event.id,
+                            paleColor = event.paleColor
+                        )
+                    )
                 }
             }
 

@@ -63,12 +63,15 @@ import kotlinx.coroutines.launch
 @Composable
 fun EditMoneySource(
     viewModel: EditMoneySourceViewModel = hiltViewModel(),
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
+    initialColor: Int
 ) {
     val state by viewModel.editMoneySourceState.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
     val cardBackgroundAnimatable = remember {
-        Animatable(Color(state.paleColor))
+        Animatable(
+            initialValue = Color(initialColor)
+        )
     }
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -76,12 +79,8 @@ fun EditMoneySource(
     LaunchedEffect(key1 = true) {
         viewModel.sideEffects.collectLatest { effect ->
             when (effect) {
-                is AddEditSourceSideEffects.ApproveButtonClicked -> {
-                    navigateBack()
-                }
-                is AddEditSourceSideEffects.CancelButtonClicked -> {
-                    navigateBack()
-                }
+                is AddEditSourceSideEffects.ApproveButtonClicked -> navigateBack()
+                is AddEditSourceSideEffects.CancelButtonClicked -> navigateBack()
                 is AddEditSourceSideEffects.Showsnackbar -> {
                     snackbarHostState.showSnackbar(message = effect.message)
                 }
