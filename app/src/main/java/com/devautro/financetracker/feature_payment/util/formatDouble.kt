@@ -22,6 +22,15 @@ fun toDoubleOrNull(value: String): Double? {
     }
 }
 
+fun String.isConvertibleToDouble(): Boolean {
+    try {
+        this.toDouble()
+        return true
+    } catch (e: NumberFormatException) {
+        return false
+    }
+}
+
 //fun formatDoubleToString(value: Double): String {
 //    val numberFormat = DecimalFormat("#,##0.00", DecimalFormatSymbols.getInstance(Locale.getDefault()))
 //    return numberFormat.format(value)

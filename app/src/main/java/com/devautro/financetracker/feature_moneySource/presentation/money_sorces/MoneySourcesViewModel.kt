@@ -54,14 +54,15 @@ class MoneySourcesViewModel @Inject constructor(
                                     message = e.message ?: "Couldn't delete Money Source :("
                                 )
                             )
-                        } finally {
-                            _moneySourcesState.update { state ->
-                                state.copy(
-                                    deleteItem = null,
-                                    showDeleteDialog = false
-                                )
-                            }
+                            return@launch
                         }
+                        _moneySourcesState.update { state ->
+                            state.copy(
+                                deleteItem = null,
+                                showDeleteDialog = false
+                            )
+                        }
+
                     }
                 }
             }

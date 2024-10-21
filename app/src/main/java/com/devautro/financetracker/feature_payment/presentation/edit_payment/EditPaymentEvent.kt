@@ -14,6 +14,7 @@ sealed class EditPaymentEvent {
     data class MonthTagSelected(val monthTag: String) : EditPaymentEvent()
     data object DismissMonthTagMenu : EditPaymentEvent()
     data object MoneySourceIconClick : EditPaymentEvent()
+    data object ClearChosenMoneySource : EditPaymentEvent()
     data class MoneySourceSelected(val moneySource: MoneySource) : EditPaymentEvent()
     data object DismissMoneySourceMenu : EditPaymentEvent()
     data class CheckBoxSelected(val isExpense: Boolean) : EditPaymentEvent()

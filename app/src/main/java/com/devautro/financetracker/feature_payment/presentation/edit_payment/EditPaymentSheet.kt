@@ -18,6 +18,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Tag
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -47,13 +48,16 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.devautro.financetracker.core.presentation.components.ActionIcon
 import com.devautro.financetracker.core.presentation.components.DualOptionButtonsRow
 import com.devautro.financetracker.core.util.Const
 import com.devautro.financetracker.feature_payment.domain.model.Payment
 import com.devautro.financetracker.feature_payment.presentation.add_payment.components.DatePickerItem
 import com.devautro.financetracker.feature_payment.presentation.add_payment.components.TextFieldComponent
 import com.devautro.financetracker.feature_payment.presentation.add_payment.components.TextFieldWithDropDownMenu
+import com.devautro.financetracker.feature_payment.presentation.add_payment.components.TextFieldWithDropDownMenuMoneySource
 import com.devautro.financetracker.feature_payment.util.convertMillisToDate
+import com.devautro.financetracker.feature_payment.util.isConvertibleToDouble
 import com.devautro.financetracker.ui.theme.AccentBlue
 import com.devautro.financetracker.ui.theme.BackgroundColor
 import kotlinx.coroutines.flow.collectLatest
@@ -208,7 +212,7 @@ fun EditPaymentSheet(
                         )
                     }
                 )
-                TextFieldWithDropDownMenu(
+                TextFieldWithDropDownMenuMoneySource(
                     itemsList = state.moneySourceList,
                     isExpanded = state.isMoneySourceMenuVisible,
                     onDismissMenu = { viewModel.onEvent(EditPaymentEvent.DismissMoneySourceMenu) },
@@ -228,11 +232,22 @@ fun EditPaymentSheet(
                             )
                         }
                     },
+                    leadingIcon = {
+                        IconButton(onClick = {
+                            viewModel.onEvent(EditPaymentEvent.ClearChosenMoneySource)
+                        }) {
+                            Icon(
+                                imageVector = Icons.Filled.Clear,
+                                contentDescription = "moneySource clear",
+                                tint = AccentBlue
+                            )
+                        }
+                    },
                     supportingText = {
                         Text(
-                            text = "Choose your money source!",
+                            text = "You can add your Money Source here",
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.error
+                            color = MaterialTheme.colorScheme.secondary
                         )
                     }
                 )
@@ -297,8 +312,7 @@ fun EditPaymentSheet(
                     onDismiss = { viewModel.onEvent(EditPaymentEvent.CancelButtonClick) },
                     onApprove = { viewModel.onEvent(EditPaymentEvent.SaveButtonClick) },
                     isApproveEnabled = data.date != null && data.monthTag.isNotBlank() && data.amountNew != null &&
-                            data.description.isNotBlank()
-//                            && data.sourceId != null
+                            data.description.isNotBlank() && state.amountInString.isConvertibleToDouble()
                 )
 
                 if (state.isDatePickerVisible) {

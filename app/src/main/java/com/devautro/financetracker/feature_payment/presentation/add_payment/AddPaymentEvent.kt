@@ -12,6 +12,7 @@ sealed class AddPaymentEvent {
     data class MonthTagSelected(val monthTag: String) : AddPaymentEvent()
     data object DismissMonthTagMenu : AddPaymentEvent()
     data object MoneySourceIconClick : AddPaymentEvent()
+    data object ClearChosenMoneySource : AddPaymentEvent()
     data class MoneySourceSelected(val moneySource: MoneySource) : AddPaymentEvent()
     data object DismissMoneySourceMenu : AddPaymentEvent()
     data class CheckBoxSelected(val isExpense: Boolean) : AddPaymentEvent()

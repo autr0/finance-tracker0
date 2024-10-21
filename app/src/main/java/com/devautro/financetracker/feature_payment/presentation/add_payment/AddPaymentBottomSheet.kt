@@ -18,6 +18,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Tag
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -33,7 +34,6 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -45,7 +45,6 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -54,10 +53,11 @@ import com.devautro.financetracker.core.util.Const
 import com.devautro.financetracker.feature_payment.presentation.add_payment.components.DatePickerItem
 import com.devautro.financetracker.feature_payment.presentation.add_payment.components.TextFieldComponent
 import com.devautro.financetracker.feature_payment.presentation.add_payment.components.TextFieldWithDropDownMenu
+import com.devautro.financetracker.feature_payment.presentation.add_payment.components.TextFieldWithDropDownMenuMoneySource
 import com.devautro.financetracker.feature_payment.util.convertMillisToDate
+import com.devautro.financetracker.feature_payment.util.isConvertibleToDouble
 import com.devautro.financetracker.ui.theme.AccentBlue
 import com.devautro.financetracker.ui.theme.BackgroundColor
-import com.devautro.financetracker.ui.theme.FinanceTrackerTheme
 import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -207,7 +207,7 @@ fun AddPaymentBottomSheet(
                         )
                     }
                 )
-                TextFieldWithDropDownMenu(
+                TextFieldWithDropDownMenuMoneySource(
                     itemsList = state.moneySourceList,
                     isExpanded = state.isMoneySourceMenuVisible,
                     onDismissMenu = { viewModel.onEvent(AddPaymentEvent.DismissMoneySourceMenu) },
@@ -227,11 +227,22 @@ fun AddPaymentBottomSheet(
                             )
                         }
                     },
+                    leadingIcon = {
+                        IconButton(onClick = {
+                            viewModel.onEvent(AddPaymentEvent.ClearChosenMoneySource)
+                        }) {
+                            Icon(
+                                imageVector = Icons.Filled.Clear,
+                                contentDescription = "moneySource clear",
+                                tint = AccentBlue
+                            )
+                        }
+                    },
                     supportingText = {
                         Text(
-                            text = "Choose your money source!",
+                            text = "You can add your Money Source here",
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.error
+                            color = MaterialTheme.colorScheme.secondary
                         )
                     }
                 )
@@ -296,8 +307,7 @@ fun AddPaymentBottomSheet(
                     onDismiss = { viewModel.onEvent(AddPaymentEvent.CancelButtonClick) },
                     onApprove = { viewModel.onEvent(AddPaymentEvent.AddButtonClick) },
                     isApproveEnabled = data.date != null && data.monthTag.isNotBlank() && data.amountNew != null &&
-                            data.description.isNotBlank()
-//                            && data.sourceId != null
+                            data.description.isNotBlank() && state.amountInString.isConvertibleToDouble()
                 )
 
                 if (state.isDatePickerVisible) {
@@ -316,14 +326,15 @@ fun AddPaymentBottomSheet(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview(showBackground = true)
-@Composable
-fun BottomSheetContentPreview() {
-    FinanceTrackerTheme {
-        AddPaymentBottomSheet(
-            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-            navigateBack = {}
-        )
-    }
-}
+
+//@OptIn(ExperimentalMaterial3Api::class)
+//@Preview(showBackground = true)
+//@Composable
+//fun BottomSheetContentPreview() {
+//    FinanceTrackerTheme {
+//        AddPaymentBottomSheet(
+//            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+//            navigateBack = {}
+//        )
+//    }
+//}

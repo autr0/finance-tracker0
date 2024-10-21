@@ -2,6 +2,7 @@ package com.devautro.financetracker.feature_payment.presentation.edit_payment
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.devautro.financetracker.feature_moneySource.domain.model.MoneySource
 import com.devautro.financetracker.feature_moneySource.domain.use_case.MoneySourceUseCases
 import com.devautro.financetracker.feature_payment.domain.model.InvalidPaymentException
 import com.devautro.financetracker.feature_payment.domain.model.Payment
@@ -36,12 +37,13 @@ class EditPaymentViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             moneySourceUseCases.getAllMoneySourcesUseCase().collect { moneySourceList ->
+
+                // it's unnecessary here to add 1st item if list.isEmpty()
+                // because we've already checked it in the AddPaymentViewModel
+
                 if (moneySourceList.isNotEmpty()) {
                     _paymentState.update { state ->
-                        state.copy(
-                            moneySourceList = moneySourceList,
-//                        selectedMoneySource = moneySourceList[0] -> empty value is better ?
-                        )
+                        state.copy(moneySourceList = moneySourceList)
                     }
                 }
             }
@@ -66,10 +68,14 @@ class EditPaymentViewModel @Inject constructor(
 
                 _paymentState.update { state ->
                     state.copy(
-                        amountInString = formatDoubleToString(event.initialPayment.amountNew!!)
+                        amountInString = formatDoubleToString(event.initialPayment.amountNew!!),
+                        selectedMoneySource = _paymentState.value.moneySourceList.find {
+                            it.id == event.initialPayment.sourceId
+                        }
                     )
                 }
             }
+
             is EditPaymentEvent.DateIconClick -> {
                 _paymentState.update { state ->
                     state.copy(
@@ -77,6 +83,7 @@ class EditPaymentViewModel @Inject constructor(
                     )
                 }
             }
+
             is EditPaymentEvent.DateSelected -> {
                 _paymentData.update { payment ->
                     payment.copy(
@@ -84,6 +91,7 @@ class EditPaymentViewModel @Inject constructor(
                     )
                 }
             }
+
             is EditPaymentEvent.DismissDatePicker -> {
                 _paymentState.update { state ->
                     state.copy(
@@ -91,6 +99,7 @@ class EditPaymentViewModel @Inject constructor(
                     )
                 }
             }
+
             is EditPaymentEvent.EnteredDescription -> {
                 _paymentData.update { payment ->
                     payment.copy(
@@ -98,22 +107,21 @@ class EditPaymentViewModel @Inject constructor(
                     )
                 }
             }
+
             is EditPaymentEvent.EnteredAmount -> {
-                if (event.amount.isNotBlank()) {
-                    try {
-                        _paymentData.update { payment ->
-                            payment.copy(
-                                amountNew = event.amount.toDouble()
+                try {
+                    _paymentData.update { payment ->
+                        payment.copy(
+                            amountNew = event.amount.toDouble()
+                        )
+                    }
+                } catch (e: NumberFormatException) {
+                    viewModelScope.launch {
+                        _sideEffects.emit(
+                            EditPaymentSideEffects.ShowSnackbar(
+                                message = "Invalid amount input: ${e.message}"
                             )
-                        }
-                    } catch (e: NumberFormatException) {
-                        viewModelScope.launch {
-                            _sideEffects.emit(
-                                EditPaymentSideEffects.ShowSnackbar(
-                                    message = "Invalid amount input: ${e.message}"
-                                )
-                            )
-                        }
+                        )
                     }
                 }
                 _paymentState.update { state ->
@@ -122,6 +130,7 @@ class EditPaymentViewModel @Inject constructor(
                     )
                 }
             }
+
             is EditPaymentEvent.MonthTagIconClick -> {
                 _paymentState.update { state ->
                     state.copy(
@@ -129,6 +138,7 @@ class EditPaymentViewModel @Inject constructor(
                     )
                 }
             }
+
             is EditPaymentEvent.MonthTagSelected -> {
                 _paymentData.update { payment ->
                     payment.copy(
@@ -136,6 +146,7 @@ class EditPaymentViewModel @Inject constructor(
                     )
                 }
             }
+
             is EditPaymentEvent.DismissMonthTagMenu -> {
                 _paymentState.update { state ->
                     state.copy(
@@ -143,6 +154,7 @@ class EditPaymentViewModel @Inject constructor(
                     )
                 }
             }
+
             is EditPaymentEvent.MoneySourceIconClick -> {
                 _paymentState.update { state ->
                     state.copy(
@@ -150,12 +162,30 @@ class EditPaymentViewModel @Inject constructor(
                     )
                 }
             }
-            is EditPaymentEvent.MoneySourceSelected -> {
+
+            is EditPaymentEvent.ClearChosenMoneySource -> {
                 _paymentData.update { payment ->
                     payment.copy(
-                        sourceId = event.moneySource.id
+                        sourceId = null
                     )
                 }
+                _paymentState.update { state ->
+                    state.copy(
+                        selectedMoneySource = null
+                    )
+                }
+            }
+
+            is EditPaymentEvent.MoneySourceSelected -> {
+//                do not update sourceId because we need to
+//                keep it original value until updateMoneySourceAmount
+
+//                _paymentData.update { payment ->
+//                    payment.copy(
+//                        sourceId = event.moneySource.id
+//                    )
+//                }
+
                 _paymentState.update { state ->
                     state.copy(
                         selectedMoneySource = state.moneySourceList.find { moneySource ->
@@ -164,6 +194,7 @@ class EditPaymentViewModel @Inject constructor(
                     )
                 }
             }
+
             is EditPaymentEvent.DismissMoneySourceMenu -> {
                 _paymentState.update { state ->
                     state.copy(
@@ -171,6 +202,7 @@ class EditPaymentViewModel @Inject constructor(
                     )
                 }
             }
+
             is EditPaymentEvent.CheckBoxSelected -> {
                 _paymentData.update { payment ->
                     payment.copy(
@@ -178,11 +210,14 @@ class EditPaymentViewModel @Inject constructor(
                     )
                 }
             }
+
             is EditPaymentEvent.SaveButtonClick -> {
                 viewModelScope.launch {
+                    val payment = _paymentData.value
+                    val selectedMs = _paymentState.value.selectedMoneySource
                     try {
                         paymentUseCases.editPaymentUseCase(
-                            payment = _paymentData.value
+                            payment = payment
                         )
                     } catch (e: InvalidPaymentException) {
                         _sideEffects.emit(
@@ -192,10 +227,24 @@ class EditPaymentViewModel @Inject constructor(
                         )
                         return@launch
                     }
+                    try {
+                        updateMoneySourceAmount(
+                            payment = payment,
+                            selectedMoneySource = selectedMs
+                        )
+                    } catch (e: Exception) {
+                        _sideEffects.emit(
+                            EditPaymentSideEffects.ShowSnackbar(
+                                message = "Couldn't update money source amount value :("
+                            )
+                        )
+                        return@launch
+                    }
                     _sideEffects.emit(EditPaymentSideEffects.SaveButton)
                     clearSelectedData()
                 }
             }
+
             is EditPaymentEvent.CancelButtonClick -> {
                 viewModelScope.launch {
                     _sideEffects.emit(EditPaymentSideEffects.CancelButton)
@@ -224,5 +273,120 @@ class EditPaymentViewModel @Inject constructor(
             )
         }
     }
+
+    private suspend fun updateMoneySourceAmount(
+        payment: Payment,
+        selectedMoneySource: MoneySource?
+    ) {
+//        if (payment.sourceId == selectedMoneySource?.id && payment.amountNew == payment.amountBefore) return
+
+        val initialMoneySourceId = payment.sourceId
+        val newMoneySourceId = selectedMoneySource?.id
+        var moneySource = selectedMoneySource
+        val correctingValue = payment.amountNew
+        val initialValue = payment.amountBefore
+
+        when {
+            correctingValue == initialValue && initialMoneySourceId == newMoneySourceId -> return
+
+            // newPaymentAmount != paymentAmountBefore && initialMsId == newMsId
+            correctingValue != initialValue && initialMoneySourceId == newMoneySourceId -> {
+                if (moneySource == null || correctingValue == null || initialValue == null) return
+                moneySource = if (payment.isExpense) {
+                    // Expense
+                    moneySource.copy(
+                        amount = (moneySource.amount + initialValue) - correctingValue
+                    )
+                } else {
+                    // Income
+                    moneySource.copy(
+                        amount = (moneySource.amount - initialValue) + correctingValue
+                    )
+                }
+
+                moneySourceUseCases.editMoneySourceUseCase(moneySource = moneySource)
+            }
+            // newPaymentAmount == paymentAmountBefore && initialMsId != newMsId
+            correctingValue == initialValue && initialMoneySourceId != newMoneySourceId -> {
+                if (correctingValue == null) return
+
+                // newPaymentAmount != paymentAmountBefore && initialMsId(!null) != newMsId(null)
+                if (newMoneySourceId == null  && selectedMoneySource == null) {
+                    moneySource = moneySourceUseCases.getMoneySourceUseCase(id = initialMoneySourceId!!)
+                    if (moneySource != null) {
+                        moneySource = if (payment.isExpense) {
+                            // Expense
+                            moneySource?.copy(
+                                amount = moneySource.amount + correctingValue
+                            )
+                        } else {
+                            // Income
+                            moneySource?.copy(
+                                amount = moneySource.amount - correctingValue
+                            )
+                        }
+                        moneySourceUseCases.editMoneySourceUseCase(moneySource = moneySource)
+                    }
+                }
+
+                // newPaymentAmount != paymentAmountBefore && initialMsId(null) != newMsId(!null)
+                if (initialMoneySourceId == null) {
+                    moneySource = if (payment.isExpense) {
+                        // Expense
+                        moneySource?.copy(
+                            amount = moneySource.amount - correctingValue
+                        )
+                    } else {
+                        // Income
+                        moneySource?.copy(
+                            amount = moneySource.amount + correctingValue
+                        )
+                    }
+                }
+
+
+            }
+            correctingValue != initialValue && initialMoneySourceId != newMoneySourceId -> {
+
+            }
+//            else -> return
+        }
+
+
+//        if (moneySource != null && correctingValue != null && initialValue != null) {
+//
+//            moneySource = when (payment.isExpense) {
+//                true -> {
+//                    val newAmountExpenseUpdated = if (correctingValue != initialValue) {
+//                        (moneySource.amount + initialValue) - correctingValue
+//                    } else {
+//                        moneySource.amount - correctingValue
+//                    }
+//
+//                    moneySource.copy(
+//                        amount = newAmountExpenseUpdated
+//                    )
+//                }
+//
+//                false -> {
+//                    val newAmountIncomeUpdated = if (correctingValue != initialValue) {
+//                        (moneySource.amount - initialValue) + correctingValue
+//                    } else {
+//                        moneySource.amount + correctingValue
+//                    }
+//
+//                    moneySource.copy(
+//                        amount = newAmountIncomeUpdated
+//                    )
+//                }
+//            }
+//
+//            moneySourceUseCases.editMoneySourceUseCase(moneySource = moneySource)
+//        }
+    }
+
+
+
+
 
 }

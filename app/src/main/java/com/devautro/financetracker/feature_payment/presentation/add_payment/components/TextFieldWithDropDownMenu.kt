@@ -2,13 +2,17 @@ package com.devautro.financetracker.feature_payment.presentation.add_payment.com
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -16,7 +20,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -28,16 +31,15 @@ import com.devautro.financetracker.feature_moneySource.domain.model.MoneySource
 import com.devautro.financetracker.ui.theme.AccentBlue
 import com.devautro.financetracker.ui.theme.BackgroundColor
 import com.devautro.financetracker.ui.theme.OnBackgroundColor
-import com.devautro.financetracker.ui.theme.secondary
 
 @Composable
-fun <T> TextFieldWithDropDownMenu(
+fun TextFieldWithDropDownMenu(
     modifier: Modifier = Modifier,
-    itemsList: List<T>,
+    itemsList: List<String>,
     isExpanded: Boolean,
     onDismissMenu: () -> Unit,
-    selectedItem: T?,
-    onSelectedItemChange: (T) -> Unit,
+    selectedItem: String?,
+    onSelectedItemChange: (String) -> Unit,
     labelText: String,
     trailingIcon: @Composable (() -> Unit),
     supportingText: @Composable (() -> Unit)? = null
@@ -50,7 +52,7 @@ fun <T> TextFieldWithDropDownMenu(
                 .onGloballyPositioned { coordinates ->
                     textFieldSize = coordinates.size.toSize()
                 }, // - maybe wrong order of the modifier's functions -> width before positioned?!
-            value = getItemDisplayName(item = selectedItem),
+            value = selectedItem ?: "",
             onValueChange = { /* read-only! */ },
             labelText = labelText,
             trailingIcon = trailingIcon,
@@ -69,28 +71,18 @@ fun <T> TextFieldWithDropDownMenu(
         ) {
             itemsList.forEach { item ->
                 DropdownMenuItem(
-                    modifier = if (item is MoneySource && item == selectedItem) Modifier
-                        .background(Color(item.paleColor))
-                    else Modifier,
                     onClick = {
                         onDismissMenu()
                         onSelectedItemChange(item) // we have to pass a MoneySource, not id :(
                     },
                     text = {
                         Text(
-                            text = when (item) {
-                                is String -> item
-                                is MoneySource -> item.name
-                                else -> ""
-                            },
+                            text = item,
                             fontSize = 18.sp,
                             color = when {
-                                item is String && item == selectedItem -> AccentBlue
-                                item is MoneySource && item == selectedItem -> BackgroundColor
-//                                item is MoneySource -> Color(item.paleColor)
+                                item == selectedItem -> AccentBlue
                                 else -> OnBackgroundColor
                             }
-//                            if (item == selectedItem) AccentBlue else OnBackgroundColor,
                         )
                     }
                 )
@@ -100,11 +92,77 @@ fun <T> TextFieldWithDropDownMenu(
 }
 
 @Composable
-private fun <T> getItemDisplayName(item: T?): String {
-    return when (item) {
-        is String -> item
-        is MoneySource -> item.name
-        else -> ""
+fun TextFieldWithDropDownMenuMoneySource(
+    modifier: Modifier = Modifier,
+    itemsList: List<MoneySource>,
+    isExpanded: Boolean,
+    onDismissMenu: () -> Unit,
+    selectedItem: MoneySource?,
+    onSelectedItemChange: (MoneySource) -> Unit,
+    labelText: String,
+    trailingIcon: @Composable (() -> Unit),
+    leadingIcon: @Composable (() -> Unit)? = null,
+    supportingText: @Composable (() -> Unit)? = null
+) {
+    var textFieldSize by remember { mutableStateOf(Size.Zero) }
+
+    Column{
+        OutlinedTextField(
+            modifier = modifier
+                .onGloballyPositioned { coordinates ->
+                    textFieldSize = coordinates.size.toSize()
+                }
+                .fillMaxWidth(0.8f)
+                .padding(top = 10.dp),
+            value = selectedItem?.name ?: "",
+            onValueChange = { /* read-only! */ },
+            label = { Text(text = labelText) },
+            trailingIcon = trailingIcon,
+            leadingIcon = if(selectedItem != null) leadingIcon else null,
+            readOnly = true,singleLine = true,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = BackgroundColor,
+                unfocusedBorderColor = AccentBlue,
+                focusedLabelColor = AccentBlue,
+                unfocusedLabelColor = AccentBlue
+            ),
+            supportingText = if (selectedItem == null) supportingText else null
+        )
+
+        DropdownMenu(
+            expanded = isExpanded,
+            onDismissRequest = { onDismissMenu() },
+            scrollState = rememberScrollState(),
+            modifier = Modifier
+                .width(with(LocalDensity.current) { textFieldSize.width.toDp() })
+                .then(
+                    if(itemsList.size < 5) Modifier.height(IntrinsicSize.Max)
+                    else Modifier.fillMaxHeight(0.3f)
+                )
+                .background(BackgroundColor)
+        ) {
+            itemsList.forEach { item ->
+                DropdownMenuItem(
+                    modifier = if (item == selectedItem) Modifier.background(Color(item.paleColor))
+                    else Modifier,
+                    onClick = {
+                        onDismissMenu()
+                        onSelectedItemChange(item) // we have to pass a MoneySource, not id :(
+                    },
+                    text = {
+                        Text(
+                            text = item.name,
+                            fontSize = 18.sp,
+                            color = when {
+                                item == selectedItem -> BackgroundColor
+                                else -> OnBackgroundColor
+                            }
+                        )
+                    }
+                )
+            }
+        }
     }
 }
+
 

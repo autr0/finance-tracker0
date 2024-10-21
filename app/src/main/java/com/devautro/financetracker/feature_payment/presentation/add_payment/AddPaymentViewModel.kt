@@ -1,7 +1,10 @@
 package com.devautro.financetracker.feature_payment.presentation.add_payment
 
+import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.devautro.financetracker.core.util.Const
+import com.devautro.financetracker.feature_moneySource.domain.model.MoneySource
 import com.devautro.financetracker.feature_moneySource.domain.use_case.MoneySourceUseCases
 import com.devautro.financetracker.feature_payment.domain.model.InvalidPaymentException
 import com.devautro.financetracker.feature_payment.domain.model.Payment
@@ -35,13 +38,18 @@ class AddPaymentViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             moneySourceUseCases.getAllMoneySourcesUseCase().collect { moneySourceList ->
-                if (moneySourceList.isNotEmpty()) {
-                    _paymentState.update { state ->
-                        state.copy(
-                            moneySourceList = moneySourceList,
-//                        selectedMoneySource = moneySourceList[0] -> empty value is better ?
+                if (moneySourceList.isEmpty()) {
+                    moneySourceUseCases.addMoneySourceUseCase(
+                        moneySource = MoneySource(
+                            name = "Main Source",
+                            amount = 0.0,
+                            paleColor = Const.sourcePaleColors[0].toArgb(),
+                            accentColor = Const.sourceAccentColors[0].toArgb()
                         )
-                    }
+                    )
+                }
+                _paymentState.update { state ->
+                    state.copy(moneySourceList = moneySourceList)
                 }
             }
         }
@@ -56,6 +64,7 @@ class AddPaymentViewModel @Inject constructor(
                     )
                 }
             }
+
             is AddPaymentEvent.DateSelected -> {
                 _paymentData.update { payment ->
                     payment.copy(
@@ -63,6 +72,7 @@ class AddPaymentViewModel @Inject constructor(
                     )
                 }
             }
+
             is AddPaymentEvent.DismissDatePicker -> {
                 _paymentState.update { state ->
                     state.copy(
@@ -70,6 +80,7 @@ class AddPaymentViewModel @Inject constructor(
                     )
                 }
             }
+
             is AddPaymentEvent.EnteredDescription -> {
                 _paymentData.update { payment ->
                     payment.copy(
@@ -77,22 +88,21 @@ class AddPaymentViewModel @Inject constructor(
                     )
                 }
             }
+
             is AddPaymentEvent.EnteredAmount -> {
-                if (event.amount.isNotBlank()) {
-                    try {
-                        _paymentData.update { payment ->
-                            payment.copy(
-                                amountNew = event.amount.toDouble()
+                try {
+                    _paymentData.update { payment ->
+                        payment.copy(
+                            amountNew = event.amount.toDouble()
+                        )
+                    }
+                } catch (e: NumberFormatException) {
+                    viewModelScope.launch {
+                        _sideEffects.emit(
+                            AddPaymentSideEffects.ShowSnackbar(
+                                message = "Invalid amount input: ${e.message}"
                             )
-                        }
-                    } catch (e: NumberFormatException) {
-                        viewModelScope.launch {
-                            _sideEffects.emit(
-                                AddPaymentSideEffects.ShowSnackbar(
-                                    message = "Invalid amount input: ${e.message}"
-                                )
-                            )
-                        }
+                        )
                     }
                 }
                 _paymentState.update { state ->
@@ -101,6 +111,7 @@ class AddPaymentViewModel @Inject constructor(
                     )
                 }
             }
+
             is AddPaymentEvent.MonthTagIconClick -> {
                 _paymentState.update { state ->
                     state.copy(
@@ -108,6 +119,7 @@ class AddPaymentViewModel @Inject constructor(
                     )
                 }
             }
+
             is AddPaymentEvent.MonthTagSelected -> {
                 _paymentData.update { payment ->
                     payment.copy(
@@ -115,6 +127,7 @@ class AddPaymentViewModel @Inject constructor(
                     )
                 }
             }
+
             is AddPaymentEvent.DismissMonthTagMenu -> {
                 _paymentState.update { state ->
                     state.copy(
@@ -122,10 +135,23 @@ class AddPaymentViewModel @Inject constructor(
                     )
                 }
             }
+
             is AddPaymentEvent.MoneySourceIconClick -> {
                 _paymentState.update { state ->
                     state.copy(
                         isMoneySourceMenuVisible = true
+                    )
+                }
+            }
+            is AddPaymentEvent.ClearChosenMoneySource -> {
+                _paymentData.update { payment ->
+                    payment.copy(
+                        sourceId = null
+                    )
+                }
+                _paymentState.update { state ->
+                    state.copy(
+                        selectedMoneySource = null
                     )
                 }
             }
@@ -143,6 +169,7 @@ class AddPaymentViewModel @Inject constructor(
                     )
                 }
             }
+
             is AddPaymentEvent.DismissMoneySourceMenu -> {
                 _paymentState.update { state ->
                     state.copy(
@@ -150,6 +177,7 @@ class AddPaymentViewModel @Inject constructor(
                     )
                 }
             }
+
             is AddPaymentEvent.CheckBoxSelected -> {
                 _paymentData.update { payment ->
                     payment.copy(
@@ -157,12 +185,11 @@ class AddPaymentViewModel @Inject constructor(
                     )
                 }
             }
+
             is AddPaymentEvent.AddButtonClick -> {
                 viewModelScope.launch {
                     try {
-                        paymentUseCases.addPaymentUseCase(
-                            payment = _paymentData.value
-                        )
+                        paymentUseCases.addPaymentUseCase(payment = _paymentData.value)
                     } catch (e: InvalidPaymentException) {
                         _sideEffects.emit(
                             AddPaymentSideEffects.ShowSnackbar(
@@ -171,10 +198,21 @@ class AddPaymentViewModel @Inject constructor(
                         )
                         return@launch
                     }
+                    try {
+                        updateMoneySourceAmount()
+                    } catch (e: Exception) {
+                        _sideEffects.emit(
+                            AddPaymentSideEffects.ShowSnackbar(
+                                message = "Couldn't update money source amount value :("
+                            )
+                        )
+                        return@launch
+                    }
                     _sideEffects.emit(AddPaymentSideEffects.AddButton)
                     clearSelectedData()
                 }
             }
+
             is AddPaymentEvent.CancelButtonClick -> {
                 viewModelScope.launch {
                     _sideEffects.emit(AddPaymentSideEffects.CancelButton)
@@ -202,6 +240,22 @@ class AddPaymentViewModel @Inject constructor(
                 selectedMoneySource = null
             )
         }
+    }
+
+    private suspend fun updateMoneySourceAmount() {
+
+        var moneySource = _paymentState.value.selectedMoneySource
+        val correctingValue = _paymentData.value.amountNew
+
+        if (moneySource != null && correctingValue != null) {
+            moneySource = when (_paymentData.value.isExpense) {
+                true -> moneySource.copy(amount = moneySource.amount - correctingValue)
+                false -> moneySource.copy(amount = moneySource.amount + correctingValue)
+            }
+
+            moneySourceUseCases.editMoneySourceUseCase(moneySource = moneySource)
+        }
+
     }
 
 }

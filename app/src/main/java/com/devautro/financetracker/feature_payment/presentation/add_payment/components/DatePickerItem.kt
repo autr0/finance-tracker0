@@ -47,9 +47,10 @@ fun DatePickerItem(
                 headlineContentColor = OnBackgroundColor,
                 todayContentColor = AccentBlue,
                 todayDateBorderColor = AccentBlue,
-                selectedDayContentColor = AccentBlue,
+                selectedDayContentColor = secondary,
                 selectedDayContainerColor = AccentBlue,
-                dividerColor = AccentBlue
+                dividerColor = AccentBlue,
+
             )
         )
     }
