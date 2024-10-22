@@ -31,7 +31,11 @@ class MoneySourcesViewModel @Inject constructor(
     val sideEffects = _sideEffects.asSharedFlow()
 
     init {
-        getInitialData()
+        if (_moneySourcesState.value.isIncludedOnlyFilter) {
+            getFilteredByIncludedData()
+        } else {
+            getInitialData()
+        }
     }
 
     fun onEvent(event: MoneySourcesEvent) {

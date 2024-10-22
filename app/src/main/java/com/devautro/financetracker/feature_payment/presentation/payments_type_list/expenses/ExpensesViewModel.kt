@@ -2,6 +2,7 @@ package com.devautro.financetracker.feature_payment.presentation.payments_type_l
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.devautro.financetracker.feature_moneySource.domain.use_case.MoneySourceUseCases
 import com.devautro.financetracker.feature_payment.domain.model.Payment
 import com.devautro.financetracker.feature_payment.domain.use_case.PaymentUseCases
 import com.devautro.financetracker.feature_payment.presentation.mappers.toPayment
@@ -13,6 +14,7 @@ import com.devautro.financetracker.feature_payment.presentation.payments_type_li
 import com.devautro.financetracker.feature_payment.util.formatDoubleToString
 import com.devautro.financetracker.feature_payment.util.getYearOfTheDate
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,6 +28,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ExpensesViewModel @Inject constructor(
     private val paymentUseCases: PaymentUseCases,
+    private val moneySourceUseCases: MoneySourceUseCases
 ) : ViewModel() {
 
     private val _paymentsState = MutableStateFlow(PaymentsListState())
@@ -100,18 +103,26 @@ class ExpensesViewModel @Inject constructor(
             }
 
             is PaymentsListEvent.DeleteIconClick -> {
-                viewModelScope.launch {
-                    paymentUseCases.deletePaymentUseCase(
-                        payment = event.paymentItem.toPayment()
-                    )
-                    recentlyDeletedPayment = event.paymentItem.toPayment()
-
-                    _sideEffects.emit(
-                        PaymentsListSideEffects.ShowSnackBar(
-                            message = "Item deleted"
+                viewModelScope.launch(Dispatchers.IO) {
+                    try {
+                        val payment = event.paymentItem.toPayment()
+                        paymentUseCases.deletePaymentUseCase(
+                            payment = payment
                         )
-                    )
+                        recentlyDeletedPayment = payment
 
+                        updateMoneySourceAmountOfDeletedItem(payment = payment)
+
+                        _sideEffects.emit(
+                            PaymentsListSideEffects.ShowSnackBar(
+                                message = "Item deleted"
+                            )
+                        )
+                    } catch (e: Exception) {
+                        _sideEffects.emit(PaymentsListSideEffects.ShowSnackBar(
+                            message = "An error occurred: ${e.message}"
+                        ))
+                    }
                 }
             }
 
@@ -134,11 +145,20 @@ class ExpensesViewModel @Inject constructor(
             }
 
             PaymentsListEvent.RestorePayment -> {
-                viewModelScope.launch {
-                    paymentUseCases.addPaymentUseCase(
-                        payment = recentlyDeletedPayment ?: return@launch
-                    )
-                    recentlyDeletedPayment = null
+                viewModelScope.launch(Dispatchers.IO) {
+                    try {
+                        paymentUseCases.addPaymentUseCase(
+                            payment = recentlyDeletedPayment ?: return@launch
+                        )
+                        updateMoneySourceAmountOfRestoredItem(
+                            payment = recentlyDeletedPayment ?: return@launch
+                        )
+                        recentlyDeletedPayment = null
+                    } catch (e: Exception) {
+                        _sideEffects.emit(PaymentsListSideEffects.ShowSnackBar(
+                            message = "Couldn't restore payment due to: ${e.message}"
+                        ))
+                    }
                 }
             }
         }
@@ -212,6 +232,34 @@ class ExpensesViewModel @Inject constructor(
                 item
             }
         }.toList()
+    }
+
+    private suspend fun updateMoneySourceAmountOfDeletedItem(
+        payment: Payment
+    ) {
+        if (payment.sourceId == null || payment.amountNew == null) return
+        val moneySource = moneySourceUseCases.getMoneySourceUseCase(id = payment.sourceId)
+
+        moneySourceUseCases.editMoneySourceUseCase(
+            moneySource = moneySource?.copy(
+//              no isExpense check because it's ExpensesViewModel!
+                amount = moneySource.amount + payment.amountNew // opposite operation
+            ) ?: throw NullPointerException()
+        )
+    }
+
+    private suspend fun updateMoneySourceAmountOfRestoredItem(
+        payment: Payment
+    ) {
+        if (payment.sourceId == null || payment.amountNew == null) return
+        val moneySource = moneySourceUseCases.getMoneySourceUseCase(id = payment.sourceId)
+
+        moneySourceUseCases.editMoneySourceUseCase(
+            moneySource = moneySource?.copy(
+//              no isExpense check because it's ExpensesViewModel!
+                amount = moneySource.amount - payment.amountNew // opposite operation
+            ) ?: throw NullPointerException()
+        )
     }
 
 }

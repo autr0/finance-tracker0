@@ -126,7 +126,7 @@ fun NavigationScreen() {
             }
         },
         floatingActionButton = {
-            if (showBottomBar) {
+            if (showBottomBar && (currentDestination?.hasRoute(Settings::class) == false)) {
                 FloatingActionButton(
                     onClick = {
 //                        navController.navigate(AddBottomSheet)
@@ -269,6 +269,15 @@ fun NavigationScreen() {
                 ) {
                     Text(text = "Coming soon...")
                 }
+
+                if (showBottomSheet.value) {
+                    AddPaymentBottomSheet(
+                        sheetState = sheetState,
+                        navigateBack = {
+                            showBottomSheet.value = false
+                        }
+                    )
+                }
             }
 
             composable<Accounts> {
@@ -286,6 +295,15 @@ fun NavigationScreen() {
                         )
                     }
                 )
+
+                if (showBottomSheet.value) {
+                    AddPaymentBottomSheet(
+                        sheetState = sheetState,
+                        navigateBack = {
+                            showBottomSheet.value = false
+                        }
+                    )
+                }
             }
 
             composable<AddAccount>(
