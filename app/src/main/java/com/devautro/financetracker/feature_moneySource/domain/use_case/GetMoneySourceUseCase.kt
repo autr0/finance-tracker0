@@ -8,7 +8,8 @@ class GetMoneySourceUseCase @Inject constructor(
     private val repository: MoneySourceRepository
 ) {
 
-    suspend operator fun invoke(id: Long): MoneySource? {
+    suspend operator fun invoke(id: Long?): MoneySource? {
+        if (id == null) return null
         return repository.getMoneySourceById(id = id)
     }
 }

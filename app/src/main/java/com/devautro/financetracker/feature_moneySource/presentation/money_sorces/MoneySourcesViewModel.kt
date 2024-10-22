@@ -36,7 +36,7 @@ class MoneySourcesViewModel @Inject constructor(
 
     fun onEvent(event: MoneySourcesEvent) {
         when (event) {
-            is MoneySourcesEvent.AddIconClick -> { /*TODO -> navigate to add Item Click*/
+            is MoneySourcesEvent.AddIconClick -> {
                 viewModelScope.launch {
                     _sideEffects.emit(MoneySourcesSideEffects.NavigateAddScreen)
                 }

@@ -46,6 +46,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -67,12 +68,14 @@ fun EditMoneySource(
     initialColor: Int
 ) {
     val state by viewModel.editMoneySourceState.collectAsStateWithLifecycle()
+
     val scope = rememberCoroutineScope()
     val cardBackgroundAnimatable = remember {
         Animatable(
             initialValue = Color(initialColor)
         )
     }
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -252,9 +255,11 @@ fun EditMoneySource(
                 dismissText = "Cancel",
                 approveText = "Save",
                 onDismiss = {
+                    keyboardController?.hide()
                     viewModel.onEvent(AddEditMoneySourceEvent.CancelButtonClicked)
                 },
                 onApprove = {
+                    keyboardController?.hide()
                     viewModel.onEvent(AddEditMoneySourceEvent.ApproveButtonClicked)
                 },
                 isApproveEnabled = state.amount.isNotBlank() && state.name.isNotBlank()

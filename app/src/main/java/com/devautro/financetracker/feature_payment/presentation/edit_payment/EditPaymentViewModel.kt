@@ -9,6 +9,8 @@ import com.devautro.financetracker.feature_payment.domain.model.Payment
 import com.devautro.financetracker.feature_payment.domain.use_case.PaymentUseCases
 import com.devautro.financetracker.feature_payment.util.formatDoubleToString
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -164,11 +166,14 @@ class EditPaymentViewModel @Inject constructor(
             }
 
             is EditPaymentEvent.ClearChosenMoneySource -> {
-                _paymentData.update { payment ->
-                    payment.copy(
-                        sourceId = null
-                    )
-                }
+//                do not update sourceId because we need to
+//                keep it original value until updateMoneySourceAmount
+
+//                _paymentData.update { payment ->
+//                    payment.copy(
+//                        sourceId = null
+//                    )
+//                }
                 _paymentState.update { state ->
                     state.copy(
                         selectedMoneySource = null
@@ -212,12 +217,14 @@ class EditPaymentViewModel @Inject constructor(
             }
 
             is EditPaymentEvent.SaveButtonClick -> {
-                viewModelScope.launch {
+
+                viewModelScope.launch(Dispatchers.IO) {
                     val payment = _paymentData.value
                     val selectedMs = _paymentState.value.selectedMoneySource
+
                     try {
                         paymentUseCases.editPaymentUseCase(
-                            payment = payment
+                            payment = payment.copy(sourceId = selectedMs?.id )
                         )
                     } catch (e: InvalidPaymentException) {
                         _sideEffects.emit(
@@ -227,11 +234,20 @@ class EditPaymentViewModel @Inject constructor(
                         )
                         return@launch
                     }
+
+
                     try {
+                        val deferred = async { moneySourceUseCases.getMoneySourceUseCase(id = payment.sourceId) }
+                        val oldMoneySource = deferred.await()
+
                         updateMoneySourceAmount(
-                            payment = payment,
-                            selectedMoneySource = selectedMs
+                            amountOld = payment.amountBefore,
+                            amountNew = payment.amountNew,
+                            msOld = oldMoneySource,
+                            msNew = selectedMs,
+                            isExpense = payment.isExpense
                         )
+
                     } catch (e: Exception) {
                         _sideEffects.emit(
                             EditPaymentSideEffects.ShowSnackbar(
@@ -275,118 +291,161 @@ class EditPaymentViewModel @Inject constructor(
     }
 
     private suspend fun updateMoneySourceAmount(
-        payment: Payment,
-        selectedMoneySource: MoneySource?
+        amountOld: Double?,
+        amountNew: Double?,
+        msOld: MoneySource?,
+        msNew: MoneySource?,
+        isExpense: Boolean
     ) {
-//        if (payment.sourceId == selectedMoneySource?.id && payment.amountNew == payment.amountBefore) return
-
-        val initialMoneySourceId = payment.sourceId
-        val newMoneySourceId = selectedMoneySource?.id
-        var moneySource = selectedMoneySource
-        val correctingValue = payment.amountNew
-        val initialValue = payment.amountBefore
-
         when {
-            correctingValue == initialValue && initialMoneySourceId == newMoneySourceId -> return
+            amountNew == amountOld && msNew == msOld -> return
 
-            // newPaymentAmount != paymentAmountBefore && initialMsId == newMsId
-            correctingValue != initialValue && initialMoneySourceId == newMoneySourceId -> {
-                if (moneySource == null || correctingValue == null || initialValue == null) return
-                moneySource = if (payment.isExpense) {
-                    // Expense
-                    moneySource.copy(
-                        amount = (moneySource.amount + initialValue) - correctingValue
-                    )
-                } else {
-                    // Income
-                    moneySource.copy(
-                        amount = (moneySource.amount - initialValue) + correctingValue
-                    )
-                }
+            amountNew != amountOld && msNew == msOld -> {
+                if (msNew == null || msOld == null || amountNew == null || amountOld == null) return
 
-                moneySourceUseCases.editMoneySourceUseCase(moneySource = moneySource)
+                val recalculatedMs = changeAmountWithSameMoneySource(
+                    msOld = msOld,
+                    amountOld = amountOld,
+                    amountNew = amountNew,
+                    isExpense = isExpense
+                )
+
+                moneySourceUseCases.editMoneySourceUseCase(moneySource = recalculatedMs)
             }
-            // newPaymentAmount == paymentAmountBefore && initialMsId != newMsId
-            correctingValue == initialValue && initialMoneySourceId != newMoneySourceId -> {
-                if (correctingValue == null) return
 
-                // newPaymentAmount != paymentAmountBefore && initialMsId(!null) != newMsId(null)
-                if (newMoneySourceId == null  && selectedMoneySource == null) {
-                    moneySource = moneySourceUseCases.getMoneySourceUseCase(id = initialMoneySourceId!!)
-                    if (moneySource != null) {
-                        moneySource = if (payment.isExpense) {
-                            // Expense
-                            moneySource?.copy(
-                                amount = moneySource.amount + correctingValue
-                            )
-                        } else {
-                            // Income
-                            moneySource?.copy(
-                                amount = moneySource.amount - correctingValue
-                            )
-                        }
-                        moneySourceUseCases.editMoneySourceUseCase(moneySource = moneySource)
-                    }
-                }
+            amountNew == amountOld && msNew != msOld -> {
+                if (amountNew == null) return
 
-                // newPaymentAmount != paymentAmountBefore && initialMsId(null) != newMsId(!null)
-                if (initialMoneySourceId == null) {
-                    moneySource = if (payment.isExpense) {
-                        // Expense
-                        moneySource?.copy(
-                            amount = moneySource.amount - correctingValue
-                        )
-                    } else {
-                        // Income
-                        moneySource?.copy(
-                            amount = moneySource.amount + correctingValue
-                        )
-                    }
-                }
-
-
+                changeMoneySourceWithSameAmount(
+                    amountNew = amountNew,
+                    msOld = msOld,
+                    msNew = msNew,
+                    isExpense = isExpense
+                )
             }
-            correctingValue != initialValue && initialMoneySourceId != newMoneySourceId -> {
 
+            amountNew != amountOld && msNew != msOld -> {
+                if (amountOld == null || amountNew == null) return
+                changeMoneySourceWithDifferentAmount(
+                    msOld = msOld,
+                    msNew = msNew,
+                    amountOld = amountOld,
+                    amountNew = amountNew,
+                    isExpense = isExpense
+                )
             }
-//            else -> return
         }
-
-
-//        if (moneySource != null && correctingValue != null && initialValue != null) {
-//
-//            moneySource = when (payment.isExpense) {
-//                true -> {
-//                    val newAmountExpenseUpdated = if (correctingValue != initialValue) {
-//                        (moneySource.amount + initialValue) - correctingValue
-//                    } else {
-//                        moneySource.amount - correctingValue
-//                    }
-//
-//                    moneySource.copy(
-//                        amount = newAmountExpenseUpdated
-//                    )
-//                }
-//
-//                false -> {
-//                    val newAmountIncomeUpdated = if (correctingValue != initialValue) {
-//                        (moneySource.amount - initialValue) + correctingValue
-//                    } else {
-//                        moneySource.amount + correctingValue
-//                    }
-//
-//                    moneySource.copy(
-//                        amount = newAmountIncomeUpdated
-//                    )
-//                }
-//            }
-//
-//            moneySourceUseCases.editMoneySourceUseCase(moneySource = moneySource)
-//        }
     }
+    // PASSED -->
+    private fun changeAmountWithSameMoneySource(
+        msOld: MoneySource,
+        amountOld: Double,
+        amountNew: Double,
+        isExpense: Boolean
+    ): MoneySource {
+        // isExpense - GOOD / !isExpense - GOOD
+        return if (isExpense) {
+            msOld.copy(
+                amount = (msOld.amount + amountOld) - amountNew
+            )
+        } else {
+            msOld.copy(
+                amount = (msOld.amount - amountOld) + amountNew
+            )
+        }
+    }
+    // PASSED -->
+    private suspend fun changeMoneySourceWithSameAmount(
+        amountNew: Double,
+        msOld: MoneySource?,
+        msNew: MoneySource?,
+        isExpense: Boolean
+    ) {
+        when {
+            // isExpense - GOOD / !isExpense - GOOD
+            msOld == null && msNew != null -> {
+                if (isExpense) {
+                    val ms = msNew.copy(amount = msNew.amount - amountNew)
+                    moneySourceUseCases.editMoneySourceUseCase(moneySource = ms)
+                } else {
+                    val ms = msNew.copy(amount = msNew.amount + amountNew)
+                    moneySourceUseCases.editMoneySourceUseCase(moneySource = ms)
+                }
+            }
+            // isExpense - FIXED / !isExpense - FIXED
+            msOld != null && msNew == null -> {
+                if (isExpense) {
+                    val ms = msOld.copy(amount = msOld.amount + amountNew)
+                    moneySourceUseCases.editMoneySourceUseCase(moneySource = ms)
+                } else {
+                    val ms = msOld.copy(amount = msOld.amount - amountNew)
+                    moneySourceUseCases.editMoneySourceUseCase(moneySource = ms)
+                }
+            }
 
-
-
+            // isExpense - GOOD / !isExpense - GOOD
+            msOld != null && msNew != null -> {
+                if (isExpense) {
+                    val newMs = msNew.copy(amount = msNew.amount - amountNew)
+                    val oldMs = msOld.copy(amount = msOld.amount + amountNew)
+                    moneySourceUseCases.editMoneySourceUseCase(moneySource = newMs)
+                    moneySourceUseCases.editMoneySourceUseCase(moneySource = oldMs)
+                } else {
+                    val newMs = msNew.copy(amount = msNew.amount + amountNew)
+                    val oldMs = msOld.copy(amount = msOld.amount - amountNew)
+                    moneySourceUseCases.editMoneySourceUseCase(moneySource = newMs)
+                    moneySourceUseCases.editMoneySourceUseCase(moneySource = oldMs)
+                }
+            }
+            else -> return
+        }
+    }
+    // PASSED -->
+    private suspend fun changeMoneySourceWithDifferentAmount(
+        amountOld: Double,
+        amountNew: Double,
+        msOld: MoneySource?,
+        msNew: MoneySource?,
+        isExpense: Boolean
+    ) {
+        when {
+            // isExpense - GOOD / !isExpense - GOOD
+            msOld == null && msNew != null -> {
+                if (isExpense) {
+                    val ms = msNew.copy(amount = msNew.amount - amountNew)
+                    moneySourceUseCases.editMoneySourceUseCase(moneySource = ms)
+                } else {
+                    val ms = msNew.copy(amount = msNew.amount + amountNew)
+                    moneySourceUseCases.editMoneySourceUseCase(moneySource = ms)
+                }
+            }
+            // isExpense - GOOD / !isExpense - GOOD
+            msOld != null && msNew == null -> {
+                if (isExpense) {
+                    val ms = msOld.copy(amount = msOld.amount + amountOld)
+                    moneySourceUseCases.editMoneySourceUseCase(moneySource = ms)
+                } else {
+                    val ms = msOld.copy(amount = msOld.amount - amountOld)
+                    moneySourceUseCases.editMoneySourceUseCase(moneySource = ms)
+                }
+            }
+            // isExpense - GOOD / !isExpense - GOOD
+            msOld != null && msNew != null -> {
+                if (isExpense) {
+                    val newMs = msNew.copy(amount = msNew.amount - amountNew)
+                    val oldMs = msOld.copy(amount = msOld.amount + amountOld)
+                    moneySourceUseCases.editMoneySourceUseCase(moneySource = newMs)
+                    moneySourceUseCases.editMoneySourceUseCase(moneySource = oldMs)
+                } else {
+                    val newMs = msNew.copy(amount = msNew.amount + amountNew)
+                    val oldMs = msOld.copy(amount = msOld.amount - amountOld)
+                    moneySourceUseCases.editMoneySourceUseCase(moneySource = newMs)
+                    moneySourceUseCases.editMoneySourceUseCase(moneySource = oldMs)
+                }
+            }
+            else -> return
+        }
+    }
 
 
 }
