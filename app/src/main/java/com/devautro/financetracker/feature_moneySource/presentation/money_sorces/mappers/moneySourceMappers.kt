@@ -1,4 +1,4 @@
-package com.devautro.financetracker.feature_moneySource.presentation.mappers
+package com.devautro.financetracker.feature_moneySource.presentation.money_sorces.mappers
 
 import com.devautro.financetracker.feature_moneySource.domain.model.MoneySource
 import com.devautro.financetracker.feature_moneySource.presentation.money_sorces.MoneySourceItem

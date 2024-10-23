@@ -7,7 +7,7 @@ import com.devautro.financetracker.feature_moneySource.domain.use_case.MoneySour
 import com.devautro.financetracker.feature_payment.domain.model.InvalidPaymentException
 import com.devautro.financetracker.feature_payment.domain.model.Payment
 import com.devautro.financetracker.feature_payment.domain.use_case.PaymentUseCases
-import com.devautro.financetracker.feature_payment.util.formatDoubleToString
+import com.devautro.financetracker.feature_payment.util.formatStringToDouble
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -70,7 +70,7 @@ class EditPaymentViewModel @Inject constructor(
 
                 _paymentState.update { state ->
                     state.copy(
-                        amountInString = formatDoubleToString(event.initialPayment.amountNew!!),
+                        amountInString = event.initialPayment.amountNew.toString(),
                         selectedMoneySource = _paymentState.value.moneySourceList.find {
                             it.id == event.initialPayment.sourceId
                         }
@@ -114,14 +114,14 @@ class EditPaymentViewModel @Inject constructor(
                 try {
                     _paymentData.update { payment ->
                         payment.copy(
-                            amountNew = event.amount.toDouble()
+                            amountNew = formatStringToDouble(event.amount)
                         )
                     }
                 } catch (e: NumberFormatException) {
                     viewModelScope.launch {
                         _sideEffects.emit(
                             EditPaymentSideEffects.ShowSnackbar(
-                                message = "Invalid amount input: ${e.message}"
+                                message = e.message ?: "Invalid amount input! :("
                             )
                         )
                     }
@@ -219,7 +219,9 @@ class EditPaymentViewModel @Inject constructor(
             is EditPaymentEvent.SaveButtonClick -> {
 
                 viewModelScope.launch(Dispatchers.IO) {
-                    val payment = _paymentData.value
+                    val payment = _paymentData.value.copy(
+                        amountNew = formatStringToDouble(_paymentState.value.amountInString)
+                    )
                     val selectedMs = _paymentState.value.selectedMoneySource
 
                     try {

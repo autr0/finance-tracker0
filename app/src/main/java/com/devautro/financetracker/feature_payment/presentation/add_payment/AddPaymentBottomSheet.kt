@@ -325,16 +325,3 @@ fun AddPaymentBottomSheet(
 
     }
 }
-
-
-//@OptIn(ExperimentalMaterial3Api::class)
-//@Preview(showBackground = true)
-//@Composable
-//fun BottomSheetContentPreview() {
-//    FinanceTrackerTheme {
-//        AddPaymentBottomSheet(
-//            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-//            navigateBack = {}
-//        )
-//    }
-//}

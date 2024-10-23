@@ -9,6 +9,7 @@ import com.devautro.financetracker.feature_moneySource.domain.use_case.MoneySour
 import com.devautro.financetracker.feature_payment.domain.model.InvalidPaymentException
 import com.devautro.financetracker.feature_payment.domain.model.Payment
 import com.devautro.financetracker.feature_payment.domain.use_case.PaymentUseCases
+import com.devautro.financetracker.feature_payment.util.formatStringToDouble
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -93,14 +94,14 @@ class AddPaymentViewModel @Inject constructor(
                 try {
                     _paymentData.update { payment ->
                         payment.copy(
-                            amountNew = event.amount.toDouble()
+                            amountNew = formatStringToDouble(event.amount)
                         )
                     }
                 } catch (e: NumberFormatException) {
                     viewModelScope.launch {
                         _sideEffects.emit(
                             AddPaymentSideEffects.ShowSnackbar(
-                                message = "Invalid amount input: ${e.message}"
+                                message = e.message ?: "Invalid amount input! :("
                             )
                         )
                     }

@@ -8,6 +8,7 @@ import com.devautro.financetracker.feature_moneySource.presentation.add_edit_mon
 import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.AddEditMoneySourceEvent
 import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.AddEditMoneySourceState
 import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.mappers.toMoneySource
+import com.devautro.financetracker.feature_payment.util.formatStringToDouble
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,7 +31,7 @@ class AddMoneySourceViewModel @Inject constructor(
     val sideEffects = _sideEffects.asSharedFlow()
 
     fun onEvent(event: AddEditMoneySourceEvent) {
-        when(event) {
+        when (event) {
             is AddEditMoneySourceEvent.IncludeInTotalToggled -> {
                 _addMoneySourceState.update { state ->
                     state.copy(
@@ -38,6 +39,7 @@ class AddMoneySourceViewModel @Inject constructor(
                     )
                 }
             }
+
             is AddEditMoneySourceEvent.NewColorPicked -> {
                 _addMoneySourceState.update { state ->
                     state.copy(
@@ -46,27 +48,27 @@ class AddMoneySourceViewModel @Inject constructor(
                     )
                 }
             }
-            is AddEditMoneySourceEvent.SourceAmountChanged -> {
 
-                if (event.amount.isNotBlank()) {
-                    try {
-                        event.amount.toDouble()
-                    } catch (e: NumberFormatException) {
-                        viewModelScope.launch {
-                            _sideEffects.emit(
-                                AddEditSourceSideEffects.Showsnackbar(
-                                    message = "Invalid amount input: ${e.message}"
-                                )
+            is AddEditMoneySourceEvent.SourceAmountChanged -> {
+                try {
+                    formatStringToDouble(event.amount)
+                } catch (e: NumberFormatException) {
+                    viewModelScope.launch {
+                        _sideEffects.emit(
+                            AddEditSourceSideEffects.Showsnackbar(
+                                message = e.message ?: "Invalid amount input! :("
                             )
-                        }
+                        )
                     }
                 }
+
                 _addMoneySourceState.update { state ->
                     state.copy(
                         amount = event.amount
                     )
                 }
             }
+
             is AddEditMoneySourceEvent.SourceNameChanged -> {
                 _addMoneySourceState.update { state ->
                     state.copy(
@@ -74,6 +76,7 @@ class AddMoneySourceViewModel @Inject constructor(
                     )
                 }
             }
+
             is AddEditMoneySourceEvent.ApproveButtonClicked -> {
                 viewModelScope.launch {
                     try {
@@ -83,13 +86,15 @@ class AddMoneySourceViewModel @Inject constructor(
                     } catch (e: Exception) {
                         _sideEffects.emit(
                             AddEditSourceSideEffects.Showsnackbar(
-                            message = e.message ?: "Couldn't add money source :("
-                        ))
+                                message = e.message ?: "Couldn't add money source :("
+                            )
+                        )
                         return@launch
                     }
                     _sideEffects.emit(AddEditSourceSideEffects.ApproveButtonClicked)
                 }
             }
+
             is AddEditMoneySourceEvent.CancelButtonClicked -> {
                 viewModelScope.launch {
                     _sideEffects.emit(AddEditSourceSideEffects.CancelButtonClicked)

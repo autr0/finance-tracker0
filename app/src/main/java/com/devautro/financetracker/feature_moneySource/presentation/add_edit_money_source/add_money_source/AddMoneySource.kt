@@ -58,6 +58,7 @@ import com.devautro.financetracker.core.util.Const
 import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.AddEditSourceSideEffects
 import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.AddEditMoneySourceEvent
 import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.components.IncludeInTotalRow
+import com.devautro.financetracker.feature_payment.util.isConvertibleToDouble
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -269,7 +270,8 @@ fun AddMoneySource(
                     keyboardController?.hide()
                     viewModel.onEvent(AddEditMoneySourceEvent.ApproveButtonClicked)
                 },
-                isApproveEnabled = state.amount.isNotBlank() && state.name.isNotBlank()
+                isApproveEnabled = state.amount.isNotBlank()
+                        && state.amount.isConvertibleToDouble() && state.name.isNotBlank()
             )
         }
     }
