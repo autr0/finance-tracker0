@@ -64,6 +64,7 @@ import com.devautro.financetracker.feature_payment.presentation.add_payment.AddP
 import com.devautro.financetracker.feature_payment.presentation.home_screen.HomeScreen
 import com.devautro.financetracker.feature_payment.presentation.payments_type_list.expenses.ExpensesList
 import com.devautro.financetracker.feature_payment.presentation.payments_type_list.incomes.IncomesList
+import com.devautro.financetracker.feature_settings.presentation.SettingsMain
 import com.devautro.financetracker.ui.theme.FinanceTrackerTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -369,7 +370,7 @@ fun NavigationScreen() {
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(text = "Settings")
+                    SettingsMain(bottomPadding = bottomNavPadding)
                 }
             }
         }

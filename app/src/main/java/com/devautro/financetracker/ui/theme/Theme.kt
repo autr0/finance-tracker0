@@ -47,12 +47,13 @@ fun FinanceTrackerTheme(
     content: @Composable () -> Unit
 ) {
 
-    val view = LocalView.current
-    SideEffect {
-        val window = (view.context as Activity).window
-        window.statusBarColor = DarkColorScheme.background.toArgb()
-        WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
-    }
+//    TODO: --> return this code in life action
+//    val view = LocalView.current
+//    SideEffect {
+//        val window = (view.context as Activity).window
+//        window.statusBarColor = DarkColorScheme.background.toArgb()
+//        WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+//    }
 
     MaterialTheme(
         colorScheme = DarkColorScheme,
