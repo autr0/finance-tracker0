@@ -2,9 +2,12 @@ package com.devautro.financetracker.feature_payment.presentation.home_screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.devautro.financetracker.R
+import com.devautro.financetracker.core.util.UiText
 import com.devautro.financetracker.feature_payment.domain.use_case.PaymentUseCases
 import com.devautro.financetracker.feature_payment.util.formatDoubleToString
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -56,92 +59,12 @@ class HomeScreenViewModel @Inject constructor(
                 when (event.tabIndex) {
                     0 -> {
                         // filter by week
-                        viewModelScope.launch {
-                            try {
-                                combine(
-                                    paymentUseCases.getIncomesUseCase(),
-                                    paymentUseCases.getExpensesUseCase()
-                                ) { incomes, expenses ->
-                                    val incomesSum = incomes
-                                        .filter {
-                                            val oneWeekAgo = LocalDate.now().minus(1, ChronoUnit.WEEKS)
-                                            val oneWeekAgoMillis = oneWeekAgo.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
-                                            it.date!! > oneWeekAgoMillis
-                                        }
-                                        .mapNotNull { it.amountNew }
-                                        .sum()
-                                    val expensesSum = expenses
-                                        .filter {
-                                            val oneWeekAgo = LocalDate.now().minus(1, ChronoUnit.WEEKS)
-                                            val oneWeekAgoMillis = oneWeekAgo.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
-                                            it.date!! > oneWeekAgoMillis
-                                        }
-                                        .mapNotNull { it.amountNew }.sum()
-                                    val budgetSum = incomesSum - expensesSum
-
-                                    _homeState.update { state ->
-                                        state.copy(
-                                            incomesSum = formatDoubleToString(incomesSum),
-                                            expensesSum = formatDoubleToString(expensesSum),
-                                            budgetSum = formatDoubleToString(budgetSum)
-                                        )
-                                    }
-                                }.collect(collector = {})
-
-
-                            } catch (e: Exception) {
-                                _sideEffects.emit(
-                                    HomeScreenSideEffects.ShowSnackbar(
-                                        message = e.message ?: "Problems with data retrieving :("
-                                    )
-                                )
-                            }
-                        }
+                        getFilteredDataByWeek()
                     }
 
                     1 -> {
                         // filter by month
-                        viewModelScope.launch {
-                            try {
-                                combine(
-                                    paymentUseCases.getIncomesUseCase(),
-                                    paymentUseCases.getExpensesUseCase()
-                                ) { incomes, expenses ->
-                                    val incomesSum = incomes
-                                        .filter {
-                                            val oneMonthAgo = LocalDate.now().minus(1, ChronoUnit.MONTHS)
-                                            val oneMonthAgoMillis = oneMonthAgo.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
-                                            it.date!! > oneMonthAgoMillis
-                                        }
-                                        .mapNotNull { it.amountNew }
-                                        .sum()
-                                    val expensesSum = expenses
-                                        .filter {
-                                            val oneMonthAgo = LocalDate.now().minus(1, ChronoUnit.MONTHS)
-                                            val oneMonthAgoMillis = oneMonthAgo.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
-                                            it.date!! > oneMonthAgoMillis
-                                        }
-                                        .mapNotNull { it.amountNew }.sum()
-                                    val budgetSum = incomesSum - expensesSum
-
-                                    _homeState.update { state ->
-                                        state.copy(
-                                            incomesSum = formatDoubleToString(incomesSum),
-                                            expensesSum = formatDoubleToString(expensesSum),
-                                            budgetSum = formatDoubleToString(budgetSum)
-                                        )
-                                    }
-                                }.collect(collector = {})
-
-
-                            } catch (e: Exception) {
-                                _sideEffects.emit(
-                                    HomeScreenSideEffects.ShowSnackbar(
-                                        message = e.message ?: "Problems with data retrieving :("
-                                    )
-                                )
-                            }
-                        }
+                        getFilteredDataByMonth()
                     }
 
                     2 -> {
@@ -152,8 +75,100 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
+    private fun getFilteredDataByWeek() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                combine(
+                    paymentUseCases.getIncomesUseCase(),
+                    paymentUseCases.getExpensesUseCase()
+                ) { incomes, expenses ->
+                    val incomesSum = incomes
+                        .filter {
+                            val oneWeekAgo = LocalDate.now().minus(1, ChronoUnit.WEEKS)
+                            val oneWeekAgoMillis = oneWeekAgo.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                            it.date!! > oneWeekAgoMillis
+                        }
+                        .mapNotNull { it.amountNew }
+                        .sum()
+                    val expensesSum = expenses
+                        .filter {
+                            val oneWeekAgo = LocalDate.now().minus(1, ChronoUnit.WEEKS)
+                            val oneWeekAgoMillis = oneWeekAgo.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                            it.date!! > oneWeekAgoMillis
+                        }
+                        .mapNotNull { it.amountNew }.sum()
+                    val budgetSum = incomesSum - expensesSum
+
+                    _homeState.update { state ->
+                        state.copy(
+                            incomesSum = formatDoubleToString(incomesSum),
+                            expensesSum = formatDoubleToString(expensesSum),
+                            budgetSum = formatDoubleToString(budgetSum)
+                        )
+                    }
+                }.collect(collector = {})
+
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+
+                _sideEffects.emit(
+                    HomeScreenSideEffects.ShowSnackbar(
+                        message = UiText.StringResource(R.string.error_get_payments_data)
+                    )
+                )
+            }
+        }
+    }
+
+    private fun getFilteredDataByMonth() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                combine(
+                    paymentUseCases.getIncomesUseCase(),
+                    paymentUseCases.getExpensesUseCase()
+                ) { incomes, expenses ->
+                    val incomesSum = incomes
+                        .filter {
+                            val oneMonthAgo = LocalDate.now().minus(1, ChronoUnit.MONTHS)
+                            val oneMonthAgoMillis = oneMonthAgo.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                            it.date!! > oneMonthAgoMillis
+                        }
+                        .mapNotNull { it.amountNew }
+                        .sum()
+                    val expensesSum = expenses
+                        .filter {
+                            val oneMonthAgo = LocalDate.now().minus(1, ChronoUnit.MONTHS)
+                            val oneMonthAgoMillis = oneMonthAgo.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                            it.date!! > oneMonthAgoMillis
+                        }
+                        .mapNotNull { it.amountNew }.sum()
+                    val budgetSum = incomesSum - expensesSum
+
+                    _homeState.update { state ->
+                        state.copy(
+                            incomesSum = formatDoubleToString(incomesSum),
+                            expensesSum = formatDoubleToString(expensesSum),
+                            budgetSum = formatDoubleToString(budgetSum)
+                        )
+                    }
+                }.collect(collector = {})
+
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+
+                _sideEffects.emit(
+                    HomeScreenSideEffects.ShowSnackbar(
+                        message = UiText.StringResource(R.string.error_get_payments_data)
+                    )
+                )
+            }
+        }
+    }
+
     private fun getAllData() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 combine(
                     paymentUseCases.getIncomesUseCase(),
@@ -175,9 +190,11 @@ class HomeScreenViewModel @Inject constructor(
 
 
             } catch (e: Exception) {
+                e.printStackTrace()
+
                 _sideEffects.emit(
                     HomeScreenSideEffects.ShowSnackbar(
-                        message = e.message ?: "Problems with data retrieving :("
+                        message = UiText.StringResource(R.string.error_get_payments_data)
                     )
                 )
             }

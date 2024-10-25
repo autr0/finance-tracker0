@@ -14,7 +14,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.devautro.financetracker.R
 import com.devautro.financetracker.core.presentation.util.AutoResizedText
 import com.devautro.financetracker.ui.theme.CancelButton
 
@@ -35,7 +37,7 @@ fun IncludeInTotalRow(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         AutoResizedText(
-            text = "Include in total balance",
+            text = stringResource(id = R.string.include_in_total_row),
             modifier = Modifier
                 .fillMaxWidth(0.8f),
         )

@@ -46,12 +46,15 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.devautro.financetracker.R
 import com.devautro.financetracker.core.presentation.components.DualOptionButtonsRow
 import com.devautro.financetracker.core.util.Const
 import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.AddEditMoneySourceEvent
@@ -80,13 +83,15 @@ fun EditMoneySource(
 
     val snackbarHostState = remember { SnackbarHostState() }
 
+    val context = LocalContext.current
+
     LaunchedEffect(key1 = true) {
         viewModel.sideEffects.collectLatest { effect ->
             when (effect) {
                 is AddEditSourceSideEffects.ApproveButtonClicked -> navigateBack()
                 is AddEditSourceSideEffects.CancelButtonClicked -> navigateBack()
                 is AddEditSourceSideEffects.Showsnackbar -> {
-                    snackbarHostState.showSnackbar(message = effect.message)
+                    snackbarHostState.showSnackbar(message = effect.message.asString(context))
                 }
             }
         }
@@ -98,7 +103,7 @@ fun EditMoneySource(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Edit Money Source",
+                        text = stringResource(id = R.string.edit_ms_title),
                         color = MaterialTheme.colorScheme.onBackground
                     )
                 },
@@ -156,7 +161,7 @@ fun EditMoneySource(
                         },
                         singleLine = true,
                         label = {
-                            Text(text = "Name of source")
+                            Text(text = stringResource(id = R.string.ms_name_label))
                         },
                         textStyle = MaterialTheme.typography.headlineMedium,
                         keyboardOptions = KeyboardOptions.Default.copy(
@@ -186,7 +191,7 @@ fun EditMoneySource(
                         },
                         singleLine = true,
                         label = {
-                            Text(text = "Amount of money")
+                            Text(text = stringResource(id = R.string.ms_amount_label))
                         },
                         textStyle = MaterialTheme.typography.headlineMedium,
                         keyboardOptions = KeyboardOptions.Default.copy(
@@ -253,8 +258,8 @@ fun EditMoneySource(
             }
             Spacer(modifier = Modifier.weight(0.5f))
             DualOptionButtonsRow(
-                dismissText = "Cancel",
-                approveText = "Save",
+                dismissText = stringResource(id = R.string.cancel),
+                approveText = stringResource(id = R.string.save),
                 onDismiss = {
                     keyboardController?.hide()
                     viewModel.onEvent(AddEditMoneySourceEvent.CancelButtonClicked)

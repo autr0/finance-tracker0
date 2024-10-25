@@ -40,9 +40,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.devautro.financetracker.R
 import com.devautro.financetracker.core.presentation.components.ActionIcon
 import com.devautro.financetracker.feature_payment.presentation.edit_payment.EditPaymentSheet
 import com.devautro.financetracker.feature_payment.presentation.payments_type_list.components.MonthTagsDrawerMenu
@@ -71,19 +74,27 @@ fun IncomesList(
     val snackbarHostState = remember { SnackbarHostState() }
     val lazyList = rememberLazyListState()
 
+    val context = LocalContext.current
+
     LaunchedEffect(key1 = true) {
         viewModel.sideEffects.collectLatest { effect ->
             when (effect) {
                 is PaymentsListSideEffects.NavigateBack -> navigateBack()
                 is PaymentsListSideEffects.ShowSnackBar -> {
-                    snackbarHostState.showSnackbar(
-                        message = effect.message,
-                        actionLabel = "Undo",
-                        duration = SnackbarDuration.Short
-                    ).let { res ->
-                        if (res == SnackbarResult.ActionPerformed) {
-                            viewModel.onEvent(PaymentsListEvent.RestorePayment)
+                    if (effect.snackbarButtonText != null) {
+                        snackbarHostState.showSnackbar(
+                            message = effect.message.asString(context),
+                            actionLabel = effect.snackbarButtonText.asString(context),
+                            duration = SnackbarDuration.Short
+                        ).let { res ->
+                            if (res == SnackbarResult.ActionPerformed) {
+                                viewModel.onEvent(PaymentsListEvent.RestorePayment)
+                            }
                         }
+                    } else {
+                        snackbarHostState.showSnackbar(
+                            message = effect.message.asString(context)
+                        )
                     }
                 }
             }
@@ -104,7 +115,7 @@ fun IncomesList(
                             modifier = Modifier.fillMaxWidth(),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text(text = "Incomes")
+                            Text(text = stringResource(id = R.string.incomes))
                         }
                     } else {
                         Row(
@@ -135,7 +146,7 @@ fun IncomesList(
                     }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "arrow back",
+                            contentDescription = stringResource(id = R.string.icon_arrow_back_description),
                             tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
@@ -148,7 +159,7 @@ fun IncomesList(
                             }) {
                                 Icon(
                                     imageVector = Icons.Filled.Clear,
-                                    contentDescription = "clear",
+                                    contentDescription = stringResource(id = R.string.icon_clear_filter_description),
                                     tint = MaterialTheme.colorScheme.onBackground
                                 )
                             }
@@ -158,7 +169,7 @@ fun IncomesList(
                         }) {
                             Icon(
                                 imageVector = Icons.Filled.FilterAlt,
-                                contentDescription = "filter",
+                                contentDescription = stringResource(id = R.string.icon_filter_payments_description),
                                 tint = MaterialTheme.colorScheme.onBackground
                             )
                         }
@@ -230,7 +241,7 @@ fun IncomesList(
                                 backgroundColor = DarkestColor,
                                 tint = MaterialTheme.colorScheme.onBackground,
                                 icon = Icons.Default.Edit,
-                                contentDescription = "edit payment",
+                                contentDescription = stringResource(id = R.string.icon_edit_payment_description),
                                 modifier = Modifier.clip(RoundedCornerShape(15.dp))
                             )
                             ActionIcon(
@@ -250,7 +261,7 @@ fun IncomesList(
                                 backgroundColor = MaterialTheme.colorScheme.errorContainer,
                                 tint = MaterialTheme.colorScheme.onBackground,
                                 icon = Icons.Default.Delete,
-                                contentDescription = "delete payment",
+                                contentDescription = stringResource(id = R.string.icon_delete_payment_description),
                                 modifier = Modifier.clip(RoundedCornerShape(15.dp))
                             )
                         },

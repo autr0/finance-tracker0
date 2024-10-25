@@ -1,21 +1,17 @@
 package com.devautro.financetracker.feature_payment.presentation.payments_type_list.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
 import com.devautro.financetracker.core.util.Const
 import com.devautro.financetracker.ui.theme.AccentBlue
-import com.devautro.financetracker.ui.theme.FinanceTrackerTheme
 import com.devautro.financetracker.ui.theme.OnBackgroundColor
 import com.devautro.financetracker.ui.theme.secondary
 
@@ -33,12 +29,12 @@ fun MonthTagsDrawerMenu(
             onDismissMenu()
         },
         scrollState = rememberScrollState(),
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth() // ???
             .fillMaxHeight(0.3f)
             .background(secondary)
     ) {
-        Const.months.forEach { month ->
+        Const.months.map { stringResource(id = it) }.forEach { month ->
 
             DropdownMenuItem(
                 onClick = {
@@ -51,25 +47,6 @@ fun MonthTagsDrawerMenu(
                         color = if (selectedItem == month) AccentBlue else OnBackgroundColor
                     )
                 }
-            )
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun MonthTagsDrawerMenuPreview() {
-    FinanceTrackerTheme {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-        ) {
-            MonthTagsDrawerMenu(
-                isExpanded = true,
-                onDismissMenu = { /*TODO*/ },
-                onSelectedItem = { },
-                selectedItem = ""
             )
         }
     }

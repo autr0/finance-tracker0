@@ -19,12 +19,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Payments
 import androidx.compose.material.icons.filled.PieChart
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.AccountBalanceWallet
-import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Payments
 import androidx.compose.material.icons.outlined.PieChartOutline
 import androidx.compose.material.icons.outlined.Settings
@@ -44,53 +42,51 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.devautro.financetracker.R
 import com.devautro.financetracker.core.presentation.TabBarItem
 import com.devautro.financetracker.core.presentation.components.BottomNavigationBar
 import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.add_money_source.AddMoneySource
 import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.edit_money_source.EditMoneySource
-import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.edit_money_source.EditMoneySourceViewModel
 import com.devautro.financetracker.feature_moneySource.presentation.money_sorces.MoneySources
 import com.devautro.financetracker.feature_payment.presentation.add_payment.AddPaymentBottomSheet
 import com.devautro.financetracker.feature_payment.presentation.home_screen.HomeScreen
 import com.devautro.financetracker.feature_payment.presentation.payments_type_list.expenses.ExpensesList
 import com.devautro.financetracker.feature_payment.presentation.payments_type_list.incomes.IncomesList
 import com.devautro.financetracker.feature_settings.presentation.SettingsMain
-import com.devautro.financetracker.ui.theme.FinanceTrackerTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavigationScreen() {
     val barItems = listOf(
         TabBarItem(
-            name = "Payments",
+            name = stringResource(id = R.string.payments_tab),
             route = Home,
             selectedIcon = Icons.Filled.Payments,
             unselectedIcon = Icons.Outlined.Payments
         ),
         TabBarItem(
-            name = "Charts",
+            name = stringResource(id = R.string.charts_tab),
             route = Charts,
             selectedIcon = Icons.Filled.PieChart,
             unselectedIcon = Icons.Outlined.PieChartOutline
         ),
         TabBarItem(
-            name = "Accounts",
+            name = stringResource(id = R.string.accounts_tab),
             route = Accounts,
             selectedIcon = Icons.Filled.AccountBalanceWallet,
             unselectedIcon = Icons.Outlined.AccountBalanceWallet
         ),
         TabBarItem(
-            name = "Settings",
+            name = stringResource(id = R.string.settings_tab),
             route = Settings,
             selectedIcon = Icons.Filled.Settings,
             unselectedIcon = Icons.Outlined.Settings
@@ -144,7 +140,7 @@ fun NavigationScreen() {
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
-                        contentDescription = "Add",
+                        contentDescription = stringResource(id = R.string.fab_description),
                         tint = MaterialTheme.colorScheme.onBackground
                     )
                 }
@@ -268,7 +264,7 @@ fun NavigationScreen() {
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(text = "Coming soon...")
+                    Text(text = stringResource(id = R.string.announce_text))
                 }
 
                 if (showBottomSheet.value) {

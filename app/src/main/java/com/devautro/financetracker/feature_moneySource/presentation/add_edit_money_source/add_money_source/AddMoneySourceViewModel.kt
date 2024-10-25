@@ -2,7 +2,8 @@ package com.devautro.financetracker.feature_moneySource.presentation.add_edit_mo
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.devautro.financetracker.feature_moneySource.domain.model.MoneySource
+import com.devautro.financetracker.R
+import com.devautro.financetracker.core.util.UiText
 import com.devautro.financetracker.feature_moneySource.domain.use_case.MoneySourceUseCases
 import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.AddEditSourceSideEffects
 import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.AddEditMoneySourceEvent
@@ -54,9 +55,11 @@ class AddMoneySourceViewModel @Inject constructor(
                     formatStringToDouble(event.amount)
                 } catch (e: NumberFormatException) {
                     viewModelScope.launch {
+                        e.printStackTrace()
+
                         _sideEffects.emit(
                             AddEditSourceSideEffects.Showsnackbar(
-                                message = e.message ?: "Invalid amount input! :("
+                                message = UiText.StringResource(id = R.string.error_input_amount)
                             )
                         )
                     }
@@ -84,9 +87,11 @@ class AddMoneySourceViewModel @Inject constructor(
                             moneySource = _addMoneySourceState.value.toMoneySource()
                         )
                     } catch (e: Exception) {
+                        e.printStackTrace()
+
                         _sideEffects.emit(
                             AddEditSourceSideEffects.Showsnackbar(
-                                message = e.message ?: "Couldn't add money source :("
+                                message = UiText.StringResource(id = R.string.error_add_ms)
                             )
                         )
                         return@launch

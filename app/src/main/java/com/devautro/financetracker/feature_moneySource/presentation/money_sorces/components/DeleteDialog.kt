@@ -6,12 +6,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
-import com.devautro.financetracker.ui.theme.FinanceTrackerTheme
+import com.devautro.financetracker.R
 
 @Composable
 fun DeleteDialog(
@@ -23,32 +23,32 @@ fun DeleteDialog(
         confirmButton = {
             TextButton(onClick = onConfirmClick) {
                 Text(
-                    text = "Delete",
+                    text = stringResource(id = R.string.delete_text),
                     color = MaterialTheme.colorScheme.errorContainer
                 )
             }
         },
         dismissButton = {
             TextButton(onClick = onDismissClick) {
-                Text(text = "Cancel", color = MaterialTheme.colorScheme.primary)
+                Text(text = stringResource(id = R.string.cancel), color = MaterialTheme.colorScheme.primary)
             }
         },
         title = {
-            Text(text = "Delete")
+            Text(text = stringResource(id = R.string.delete_text))
         },
         text = {
             Text(
                 buildAnnotatedString {
-                    append("Are you sure you want to ")
+                    append(stringResource(id = R.string.delete_dialog_text_1))
 
                     withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.errorContainer)) {
-                        append("delete ")
+                        append(stringResource(id = R.string.delete_dialog_text_2))
                     }
-                    append("this data? You will ")
+                    append(stringResource(id = R.string.delete_dialog_text_3))
                     withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append("not ")
+                        append(stringResource(id = R.string.delete_dialog_text_4))
                     }
-                    append("restore it anymore!")
+                    append(stringResource(id = R.string.delete_dialog_text_5))
                 }
             )
         },
@@ -56,15 +56,4 @@ fun DeleteDialog(
         textContentColor = Color.Black,
         titleContentColor = Color.Black
     )
-}
-
-@Preview
-@Composable
-fun DeleteDialogPreview() {
-    FinanceTrackerTheme {
-        DeleteDialog(
-            onConfirmClick = {},
-            onDismissClick = {}
-        )
-    }
 }

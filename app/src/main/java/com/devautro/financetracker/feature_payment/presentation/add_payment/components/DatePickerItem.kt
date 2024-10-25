@@ -8,9 +8,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
+import com.devautro.financetracker.R
 import com.devautro.financetracker.ui.theme.AccentBlue
-import com.devautro.financetracker.ui.theme.FinanceTrackerTheme
 import com.devautro.financetracker.ui.theme.OnBackgroundColor
 import com.devautro.financetracker.ui.theme.secondary
 
@@ -29,12 +29,12 @@ fun DatePickerItem(
                 onDateSelected(datePickerState.selectedDateMillis)
                 onDismiss()
             }) {
-                Text(text = "OK", color = AccentBlue)
+                Text(text = stringResource(id = R.string.ok), color = AccentBlue)
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(text = "Cancel", color = AccentBlue)
+                Text(text = stringResource(id = R.string.cancel), color = AccentBlue)
             }
         },
 
@@ -52,17 +52,6 @@ fun DatePickerItem(
                 dividerColor = AccentBlue,
 
             )
-        )
-    }
-}
-
-@Preview
-@Composable
-fun DatePickerPreview() {
-    FinanceTrackerTheme {
-        DatePickerItem(
-            onDateSelected = {},
-            onDismiss = {}
         )
     }
 }

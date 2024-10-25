@@ -16,8 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.devautro.financetracker.R
 import com.devautro.financetracker.core.util.Const
 
 @Composable
@@ -44,7 +46,7 @@ fun DropDownLanguageMenu(
                 },
                 text = {
                     Text(
-                        text = item.language,
+                        text = stringResource(id = item.language),
                         fontSize = 18.sp,
                         color = when {
                             item.imageResource == selectedItem -> MaterialTheme.colorScheme.secondary
@@ -54,10 +56,11 @@ fun DropDownLanguageMenu(
                 },
                 trailingIcon = {
                     Icon(
-                        modifier = Modifier.size(48.dp)
+                        modifier = Modifier
+                            .size(48.dp)
                             .clip(RoundedCornerShape(15.dp)),
                         painter = painterResource(id = item.imageResource),
-                        contentDescription = "${item.language} flag",
+                        contentDescription = stringResource(id = R.string.icon_flag_description),
                         tint = Color.Unspecified // for correct drawable color
                     )
                 }

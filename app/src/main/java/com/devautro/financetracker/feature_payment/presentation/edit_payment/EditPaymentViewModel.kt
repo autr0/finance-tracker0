@@ -2,6 +2,8 @@ package com.devautro.financetracker.feature_payment.presentation.edit_payment
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.devautro.financetracker.R
+import com.devautro.financetracker.core.util.UiText
 import com.devautro.financetracker.feature_moneySource.domain.model.MoneySource
 import com.devautro.financetracker.feature_moneySource.domain.use_case.MoneySourceUseCases
 import com.devautro.financetracker.feature_payment.domain.model.InvalidPaymentException
@@ -119,9 +121,11 @@ class EditPaymentViewModel @Inject constructor(
                     }
                 } catch (e: NumberFormatException) {
                     viewModelScope.launch {
+                        e.printStackTrace()
+
                         _sideEffects.emit(
                             EditPaymentSideEffects.ShowSnackbar(
-                                message = e.message ?: "Invalid amount input! :("
+                                message = UiText.StringResource(R.string.error_input_amount)
                             )
                         )
                     }
@@ -229,9 +233,11 @@ class EditPaymentViewModel @Inject constructor(
                             payment = payment.copy(sourceId = selectedMs?.id )
                         )
                     } catch (e: InvalidPaymentException) {
+                        e.printStackTrace()
+
                         _sideEffects.emit(
                             EditPaymentSideEffects.ShowSnackbar(
-                                message = e.message ?: "Couldn't update payment"
+                                message = UiText.StringResource(R.string.error_update_payment)
                             )
                         )
                         return@launch
@@ -251,9 +257,11 @@ class EditPaymentViewModel @Inject constructor(
                         )
 
                     } catch (e: Exception) {
+                        e.printStackTrace()
+
                         _sideEffects.emit(
                             EditPaymentSideEffects.ShowSnackbar(
-                                message = "Couldn't update money source amount value :("
+                                message = UiText.StringResource(R.string.error_ms_amount_update)
                             )
                         )
                         return@launch

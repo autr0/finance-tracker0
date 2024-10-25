@@ -23,16 +23,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.devautro.financetracker.R
 import com.devautro.financetracker.core.presentation.components.TopTabsSorting
 import com.devautro.financetracker.core.util.Const
 import com.devautro.financetracker.feature_payment.presentation.home_screen.components.InfoCard
 import com.devautro.financetracker.ui.theme.DarkGreenCircle
 import com.devautro.financetracker.ui.theme.DarkRedCircle
-import com.devautro.financetracker.ui.theme.FinanceTrackerTheme
 import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -46,17 +47,19 @@ fun HomeScreen(
     val state by viewModel.homeState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
+    val context = LocalContext.current
+
     LaunchedEffect(key1 = true) {
         viewModel.sideEffects.collectLatest { effect ->
             when(effect) {
-                is HomeScreenSideEffects.IncomesClick -> {
-                    navigateToIncomes()
-                }
-                is HomeScreenSideEffects.ExpensesClick -> {
-                    navigateToExpenses()
-                }
+                is HomeScreenSideEffects.IncomesClick -> navigateToIncomes()
+
+                is HomeScreenSideEffects.ExpensesClick -> navigateToExpenses()
+
                 is HomeScreenSideEffects.ShowSnackbar -> {
-                    snackbarHostState.showSnackbar(message = effect.message)
+                    snackbarHostState.showSnackbar(
+                        message = effect.message.asString(context)
+                    )
                 }
             }
         }
@@ -67,7 +70,7 @@ fun HomeScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Home",
+                        text = stringResource(id = R.string.home_topbar_text),
                         color = MaterialTheme.colorScheme.onBackground
                     )
                 },
@@ -89,7 +92,7 @@ fun HomeScreen(
                 .background(MaterialTheme.colorScheme.background),
         ) {
             TopTabsSorting(
-                tabItems = Const.filterTags,
+                tabItems = Const.filterTags.map { stringResource(id = it) },
                 selectedTabIndex = state.selectedTabIndex,
                 onSelectedTabClick = { tabIndex ->
                     viewModel.onEvent(HomeScreenEvent.TabClick(tabIndex = tabIndex))
@@ -104,7 +107,7 @@ fun HomeScreen(
                         modifier = Modifier.clickable {
                             viewModel.onEvent(HomeScreenEvent.IncomesClick)
                         },
-                        text = "Incomes",
+                        text = stringResource(id = R.string.incomes),
                         amount = state.incomesSum,
                         color = DarkGreenCircle,
                     )
@@ -114,14 +117,14 @@ fun HomeScreen(
                         modifier = Modifier.clickable {
                             viewModel.onEvent(HomeScreenEvent.ExpensesClick)
                         },
-                        text = "Expenses",
+                        text = stringResource(id = R.string.expenses),
                         amount = state.expensesSum,
                         color = DarkRedCircle
                     )
                 }
                 item {
                     InfoCard(
-                        text = "Budget",
+                        text = stringResource(id = R.string.budget),
                         amount = state.budgetSum,
                         color = MaterialTheme.colorScheme.background
                     )
@@ -129,19 +132,5 @@ fun HomeScreen(
             }
         }
 
-    }
-}
-
-@Preview(
-    showBackground = true
-)
-@Composable
-fun HomePreview() {
-    FinanceTrackerTheme {
-        HomeScreen(
-            bottomPadding = PaddingValues(0.dp),
-            navigateToIncomes = {},
-            navigateToExpenses = {}
-        )
     }
 }

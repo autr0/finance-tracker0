@@ -3,7 +3,9 @@ package com.devautro.financetracker.feature_moneySource.presentation.money_sorce
 import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.devautro.financetracker.R
 import com.devautro.financetracker.core.util.Const
+import com.devautro.financetracker.core.util.UiText
 import com.devautro.financetracker.feature_moneySource.domain.model.MoneySource
 import com.devautro.financetracker.feature_moneySource.domain.use_case.MoneySourceUseCases
 import com.devautro.financetracker.feature_moneySource.presentation.money_sorces.mappers.toMoneySource
@@ -53,9 +55,11 @@ class MoneySourcesViewModel @Inject constructor(
                         try {
                             moneySourceUseCases.deleteMoneySourceUseCase(deleteItem.toMoneySource())
                         } catch (e: Exception) {
+                            e.printStackTrace()
+
                             _sideEffects.emit(
                                 MoneySourcesSideEffects.ShowSnackbar(
-                                    message = e.message ?: "Couldn't delete Money Source :("
+                                    message = UiText.StringResource(R.string.error_delete_ms)
                                 )
                             )
                             return@launch

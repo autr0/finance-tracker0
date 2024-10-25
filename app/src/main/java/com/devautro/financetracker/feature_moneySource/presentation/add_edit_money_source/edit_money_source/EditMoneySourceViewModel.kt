@@ -4,7 +4,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.devautro.financetracker.R
 import com.devautro.financetracker.core.presentation.navigation.EditAccount
+import com.devautro.financetracker.core.util.UiText
 import com.devautro.financetracker.feature_moneySource.domain.use_case.MoneySourceUseCases
 import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.AddEditMoneySourceEvent
 import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.AddEditMoneySourceState
@@ -68,9 +70,11 @@ class EditMoneySourceViewModel @Inject constructor(
                     formatStringToDouble(event.amount)
                 } catch (e: NumberFormatException) {
                     viewModelScope.launch {
+                        e.printStackTrace()
+
                         _sideEffects.emit(
                             AddEditSourceSideEffects.Showsnackbar(
-                                message = e.message ?: "Invalid amount input! :("
+                                message = UiText.StringResource(id = R.string.error_input_amount)
                             )
                         )
                     }
@@ -98,9 +102,11 @@ class EditMoneySourceViewModel @Inject constructor(
                             moneySource = _editMoneySourceState.value.toMoneySource()
                         )
                     } catch (e: Exception) {
+                        e.printStackTrace()
+
                         _sideEffects.emit(
                             AddEditSourceSideEffects.Showsnackbar(
-                                message = e.message ?: "Couldn't update money source :("
+                                message = UiText.StringResource(R.string.error_update_ms)
                             )
                         )
                         return@launch
@@ -134,7 +140,7 @@ class EditMoneySourceViewModel @Inject constructor(
             } else {
                 _sideEffects.emit(
                     AddEditSourceSideEffects.Showsnackbar(
-                        message = "Error: couldn't find this item :("
+                        message = UiText.StringResource(R.string.error_ms_not_found)
                     )
                 )
             }

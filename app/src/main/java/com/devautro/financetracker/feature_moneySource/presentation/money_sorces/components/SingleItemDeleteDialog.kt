@@ -13,16 +13,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.devautro.financetracker.ui.theme.FinanceTrackerTheme
+import com.devautro.financetracker.R
 
 @Composable
 fun SingleItemDeleteDialog(
@@ -45,11 +45,11 @@ fun SingleItemDeleteDialog(
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 text = buildAnnotatedString {
-                    append("You can ")
+                    append(stringResource(id = R.string.one_time_dialog_1))
                     withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append("not ")
+                        append(stringResource(id = R.string.one_time_dialog_2))
                     }
-                    append("delete it!")
+                    append(stringResource(id = R.string.one_time_dialog_3))
                 },
                 textAlign = TextAlign.Center,
                 fontSize = 24.sp,
@@ -58,26 +58,16 @@ fun SingleItemDeleteDialog(
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 text = buildAnnotatedString {
-                    append("There is must be at least ")
+                    append(stringResource(id = R.string.one_time_dialog_4))
                     withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append("one ")
+                        append(stringResource(id = R.string.one_time_dialog_5))
                     }
-                    append("source of money")
+                    append(stringResource(id = R.string.one_time_dialog_6))
                 },
                 color = Color.Black,
                 textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.height(20.dp))
-        }
-    }
-}
-
-@Preview
-@Composable
-fun DialogPreview() {
-    FinanceTrackerTheme {
-        SingleItemDeleteDialog {
-
         }
     }
 }

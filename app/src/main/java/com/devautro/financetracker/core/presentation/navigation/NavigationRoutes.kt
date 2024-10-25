@@ -1,5 +1,6 @@
 package com.devautro.financetracker.core.presentation.navigation
 
+import androidx.annotation.ColorInt
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -24,7 +25,7 @@ object Accounts
 object AddAccount
 
 @Serializable
-data class EditAccount(val id: Long, val paleColor: Int)
+data class EditAccount(val id: Long, @ColorInt val paleColor: Int)
 
 @Serializable
 object Settings

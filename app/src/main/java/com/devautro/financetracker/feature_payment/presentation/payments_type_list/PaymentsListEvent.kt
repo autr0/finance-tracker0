@@ -10,7 +10,6 @@ sealed class PaymentsListEvent {
     data class ItemRevealed(val id: Long, val isRevealed: Boolean) : PaymentsListEvent()
     data class EditIconClick(val paymentItem: PaymentItem) : PaymentsListEvent()
     data class DeleteIconClick(val paymentItem: PaymentItem) : PaymentsListEvent()
-//    data class GetInitialPaymentType(val isExpense: Boolean) : PaymentsListEvent()
     data object RestorePayment : PaymentsListEvent()
     data object ShowEditBottomSheet : PaymentsListEvent()
 }

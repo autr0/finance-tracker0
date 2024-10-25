@@ -39,6 +39,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -46,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.devautro.financetracker.R
 import com.devautro.financetracker.core.presentation.components.ActionIcon
 import com.devautro.financetracker.feature_moneySource.presentation.money_sorces.components.DeleteDialog
 import com.devautro.financetracker.feature_moneySource.presentation.money_sorces.components.MoneySourceCard
@@ -70,6 +73,8 @@ fun MoneySources(
 
     val state by viewModel.moneySourcesState.collectAsStateWithLifecycle()
 
+    val context = LocalContext.current
+
     LaunchedEffect(key1 = true) {
         viewModel.sideEffects.collectLatest { effect ->
             when (effect) {
@@ -82,7 +87,9 @@ fun MoneySources(
                 }
 
                 is MoneySourcesSideEffects.ShowSnackbar -> {
-                    snackbarHostState.showSnackbar(message = effect.message)
+                    snackbarHostState.showSnackbar(
+                        message = effect.message.asString(context)
+                    )
                 }
             }
         }
@@ -94,7 +101,7 @@ fun MoneySources(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Money Sources",
+                        text = stringResource(id = R.string.money_sources),
                         color = MaterialTheme.colorScheme.onBackground
                     )
                 },
@@ -168,7 +175,12 @@ fun MoneySources(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(start = 20.dp),
-                        text = if (state.isIncludedOnlyFilter) "Total included:" else "Total money:",
+                        text = if (state.isIncludedOnlyFilter) {
+                            stringResource(id = R.string.total_included)
+                        }
+                        else {
+                            stringResource(id = R.string.total_money)
+                        },
                         textAlign = TextAlign.Start,
                         style = MaterialTheme.typography.headlineMedium
                     )
@@ -218,7 +230,7 @@ fun MoneySources(
                                 },
                                 backgroundColor = MaterialTheme.colorScheme.errorContainer,
                                 icon = Icons.Default.Delete,
-                                contentDescription = "delete moneySource",
+                                contentDescription = stringResource(id = R.string.delete_ms_description),
                                 tint = MaterialTheme.colorScheme.onBackground
                             )
                         },

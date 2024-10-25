@@ -8,14 +8,11 @@ data class MoneySourceItem(
     val name: String = "",
     val amount: Double = 0.0,
     val includeInTotal: Boolean = true,
-    val paleColor: Int = paleColors[currentIndex].toArgb(),
-    val accentColor: Int = accentColors[currentIndex].toArgb(),
+    val paleColor: Int = Const.sourcePaleColors[currentIndex].toArgb(),
+    val accentColor: Int = Const.sourceAccentColors[currentIndex].toArgb(),
     val isRevealed: Boolean = false
 ) {
     companion object {
-        val paleColors = Const.sourcePaleColors
-        val accentColors = Const.sourceAccentColors
-
-        val currentIndex = paleColors.indices.random()
+        val currentIndex = (0..3).random()
     }
 }

@@ -2,6 +2,8 @@ package com.devautro.financetracker.feature_payment.presentation.payments_type_l
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.devautro.financetracker.R
+import com.devautro.financetracker.core.util.UiText
 import com.devautro.financetracker.feature_moneySource.domain.use_case.MoneySourceUseCases
 import com.devautro.financetracker.feature_payment.domain.model.Payment
 import com.devautro.financetracker.feature_payment.domain.use_case.PaymentUseCases
@@ -115,12 +117,15 @@ class ExpensesViewModel @Inject constructor(
 
                         _sideEffects.emit(
                             PaymentsListSideEffects.ShowSnackBar(
-                                message = "Item deleted"
+                                message = UiText.StringResource(R.string.item_deleted),
+                                snackbarButtonText = UiText.StringResource(R.string.undo_snackbar)
                             )
                         )
                     } catch (e: Exception) {
+                        e.printStackTrace()
+
                         _sideEffects.emit(PaymentsListSideEffects.ShowSnackBar(
-                            message = "An error occurred: ${e.message}"
+                            message = UiText.StringResource(R.string.error_payment_delete)
                         ))
                     }
                 }
@@ -155,8 +160,10 @@ class ExpensesViewModel @Inject constructor(
                         )
                         recentlyDeletedPayment = null
                     } catch (e: Exception) {
+                        e.printStackTrace()
+
                         _sideEffects.emit(PaymentsListSideEffects.ShowSnackBar(
-                            message = "Couldn't restore payment due to: ${e.message}"
+                            message = UiText.StringResource(R.string.error_payment_restore)
                         ))
                     }
                 }

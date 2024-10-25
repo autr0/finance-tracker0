@@ -7,14 +7,14 @@ data class AddEditMoneySourceState(
     val id: Long? = null,
     val name: String = "",
     val amount: String = "",
-    val paleColor: Int = paleColors[currentIndex].toArgb(),
-    val accentColor: Int = accentColors[currentIndex].toArgb(),
+    val paleColor: Int = Const.sourcePaleColors[currentIndex].toArgb(),
+    val accentColor: Int = Const.sourceAccentColors[currentIndex].toArgb(),
     val includedInTotal: Boolean = true
 ) {
     companion object {
-        val paleColors = Const.sourcePaleColors
-        val accentColors = Const.sourceAccentColors
+//        val paleColors = Const.sourcePaleColors
+//        val accentColors = Const.sourceAccentColors
 
-        val currentIndex = paleColors.indices.random()
+        val currentIndex = (0..3).random()
     }
 }

@@ -43,11 +43,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.devautro.financetracker.R
 import com.devautro.financetracker.core.presentation.components.DualOptionButtonsRow
 import com.devautro.financetracker.core.util.Const
 import com.devautro.financetracker.feature_payment.presentation.add_payment.components.DatePickerItem
@@ -78,11 +81,15 @@ fun AddPaymentBottomSheet(
 
     val snackbarHostState = remember { SnackbarHostState() }
 
+    val context = LocalContext.current
+
     LaunchedEffect(key1 = true) {
         viewModel.sideEffects.collectLatest { effect ->
             when (effect) {
                 is AddPaymentSideEffects.ShowSnackbar -> {
-                    snackbarHostState.showSnackbar(message = effect.message)
+                    snackbarHostState.showSnackbar(
+                        message = effect.message.asString(context)
+                    )
                 }
                 is AddPaymentSideEffects.AddButton -> navigateBack() // navigateUp()
                 is AddPaymentSideEffects.CancelButton -> navigateBack() // navigateUp()
@@ -111,14 +118,14 @@ fun AddPaymentBottomSheet(
                 TextFieldComponent(
                     value = if (data.date == null) "" else convertMillisToDate(data.date!!),
                     onValueChange = { },
-                    labelText = "Date",
+                    labelText = stringResource(id = R.string.date_label),
                     trailingIcon = {
                         IconButton(onClick = {
                             viewModel.onEvent(AddPaymentEvent.DateIconClick)
                         }) {
                             Icon(
                                 imageVector = Icons.Default.CalendarMonth,
-                                contentDescription = "date",
+                                contentDescription = stringResource(id = R.string.date_icon_description),
                                 tint = AccentBlue
                             )
                         }
@@ -126,7 +133,7 @@ fun AddPaymentBottomSheet(
                     readOnly = true,
                     supportingText = {
                         Text(
-                            text = "Date should be picked!",
+                            text = stringResource(id = R.string.date_supporting_text),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.error
                         )
@@ -135,7 +142,7 @@ fun AddPaymentBottomSheet(
                 TextFieldComponent(
                     value = data.description,
                     onValueChange = { viewModel.onEvent(AddPaymentEvent.EnteredDescription(it)) },
-                    labelText = "Description",
+                    labelText = stringResource(id = R.string.description_label),
                     keyboardOptions = KeyboardOptions.Default.copy(
                         imeAction = ImeAction.Next
                     ),
@@ -147,7 +154,7 @@ fun AddPaymentBottomSheet(
                     ),
                     supportingText = {
                         Text(
-                            text = "Enter description!",
+                            text = stringResource(id = R.string.description_supporting_text),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.error
                         )
@@ -157,7 +164,7 @@ fun AddPaymentBottomSheet(
                     modifier = Modifier.focusRequester(amountFieldFocusRequester),
                     value = state.amountInString,
                     onValueChange = { viewModel.onEvent(AddPaymentEvent.EnteredAmount(it)) },
-                    labelText = "Amount",
+                    labelText = stringResource(id = R.string.amount_label),
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Number,
                         imeAction = ImeAction.Done
@@ -171,7 +178,7 @@ fun AddPaymentBottomSheet(
                     ),
                     supportingText = {
                         Text(
-                            text = "Enter amount!",
+                            text = stringResource(id = R.string.amount_supporting_text_0),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.error
                         )
@@ -180,28 +187,28 @@ fun AddPaymentBottomSheet(
 
                 TextFieldWithDropDownMenu(
                     modifier = Modifier.focusRequester(monthTagFieldFocusRequester),
-                    itemsList = Const.months,
+                    itemsList = Const.months.map { stringResource(id = it) },
                     isExpanded = state.isMonthTagMenuVisible,
                     onDismissMenu = { viewModel.onEvent(AddPaymentEvent.DismissMonthTagMenu) },
                     selectedItem = data.monthTag,
                     onSelectedItemChange = { selectedMonth ->
                         viewModel.onEvent(AddPaymentEvent.MonthTagSelected(selectedMonth))
                     },
-                    labelText = "Month Tag",
+                    labelText = stringResource(id = R.string.month_tag_label),
                     trailingIcon = {
                         IconButton(onClick = {
                             viewModel.onEvent(event = AddPaymentEvent.MonthTagIconClick)
                         }) {
                             Icon(
                                 imageVector = Icons.Default.Tag,
-                                contentDescription = "tag",
+                                contentDescription = stringResource(id = R.string.month_tag_icon_description),
                                 tint = AccentBlue
                             )
                         }
                     },
                     supportingText = {
                         Text(
-                            text = "Choose the month tag!",
+                            text = stringResource(id = R.string.month_tag_supporting_text),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.error
                         )
@@ -215,14 +222,14 @@ fun AddPaymentBottomSheet(
                     onSelectedItemChange = { newMoneySource ->
                         viewModel.onEvent(AddPaymentEvent.MoneySourceSelected(newMoneySource))
                     },
-                    labelText = "Money source",
+                    labelText = stringResource(id = R.string.ms_name_label),
                     trailingIcon = {
                         IconButton(onClick = {
                             viewModel.onEvent(AddPaymentEvent.MoneySourceIconClick)
                         }) {
                             Icon(
                                 imageVector = Icons.Default.AccountBalanceWallet,
-                                contentDescription = "moneySource",
+                                contentDescription = stringResource(id = R.string.ms_icon_def_description),
                                 tint = AccentBlue
                             )
                         }
@@ -233,14 +240,14 @@ fun AddPaymentBottomSheet(
                         }) {
                             Icon(
                                 imageVector = Icons.Filled.Clear,
-                                contentDescription = "moneySource clear",
+                                contentDescription = stringResource(id = R.string.ms_icon_clean_description),
                                 tint = AccentBlue
                             )
                         }
                     },
                     supportingText = {
                         Text(
-                            text = "You can add your Money Source here",
+                            text = stringResource(id = R.string.ms_supporting_text),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.secondary
                         )
@@ -278,7 +285,7 @@ fun AddPaymentBottomSheet(
                                     checkedColor = AccentBlue
                                 )
                             )
-                            Text(text = "Income")
+                            Text(text = stringResource(id = R.string.income_checkbox))
                         }
                         Row(
                             modifier = Modifier.weight(1f),
@@ -295,15 +302,15 @@ fun AddPaymentBottomSheet(
                                     checkedColor = AccentBlue
                                 )
                             )
-                            Text(text = "Expense")
+                            Text(text = stringResource(id = R.string.expense_checkbox))
                         }
                     }
                     Spacer(modifier = Modifier.height(20.dp))
                 }
                 Spacer(modifier = Modifier.weight(1f))
                 DualOptionButtonsRow(
-                    dismissText = "Cancel",
-                    approveText = "Add",
+                    dismissText = stringResource(id = R.string.cancel),
+                    approveText = stringResource(id = R.string.add),
                     onDismiss = { viewModel.onEvent(AddPaymentEvent.CancelButtonClick) },
                     onApprove = { viewModel.onEvent(AddPaymentEvent.AddButtonClick) },
                     isApproveEnabled = data.date != null && data.monthTag.isNotBlank() && data.amountNew != null &&

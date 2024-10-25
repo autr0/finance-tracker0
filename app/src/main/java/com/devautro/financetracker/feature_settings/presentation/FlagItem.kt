@@ -1,6 +1,9 @@
 package com.devautro.financetracker.feature_settings.presentation
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+
 data class FlagItem(
-    val language: String,
-    val imageResource: Int
+    @StringRes val language: Int,
+    @DrawableRes val imageResource: Int
 )

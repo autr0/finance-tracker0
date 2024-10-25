@@ -14,29 +14,29 @@ import com.devautro.financetracker.ui.theme.PurplePaleCard
 object Const {
 
     val months = listOf(
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December"
+        R.string.january,
+        R.string.february,
+        R.string.march,
+        R.string.april,
+        R.string.may,
+        R.string.june,
+        R.string.july,
+        R.string.august,
+        R.string.september,
+        R.string.october,
+        R.string.november,
+        R.string.december
     )
 
-    val filterTags = listOf("WEEK", "MONTH", "ALL")
+    val filterTags = listOf(R.string.week, R.string.month, R.string.all)
 
     val sourcePaleColors = listOf(OrangePaleCard, PinkPaleCard, GreenPaleCard, PurplePaleCard)
     val sourceAccentColors = listOf(OrangeAccentCard, PinkAccentCard, GreenAccentCard, PurpleAccentCard)
 
     val flags = listOf(
-        FlagItem(language = "English", imageResource = R.drawable.gb),
-        FlagItem(language = "Spanish", imageResource = R.drawable.es),
-        FlagItem(language = "Russian", imageResource = R.drawable.ru)
+        FlagItem(language = R.string.english, imageResource = R.drawable.gb),
+        FlagItem(language = R.string.spanish, imageResource = R.drawable.es),
+        FlagItem(language = R.string.russian, imageResource = R.drawable.ru)
     )
 
 }

@@ -1,11 +1,9 @@
 package com.devautro.financetracker.feature_payment.presentation.payments_type_list.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,11 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.devautro.financetracker.ui.theme.ExpenseRed
-import com.devautro.financetracker.ui.theme.FinanceTrackerTheme
-import com.devautro.financetracker.ui.theme.IncomeGreen
 
 @Composable
 fun PaymentTypeCard(
@@ -96,45 +90,6 @@ fun PaymentTypeCard(
                     style = MaterialTheme.typography.headlineLarge
                 )
             }
-        }
-    }
-}
-
-@Preview
-@Composable
-fun PaymentTypeCardPreview() {
-    FinanceTrackerTheme {
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)) {
-            PaymentTypeCard(
-                description = "Rest payment for soup and more long message",
-                amount = "211217.99 $",
-                monthTag = "October",
-                date = "12.10.24",
-                color = IncomeGreen
-            )
-            PaymentTypeCard(
-                description = "Rest payment for soup and more long message",
-                amount = "211217.99 $",
-                monthTag = "October",
-                date = "12.10.24",
-                color = ExpenseRed
-            )
-            PaymentTypeCard(
-                description = "Rest payment for soup and more long message",
-                amount = "217.99 $",
-                monthTag = "October",
-                date = "12.10.24",
-                color = IncomeGreen
-            )
-            PaymentTypeCard(
-                description = "Rest payment for soup and more long message",
-                amount = "211217.99 $",
-                monthTag = "October",
-                date = "12.10.24",
-                color = ExpenseRed
-            )
         }
     }
 }

@@ -34,9 +34,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.devautro.financetracker.R
-import com.devautro.financetracker.core.util.Const
 import com.devautro.financetracker.feature_settings.presentation.components.DropDownLanguageMenu
 import com.devautro.financetracker.feature_settings.presentation.components.SettingsItem
 import com.devautro.financetracker.ui.theme.CancelButton
@@ -72,7 +72,7 @@ fun SettingsMain(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Settings",
+                        text = stringResource(id = R.string.settings_header),
                         color = MaterialTheme.colorScheme.onBackground
                     )
                 },
@@ -95,21 +95,23 @@ fun SettingsMain(
             ) {
                 item {
                     Column(
-                        modifier = Modifier.height(IntrinsicSize.Min)
+                        modifier = Modifier
+                            .height(IntrinsicSize.Min)
                             .fillMaxWidth()
                     ) {
                         SettingsItem(
-                            headerText = "Language",
-                            bodyText = "Choose a language of the app",
+                            headerText = stringResource(id = R.string.language),
+                            bodyText = stringResource(id = R.string.choose_language_text),
                             icon = Icons.Filled.GTranslate,
-                            contentDescription = "language picker",
+                            contentDescription = stringResource(id = R.string.icon_language_description),
                             onCardClick = { showDropDownLanguageMenu.value = true },
                             switcher = {
                                 Icon(
-                                    modifier = Modifier.size(48.dp)
+                                    modifier = Modifier
+                                        .size(48.dp)
                                         .clip(RoundedCornerShape(15.dp)),
                                     painter = painterResource(id = selectedLanguageId.intValue),
-                                    contentDescription = "${selectedLanguageId.intValue} flag",
+                                    contentDescription = stringResource(id = R.string.icon_flag_description),
                                     tint = Color.Unspecified // for correct drawable color
                                 )
                             }
@@ -127,10 +129,10 @@ fun SettingsMain(
                 }
                 item {
                     SettingsItem(
-                        headerText = "Theme",
-                        bodyText = "Switch to dark theme",
+                        headerText = stringResource(id = R.string.theme),
+                        bodyText = stringResource(id = R.string.theme_body),
                         icon = Icons.Default.NightsStay,
-                        contentDescription = "theme picker",
+                        contentDescription = stringResource(id = R.string.icon_theme_description),
                         switcher = {
                             Switch(
                                 checked = true,
@@ -148,19 +150,19 @@ fun SettingsMain(
                 }
                 item {
                     SettingsItem(
-                        headerText = "Delete",
-                        bodyText = "Choose a data to delete",
+                        headerText = stringResource(id = R.string.delete_settings),
+                        bodyText = stringResource(id = R.string.delete_settings_body),
                         icon = Icons.Filled.Delete,
-                        contentDescription = "delete all",
+                        contentDescription = stringResource(id = R.string.icon_delete_all_description),
                         onCardClick = {  }
                     )
                 }
                 item {
                     SettingsItem(
-                        headerText = "Currency",
-                        bodyText = "Choose a currency of the app",
+                        headerText = stringResource(id = R.string.currency),
+                        bodyText = stringResource(id = R.string.currency_body),
                         icon = Icons.Filled.MonetizationOn,
-                        contentDescription = "currency picker",
+                        contentDescription = stringResource(id = R.string.icon_currency_description),
                         onCardClick = {  }
                     )
                 }

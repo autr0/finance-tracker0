@@ -3,7 +3,6 @@ package com.devautro.financetracker.feature_settings.presentation.components
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,14 +19,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.devautro.financetracker.R
 import com.devautro.financetracker.core.presentation.components.ActionIcon
 import com.devautro.financetracker.core.presentation.util.AutoResizedText
-import com.devautro.financetracker.feature_settings.presentation.SettingsMain
-import com.devautro.financetracker.ui.theme.FinanceTrackerTheme
 
 @Composable
 fun SettingsItem(
@@ -91,23 +84,5 @@ fun SettingsItem(
             }
             if (switcher != null) switcher()
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun SettingsItemPreview() {
-    FinanceTrackerTheme {
-//        Column(
-//            modifier = Modifier.fillMaxSize()
-//        ) {
-//            SettingsItem(
-//                headerText = "Language",
-//                bodyText = "Choose a language of the app",
-//                icon = Icons.Filled.GTranslate,
-//                contentDescription = "language picker"
-//            )
-//        }
-        SettingsMain(bottomPadding = PaddingValues(0.dp))
     }
 }
