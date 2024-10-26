@@ -20,7 +20,7 @@
     <string name="fab_description">botón agregar pago</string>
 
     <!-- Charts announce text -->
-    <string name="announce_text" >Pronto…</string>
+    <string name="announce_text">Pronto…</string>
 
     <!-- CONST -->
         <!-- months -->
@@ -63,16 +63,16 @@
     <!-- Money Sources -->
     <string name="delete_text">Eliminar</string>
     <string name="delete_dialog_text_1">¿Está seguro de que desea</string>
-    <string name="delete_dialog_text_2"> eliminar </string>
+    <string name="delete_dialog_text_2">\u0020eliminar\u0020</string>
     <string name="delete_dialog_text_3">estos datos? Ya</string>
-    <string name="delete_dialog_text_4"> no </string>
+    <string name="delete_dialog_text_4">\u0020no\u0020</string>
     <string name="delete_dialog_text_5">se restaurará!</string>
 
     <string name="one_time_dialog_1">¡</string>
-    <string name="one_time_dialog_2">No </string>
+    <string name="one_time_dialog_2">No\u0020</string>
     <string name="one_time_dialog_3">puede eliminarlo!</string>
     <string name="one_time_dialog_4">Debe haber al menos</string>
-    <string name="one_time_dialog_5"> una </string>
+    <string name="one_time_dialog_5">\u0020una\u0020</string>
     <string name="one_time_dialog_6">fuente de dinero</string>
 
     <string name="money_sources">Fuentes de Dinero</string>

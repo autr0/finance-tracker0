@@ -13,20 +13,24 @@ import com.devautro.financetracker.ui.theme.PurplePaleCard
 
 object Const {
 
-    val months = listOf(
-        R.string.january,
-        R.string.february,
-        R.string.march,
-        R.string.april,
-        R.string.may,
-        R.string.june,
-        R.string.july,
-        R.string.august,
-        R.string.september,
-        R.string.october,
-        R.string.november,
-        R.string.december
+    val months = mapOf(
+        R.string.january to "January",
+        R.string.february to "February",
+        R.string.march to "March",
+        R.string.april to "April",
+        R.string.may to "May",
+        R.string.june to "June",
+        R.string.july to "July",
+        R.string.august to "August",
+        R.string.september to "September",
+        R.string.october to "October",
+        R.string.november to "November",
+        R.string.december to "December"
     )
+
+    fun getResourceIdByEnglishMonth(monthTag: String): Int? {
+        return months.entries.find { it.value == monthTag }?.key
+    }
 
     val filterTags = listOf(R.string.week, R.string.month, R.string.all)
 
@@ -34,9 +38,9 @@ object Const {
     val sourceAccentColors = listOf(OrangeAccentCard, PinkAccentCard, GreenAccentCard, PurpleAccentCard)
 
     val flags = listOf(
-        FlagItem(language = R.string.english, imageResource = R.drawable.gb),
-        FlagItem(language = R.string.spanish, imageResource = R.drawable.es),
-        FlagItem(language = R.string.russian, imageResource = R.drawable.ru)
+        FlagItem(languageName = R.string.english, imageResource = R.drawable.gb, localeLanguage = "en"),
+        FlagItem(languageName = R.string.spanish, imageResource = R.drawable.es, localeLanguage = "es"),
+        FlagItem(languageName = R.string.russian, imageResource = R.drawable.ru, localeLanguage = "ru")
     )
 
 }

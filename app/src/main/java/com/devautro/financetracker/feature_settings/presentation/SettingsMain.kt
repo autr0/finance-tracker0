@@ -27,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,6 +37,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.devautro.financetracker.R
 import com.devautro.financetracker.feature_settings.presentation.components.DropDownLanguageMenu
 import com.devautro.financetracker.feature_settings.presentation.components.SettingsItem
@@ -44,17 +47,20 @@ import com.devautro.financetracker.ui.theme.CancelButton
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsMain(
+    viewModel: SettingsViewModel = hiltViewModel(),
     bottomPadding: PaddingValues
 ) {
 
+    val state by viewModel.settingsState.collectAsStateWithLifecycle()
+
     val snackbarHostState = remember { SnackbarHostState() }
 
-    val showDropDownLanguageMenu = remember {
-        mutableStateOf(false)
-    }
-    val selectedLanguageId = remember {
-        mutableIntStateOf(R.drawable.gb)
-    }
+//    val showDropDownLanguageMenu = remember {
+//        mutableStateOf(false)
+//    }
+//    val selectedLanguageId = remember {
+//        mutableIntStateOf(R.drawable.gb)
+//    }
 
     val isDarkThemeChosen = remember {
         mutableStateOf(false)
@@ -104,13 +110,15 @@ fun SettingsMain(
                             bodyText = stringResource(id = R.string.choose_language_text),
                             icon = Icons.Filled.GTranslate,
                             contentDescription = stringResource(id = R.string.icon_language_description),
-                            onCardClick = { showDropDownLanguageMenu.value = true },
+                            onCardClick = {
+                                viewModel.onEvent(SettingsEvent.ShowLanguageMenu)
+                            },
                             switcher = {
                                 Icon(
                                     modifier = Modifier
                                         .size(48.dp)
                                         .clip(RoundedCornerShape(15.dp)),
-                                    painter = painterResource(id = selectedLanguageId.intValue),
+                                    painter = painterResource(id = state.selectedLanguageImageId),
                                     contentDescription = stringResource(id = R.string.icon_flag_description),
                                     tint = Color.Unspecified // for correct drawable color
                                 )
@@ -118,11 +126,14 @@ fun SettingsMain(
                         )
                         DropDownLanguageMenu(
                             modifier = Modifier.fillMaxWidth(),
-                            isExpanded = showDropDownLanguageMenu.value,
-                            onDismissMenu = { showDropDownLanguageMenu.value = false },
-                            selectedItem = selectedLanguageId.intValue,
-                            onSelectedItemIdChange = { flagItemId ->
-                                selectedLanguageId.intValue = flagItemId
+                            isExpanded = state.isLanguageMenuShown,
+                            onDismissMenu = { viewModel.onEvent(SettingsEvent.DismissLanguageMenu) },
+                            selectedItem = state.selectedLanguageImageId,
+                            onSelectedItemIdChange = { flagItemId, locale ->
+                                viewModel.onEvent(SettingsEvent.NewLanguageSelected(
+                                    flagImage = flagItemId,
+                                    locale = locale
+                                ))
                             }
                         )
                     }

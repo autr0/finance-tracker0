@@ -23,6 +23,8 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        resourceConfigurations.addAll(arrayOf("en", "es", "ru"))
     }
 
     buildTypes {
@@ -95,4 +97,7 @@ dependencies {
 
     //Serialization
     implementation(libs.kotlinx.serialization.json)
+
+    // AppCompat
+    implementation(libs.appcompat)
 }

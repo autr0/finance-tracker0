@@ -48,6 +48,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.devautro.financetracker.R
 import com.devautro.financetracker.core.presentation.components.ActionIcon
 import com.devautro.financetracker.core.presentation.components.SwipeableItem
+import com.devautro.financetracker.core.util.Const
 import com.devautro.financetracker.feature_payment.presentation.edit_payment.EditPaymentSheet
 import com.devautro.financetracker.feature_payment.presentation.payments_type_list.PaymentsListEvent
 import com.devautro.financetracker.feature_payment.presentation.payments_type_list.PaymentsListSideEffects
@@ -282,10 +283,13 @@ fun ExpensesList(
                             )
                         }
                     ) {
+                        val resId = Const.getResourceIdByEnglishMonth(payment.monthTag)
+                        val monthTag = resId?.let { stringResource(id = it) } ?: payment.monthTag
+
                         PaymentTypeCard(
                             description = payment.description,
                             amount = formatDoubleToString(payment.amountNew),
-                            monthTag = payment.monthTag,
+                            monthTag = monthTag,
                             date = convertMillisToDate(payment.date),
                             color = ExpenseRed
                         )

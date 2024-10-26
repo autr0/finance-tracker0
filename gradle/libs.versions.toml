@@ -21,8 +21,8 @@ hilt = "2.49"
 kspPlugin = "1.9.0-1.0.12"
 
 room = "2.6.1"
-
 serialization = "1.6.3"
+appcompat = "1.7.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -60,8 +60,11 @@ ksp-room = { group = "androidx.room", name = "room-compiler", version.ref = "roo
 # room support
 room-support = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 
-# fro type-safe navigation
+# for type-safe navigation
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization"}
+
+# for change language in app
+appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

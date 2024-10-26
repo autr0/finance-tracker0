@@ -15,12 +15,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.devautro.financetracker.R
 import com.devautro.financetracker.core.util.Const
+import com.devautro.financetracker.feature_settings.presentation.util.onClickRefreshActivity
 
 @Composable
 fun DropDownLanguageMenu(
@@ -28,8 +30,10 @@ fun DropDownLanguageMenu(
     isExpanded: Boolean,
     onDismissMenu: () -> Unit,
     selectedItem: Int,
-    onSelectedItemIdChange: (Int) -> Unit,
+    onSelectedItemIdChange: (Int, String) -> Unit,
 ) {
+    val context = LocalContext.current
+
     DropdownMenu(
         expanded = isExpanded,
         onDismissRequest = { onDismissMenu() },
@@ -42,11 +46,12 @@ fun DropDownLanguageMenu(
             DropdownMenuItem(
                 onClick = {
                     onDismissMenu()
-                    onSelectedItemIdChange(item.imageResource)
+                    onSelectedItemIdChange(item.imageResource, item.localeLanguage)
+                    onClickRefreshActivity(context = context, locale = item.localeLanguage)
                 },
                 text = {
                     Text(
-                        text = stringResource(id = item.language),
+                        text = stringResource(id = item.languageName),
                         fontSize = 18.sp,
                         color = when {
                             item.imageResource == selectedItem -> MaterialTheme.colorScheme.secondary

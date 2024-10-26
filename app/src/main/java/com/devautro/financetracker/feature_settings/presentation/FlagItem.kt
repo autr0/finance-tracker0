@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 
 data class FlagItem(
-    @StringRes val language: Int,
-    @DrawableRes val imageResource: Int
+    @StringRes val languageName: Int,
+    @DrawableRes val imageResource: Int,
+    val localeLanguage: String
 )

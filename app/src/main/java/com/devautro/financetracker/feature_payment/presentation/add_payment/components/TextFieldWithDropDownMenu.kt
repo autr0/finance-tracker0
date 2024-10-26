@@ -24,9 +24,11 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
+import com.devautro.financetracker.core.util.Const
 import com.devautro.financetracker.feature_moneySource.domain.model.MoneySource
 import com.devautro.financetracker.ui.theme.AccentBlue
 import com.devautro.financetracker.ui.theme.BackgroundColor
@@ -35,7 +37,7 @@ import com.devautro.financetracker.ui.theme.OnBackgroundColor
 @Composable
 fun TextFieldWithDropDownMenu(
     modifier: Modifier = Modifier,
-    itemsList: List<String>,
+//    itemsList: List<String>,
     isExpanded: Boolean,
     onDismissMenu: () -> Unit,
     selectedItem: String?,
@@ -69,18 +71,18 @@ fun TextFieldWithDropDownMenu(
                 .fillMaxHeight(0.3f)
                 .background(BackgroundColor)
         ) {
-            itemsList.forEach { item ->
+            Const.months.forEach { month ->
                 DropdownMenuItem(
                     onClick = {
                         onDismissMenu()
-                        onSelectedItemChange(item) // we have to pass a MoneySource, not id :(
+                        onSelectedItemChange(month.value) // we have to pass a MoneySource, not id :(
                     },
                     text = {
                         Text(
-                            text = item,
+                            text = stringResource(id = month.key),
                             fontSize = 18.sp,
                             color = when {
-                                item == selectedItem -> AccentBlue
+                                month.value == selectedItem -> AccentBlue
                                 else -> OnBackgroundColor
                             }
                         )

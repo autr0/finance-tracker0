@@ -30,24 +30,25 @@ fun MonthTagsDrawerMenu(
         },
         scrollState = rememberScrollState(),
         modifier = modifier
-            .fillMaxWidth() // ???
+            .fillMaxWidth()
             .fillMaxHeight(0.3f)
             .background(secondary)
     ) {
-        Const.months.map { stringResource(id = it) }.forEach { month ->
+        Const.months.forEach { month ->
 
             DropdownMenuItem(
                 onClick = {
                     onDismissMenu()
-                    onSelectedItem(month)
+                    onSelectedItem(month.value) // pass the en month string
                 },
                 text = {
                     Text(
-                        text = month,
-                        color = if (selectedItem == month) AccentBlue else OnBackgroundColor
+                        text = stringResource(id = month.key), // display month in corresponding language
+                        color = if (selectedItem == month.value) AccentBlue else OnBackgroundColor
                     )
                 }
             )
         }
+
     }
 }

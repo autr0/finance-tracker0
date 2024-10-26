@@ -187,12 +187,15 @@ fun EditPaymentSheet(
                     }
                 )
 
+                val resId = Const.getResourceIdByEnglishMonth(data.monthTag)
+                val monthTag = resId?.let { stringResource(id = it) } ?: data.monthTag
+
                 TextFieldWithDropDownMenu(
                     modifier = Modifier.focusRequester(monthTagFieldFocusRequester),
-                    itemsList = Const.months.map { stringResource(id = it) },
+//                    itemsList = Const.months.map { stringResource(id = it) },
                     isExpanded = state.isMonthTagMenuVisible,
                     onDismissMenu = { viewModel.onEvent(EditPaymentEvent.DismissMonthTagMenu) },
-                    selectedItem = data.monthTag,
+                    selectedItem = monthTag,
                     onSelectedItemChange = { selectedMonth ->
                         viewModel.onEvent(EditPaymentEvent.MonthTagSelected(selectedMonth))
                     },

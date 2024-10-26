@@ -20,7 +20,7 @@
     <string name="fab_description">Кнопка добавить платеж</string>
 
     <!-- Charts announce text -->
-    <string name="announce_text" >Скоро…</string>
+    <string name="announce_text">Скоро…</string>
 
     <!-- CONST -->
         <!-- months -->
@@ -63,9 +63,9 @@
     <!-- Money Sources -->
     <string name="delete_text">Удалить</string>
     <string name="delete_dialog_text_1">Вы уверенны, что хотите</string>
-    <string name="delete_dialog_text_2"> удалить </string>
+    <string name="delete_dialog_text_2">\u0020удалить\u0020</string>
     <string name="delete_dialog_text_3">эти данные? Вы</string>
-    <string name="delete_dialog_text_4"> не </string>
+    <string name="delete_dialog_text_4">\u0020не\u0020</string>
     <string name="delete_dialog_text_5">сможете их восстановить!</string>
 
     <string name="one_time_dialog_1">Вы</string>

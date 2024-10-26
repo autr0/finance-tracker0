@@ -52,6 +52,7 @@ import com.devautro.financetracker.feature_payment.presentation.payments_type_li
 import com.devautro.financetracker.feature_payment.presentation.payments_type_list.components.PaymentTypeCard
 import com.devautro.financetracker.feature_payment.presentation.payments_type_list.components.SelectedMonthContainer
 import com.devautro.financetracker.core.presentation.components.SwipeableItem
+import com.devautro.financetracker.core.util.Const
 import com.devautro.financetracker.feature_payment.presentation.payments_type_list.PaymentsListEvent
 import com.devautro.financetracker.feature_payment.presentation.payments_type_list.PaymentsListSideEffects
 import com.devautro.financetracker.feature_payment.presentation.payments_type_list.components.TotalAmountCard
@@ -282,10 +283,13 @@ fun IncomesList(
                             )
                         }
                     ) {
+                        val resId = Const.getResourceIdByEnglishMonth(payment.monthTag)
+                        val monthTag = resId?.let { stringResource(id = it) } ?: payment.monthTag
+
                         PaymentTypeCard(
                             description = payment.description,
                             amount = formatDoubleToString(payment.amountNew),
-                            monthTag = payment.monthTag,
+                            monthTag = monthTag,
                             date = convertMillisToDate(payment.date),
                             color = IncomeGreen
                         )

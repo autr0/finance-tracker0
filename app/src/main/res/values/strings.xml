@@ -17,7 +17,7 @@
     <string name="fab_description">FAB Add payment</string>
 
 <!-- Charts announce text -->
-    <string name="announce_text" >Coming soon…</string>
+    <string name="announce_text">Coming soon…</string>
 
 <!-- CONST -->
     <!-- months -->
@@ -60,16 +60,16 @@
 <!-- Money Sources -->
     <string name="delete_text">Delete</string>
     <string name="delete_dialog_text_1">Are you sure you want to</string>
-    <string name="delete_dialog_text_2"> delete </string>
+    <string name="delete_dialog_text_2">\u0020delete\u0020</string>
     <string name="delete_dialog_text_3">this data? You will</string>
-    <string name="delete_dialog_text_4"> no </string>
+    <string name="delete_dialog_text_4">\u0020no\u0020</string>
     <string name="delete_dialog_text_5">longer restore it!</string>
 
     <string name="one_time_dialog_1">You can</string>
     <string name="one_time_dialog_2"> not </string>
     <string name="one_time_dialog_3">delete it!</string>
     <string name="one_time_dialog_4">There must be at least</string>
-    <string name="one_time_dialog_5"> one </string>
+    <string name="one_time_dialog_5">\u0020one\u0020</string>
     <string name="one_time_dialog_6">source of money</string>
 
     <string name="money_sources">Money Sources</string>
