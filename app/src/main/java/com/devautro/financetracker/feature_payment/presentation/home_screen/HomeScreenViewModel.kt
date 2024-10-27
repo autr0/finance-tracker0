@@ -82,21 +82,21 @@ class HomeScreenViewModel @Inject constructor(
                     paymentUseCases.getIncomesUseCase(),
                     paymentUseCases.getExpensesUseCase()
                 ) { incomes, expenses ->
-                    val incomesSum = incomes
-                        .filter {
-                            val oneWeekAgo = LocalDate.now().minus(1, ChronoUnit.WEEKS)
-                            val oneWeekAgoMillis = oneWeekAgo.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
-                            it.date!! > oneWeekAgoMillis
-                        }
-                        .mapNotNull { it.amountNew }
-                        .sum()
-                    val expensesSum = expenses
-                        .filter {
-                            val oneWeekAgo = LocalDate.now().minus(1, ChronoUnit.WEEKS)
-                            val oneWeekAgoMillis = oneWeekAgo.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
-                            it.date!! > oneWeekAgoMillis
-                        }
-                        .mapNotNull { it.amountNew }.sum()
+                    val incomesSum = incomes.filter {
+                        val oneWeekAgo = LocalDate.now().minus(1, ChronoUnit.WEEKS)
+                        val oneWeekAgoMillis = oneWeekAgo.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                        it.date!! > oneWeekAgoMillis
+                    }.mapNotNull { it.amountNew }.sum()
+
+                    val expensesSum = expenses.filter {
+                        val oneWeekAgo = LocalDate.now().minus(1, ChronoUnit.WEEKS)
+                        val oneWeekAgoMillis = oneWeekAgo.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                        it.date!! > oneWeekAgoMillis
+                    }.mapNotNull { it.amountNew }.sum()
+
+                    incomesSum to expensesSum
+
+                }.collect { (incomesSum, expensesSum) ->
                     val budgetSum = incomesSum - expensesSum
 
                     _homeState.update { state ->
@@ -106,17 +106,10 @@ class HomeScreenViewModel @Inject constructor(
                             budgetSum = formatDoubleToString(budgetSum)
                         )
                     }
-                }.collect(collector = {})
 
-
+                }
             } catch (e: Exception) {
-                e.printStackTrace()
-
-                _sideEffects.emit(
-                    HomeScreenSideEffects.ShowSnackbar(
-                        message = UiText.StringResource(R.string.error_get_payments_data)
-                    )
-                )
+                handleError(e)
             }
         }
     }
@@ -128,21 +121,21 @@ class HomeScreenViewModel @Inject constructor(
                     paymentUseCases.getIncomesUseCase(),
                     paymentUseCases.getExpensesUseCase()
                 ) { incomes, expenses ->
-                    val incomesSum = incomes
-                        .filter {
-                            val oneMonthAgo = LocalDate.now().minus(1, ChronoUnit.MONTHS)
-                            val oneMonthAgoMillis = oneMonthAgo.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
-                            it.date!! > oneMonthAgoMillis
-                        }
-                        .mapNotNull { it.amountNew }
-                        .sum()
-                    val expensesSum = expenses
-                        .filter {
-                            val oneMonthAgo = LocalDate.now().minus(1, ChronoUnit.MONTHS)
-                            val oneMonthAgoMillis = oneMonthAgo.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
-                            it.date!! > oneMonthAgoMillis
-                        }
-                        .mapNotNull { it.amountNew }.sum()
+                    val incomesSum = incomes.filter {
+                        val oneMonthAgo = LocalDate.now().minus(1, ChronoUnit.MONTHS)
+                        val oneMonthAgoMillis = oneMonthAgo.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                        it.date!! > oneMonthAgoMillis
+                    }.mapNotNull { it.amountNew }.sum()
+
+                    val expensesSum = expenses.filter {
+                        val oneMonthAgo = LocalDate.now().minus(1, ChronoUnit.MONTHS)
+                        val oneMonthAgoMillis = oneMonthAgo.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                        it.date!! > oneMonthAgoMillis
+                    }.mapNotNull { it.amountNew }.sum()
+
+                    incomesSum to expensesSum
+
+                }.collect { (incomesSum, expensesSum) ->
                     val budgetSum = incomesSum - expensesSum
 
                     _homeState.update { state ->
@@ -152,17 +145,10 @@ class HomeScreenViewModel @Inject constructor(
                             budgetSum = formatDoubleToString(budgetSum)
                         )
                     }
-                }.collect(collector = {})
 
-
+                }
             } catch (e: Exception) {
-                e.printStackTrace()
-
-                _sideEffects.emit(
-                    HomeScreenSideEffects.ShowSnackbar(
-                        message = UiText.StringResource(R.string.error_get_payments_data)
-                    )
-                )
+                handleError(e)
             }
         }
     }
@@ -174,9 +160,12 @@ class HomeScreenViewModel @Inject constructor(
                     paymentUseCases.getIncomesUseCase(),
                     paymentUseCases.getExpensesUseCase()
                 ) { incomes, expenses ->
-                    val incomesSum = incomes.mapNotNull { it.amountNew }
-                        .sum()
+                    val incomesSum = incomes.mapNotNull { it.amountNew }.sum()
                     val expensesSum = expenses.mapNotNull { it.amountNew }.sum()
+
+                    incomesSum to expensesSum
+
+                }.collect { (incomesSum, expensesSum) ->
                     val budgetSum = incomesSum - expensesSum
 
                     _homeState.update { state ->
@@ -186,19 +175,22 @@ class HomeScreenViewModel @Inject constructor(
                             budgetSum = formatDoubleToString(budgetSum)
                         )
                     }
-                }.collect(collector = {})
 
-
+                }
             } catch (e: Exception) {
-                e.printStackTrace()
-
-                _sideEffects.emit(
-                    HomeScreenSideEffects.ShowSnackbar(
-                        message = UiText.StringResource(R.string.error_get_payments_data)
-                    )
-                )
+                handleError(e)
             }
         }
+    }
+
+    private suspend fun handleError(e: Exception) {
+        e.printStackTrace()
+
+        _sideEffects.emit(
+            HomeScreenSideEffects.ShowSnackbar(
+                message = UiText.StringResource(R.string.error_get_payments_data)
+            )
+        )
     }
 
 }

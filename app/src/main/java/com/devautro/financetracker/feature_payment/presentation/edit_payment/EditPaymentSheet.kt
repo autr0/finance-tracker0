@@ -52,7 +52,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.devautro.financetracker.R
 import com.devautro.financetracker.core.presentation.components.DualOptionButtonsRow
-import com.devautro.financetracker.core.util.Const
 import com.devautro.financetracker.feature_payment.domain.model.Payment
 import com.devautro.financetracker.feature_payment.presentation.add_payment.components.DatePickerItem
 import com.devautro.financetracker.feature_payment.presentation.add_payment.components.TextFieldComponent
@@ -187,15 +186,11 @@ fun EditPaymentSheet(
                     }
                 )
 
-                val resId = Const.getResourceIdByEnglishMonth(data.monthTag)
-                val monthTag = resId?.let { stringResource(id = it) } ?: data.monthTag
-
                 TextFieldWithDropDownMenu(
                     modifier = Modifier.focusRequester(monthTagFieldFocusRequester),
-//                    itemsList = Const.months.map { stringResource(id = it) },
                     isExpanded = state.isMonthTagMenuVisible,
                     onDismissMenu = { viewModel.onEvent(EditPaymentEvent.DismissMonthTagMenu) },
-                    selectedItem = monthTag,
+                    selectedItem = data.monthTag,
                     onSelectedItemChange = { selectedMonth ->
                         viewModel.onEvent(EditPaymentEvent.MonthTagSelected(selectedMonth))
                     },

@@ -14,4 +14,6 @@ interface MoneySourceRepository {
     suspend fun updateMoneySource(moneySource: MoneySource)
 
     suspend fun deleteMoneySource(moneySource: MoneySource)
+
+    suspend fun deleteAllMoneySources()
 }

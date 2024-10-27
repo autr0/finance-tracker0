@@ -148,4 +148,11 @@
     <string name="currency_body">Elija la divisa de la aplicación.</string>
     <string name="icon_currency_description">elegir divisa</string>
 
+    <string name="delete_payments1">Eliminar todos los\u0020</string>
+    <string name="delete_payments2">pagos</string>
+    <string name="delete_mss1">Eliminar todos las\u0020</string>
+    <string name="delete_mss2">Fuentes de Dinero</string>
+
+    <string name="error_delete_all">No se pudo eliminar :(</string>
+
 </resources>

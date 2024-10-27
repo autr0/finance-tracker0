@@ -66,7 +66,7 @@
     <string name="delete_dialog_text_5">longer restore it!</string>
 
     <string name="one_time_dialog_1">You can</string>
-    <string name="one_time_dialog_2"> not </string>
+    <string name="one_time_dialog_2">\u0020not\u0020</string>
     <string name="one_time_dialog_3">delete it!</string>
     <string name="one_time_dialog_4">There must be at least</string>
     <string name="one_time_dialog_5">\u0020one\u0020</string>
@@ -145,5 +145,12 @@
     <string name="currency">Currency</string>
     <string name="currency_body">Choose the currency of the app</string>
     <string name="icon_currency_description">currency picker</string>
+
+    <string name="delete_payments1">Delete all\u0020</string>
+    <string name="delete_payments2">payments</string>
+    <string name="delete_mss1">Delete all\u0020</string>
+    <string name="delete_mss2">Money Sources</string>
+
+    <string name="error_delete_all">Could not delete :(</string>
 
 </resources>

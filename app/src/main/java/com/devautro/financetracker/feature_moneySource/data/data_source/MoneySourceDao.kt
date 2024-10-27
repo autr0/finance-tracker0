@@ -12,10 +12,10 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface MoneySourceDao {
 
-    @Query("SELECT * FROM MoneySourceEntity")
+    @Query("SELECT * FROM moneySources_table")
     fun getMoneySources(): Flow<List<MoneySourceEntity>>
 
-    @Query("SELECT * FROM MoneySourceEntity WHERE id = :id")
+    @Query("SELECT * FROM moneySources_table WHERE id = :id")
     suspend fun getMoneySourceById(id: Long): MoneySourceEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -26,4 +26,7 @@ interface MoneySourceDao {
 
     @Delete
     suspend fun deleteMoneySource(moneySourceEntity: MoneySourceEntity)
+
+    @Query("DELETE FROM moneySources_table WHERE id NOT IN (SELECT id FROM moneySources_table ORDER BY id LIMIT 1)")
+    suspend fun deleteAllMoneySources()
 }

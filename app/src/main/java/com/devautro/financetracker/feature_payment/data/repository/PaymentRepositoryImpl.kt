@@ -6,7 +6,6 @@ import com.devautro.financetracker.feature_payment.data.mappers.toPaymentEntity
 import com.devautro.financetracker.feature_payment.domain.model.Payment
 import com.devautro.financetracker.feature_payment.domain.repository.PaymentRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -39,6 +38,10 @@ class PaymentRepositoryImpl @Inject constructor(
 
     override suspend fun updatePayment(payment: Payment) {
         dao.updatePayment(paymentEntity = payment.toPaymentEntity())
+    }
+
+    override suspend fun deleteAllPayments() {
+        dao.deleteAllPayments()
     }
 
 }

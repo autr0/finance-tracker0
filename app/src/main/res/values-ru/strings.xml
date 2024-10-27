@@ -69,10 +69,10 @@
     <string name="delete_dialog_text_5">сможете их восстановить!</string>
 
     <string name="one_time_dialog_1">Вы</string>
-    <string name="one_time_dialog_2"> не </string>
+    <string name="one_time_dialog_2">\u0020не\u0020</string>
     <string name="one_time_dialog_3">можете удалить это!</string>
     <string name="one_time_dialog_4">должен быть по крайней мере</string>
-    <string name="one_time_dialog_5"> один </string>
+    <string name="one_time_dialog_5">\u0020один\u0020</string>
     <string name="one_time_dialog_6">источник денег</string>
 
     <string name="money_sources">Источники денег</string>
@@ -147,5 +147,12 @@
     <string name="currency">Валюта</string>
     <string name="currency_body">Выберите валюту всех платежей</string>
     <string name="icon_currency_description">выбор валюты</string>
+
+    <string name="delete_payments1">Удалить все\u0020</string>
+    <string name="delete_payments2">платежи</string>
+    <string name="delete_mss1">Удалить все\u0020</string>
+    <string name="delete_mss2">Источники Денег</string>
+
+    <string name="error_delete_all">Не удалось удалить :(</string>
 
 </resources>

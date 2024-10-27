@@ -12,10 +12,10 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface PaymentDao {
 
-    @Query("SELECT * FROM paymentEntity WHERE isExpense = :isExpense")
+    @Query("SELECT * FROM payments_table WHERE isExpense = :isExpense")
     fun getCertainTypeOfPayments(isExpense: Boolean): Flow<List<PaymentEntity>>
 
-    @Query("SELECT * FROM PaymentEntity WHERE id = :id")
+    @Query("SELECT * FROM payments_table WHERE id = :id")
     suspend fun getPaymentById(id: Long): PaymentEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -27,5 +27,6 @@ interface PaymentDao {
     @Update
     suspend fun updatePayment(paymentEntity: PaymentEntity)
 
-    /* TODO --> Delete all data from the table? */
+    @Query("DELETE FROM payments_table")
+    suspend fun deleteAllPayments()
 }

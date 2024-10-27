@@ -27,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -34,15 +35,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.devautro.financetracker.R
+import com.devautro.financetracker.feature_settings.presentation.components.DeleteAllDialog
 import com.devautro.financetracker.feature_settings.presentation.components.DropDownLanguageMenu
 import com.devautro.financetracker.feature_settings.presentation.components.SettingsItem
 import com.devautro.financetracker.ui.theme.CancelButton
+import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,21 +59,25 @@ fun SettingsMain(
 
     val snackbarHostState = remember { SnackbarHostState() }
 
-//    val showDropDownLanguageMenu = remember {
-//        mutableStateOf(false)
-//    }
-//    val selectedLanguageId = remember {
-//        mutableIntStateOf(R.drawable.gb)
-//    }
-
     val isDarkThemeChosen = remember {
-        mutableStateOf(false)
-    }
-    val showDeleteDialog = remember {
         mutableStateOf(false)
     }
     val showCurrencyDialog = remember {
         mutableStateOf(false)
+    }
+
+    val context = LocalContext.current
+
+    LaunchedEffect(key1 = true) {
+        viewModel.sideEffects.collectLatest { effect ->
+            when(effect) {
+                is SettingsSideEffects.ShowSnackbar -> {
+                    snackbarHostState.showSnackbar(
+                        message = effect.message.asString(context)
+                    )
+                }
+            }
+        }
     }
 
     Scaffold(
@@ -165,7 +173,7 @@ fun SettingsMain(
                         bodyText = stringResource(id = R.string.delete_settings_body),
                         icon = Icons.Filled.Delete,
                         contentDescription = stringResource(id = R.string.icon_delete_all_description),
-                        onCardClick = {  }
+                        onCardClick = { viewModel.onEvent(SettingsEvent.ShowDeleteDialog) }
                     )
                 }
                 item {
@@ -178,6 +186,18 @@ fun SettingsMain(
                     )
                 }
             }
+
+            if (state.showDeleteDialog) {
+                DeleteAllDialog(
+                    onConfirmClick = { viewModel.onEvent(SettingsEvent.ApproveDeleteDialog) },
+                    onDismissClick = { viewModel.onEvent(SettingsEvent.DismissDeleteDialog) },
+                    isDeleteMoneySources = state.isDeleteMoneySourcesPicked,
+                    onMsCheckedChange = { viewModel.onEvent(SettingsEvent.ClickOnMoneySourcesCheckBox) },
+                    isDeletePayments = state.isDeletePaymentsPicked,
+                    onPaymentsCheckedChange = { viewModel.onEvent(SettingsEvent.ClickOnPaymentsCheckBox) }
+                )
+            }
+
         }
     }
 }

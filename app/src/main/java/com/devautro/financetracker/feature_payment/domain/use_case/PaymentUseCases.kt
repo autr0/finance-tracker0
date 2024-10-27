@@ -6,5 +6,6 @@ data class PaymentUseCases(
     val getPaymentUseCase: GetPaymentUseCase,
     val addPaymentUseCase: AddPaymentUseCase,
     val deletePaymentUseCase: DeletePaymentUseCase,
-    val editPaymentUseCase: EditPaymentUseCase
+    val editPaymentUseCase: EditPaymentUseCase,
+    val clearAllPaymentsUseCase: ClearAllPaymentsUseCase
 )

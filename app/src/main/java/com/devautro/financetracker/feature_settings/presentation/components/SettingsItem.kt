@@ -62,7 +62,7 @@ fun SettingsItem(
                 contentDescription = contentDescription,
                 tint = Color.Black,
                 isEnabled = false,
-                disabledTint = Color.Black
+                disabledTint = MaterialTheme.colorScheme.background
             )
             Spacer(modifier = Modifier.width(16.dp))
             Column(

@@ -37,7 +37,6 @@ import com.devautro.financetracker.ui.theme.OnBackgroundColor
 @Composable
 fun TextFieldWithDropDownMenu(
     modifier: Modifier = Modifier,
-//    itemsList: List<String>,
     isExpanded: Boolean,
     onDismissMenu: () -> Unit,
     selectedItem: String?,
@@ -48,13 +47,16 @@ fun TextFieldWithDropDownMenu(
 ) {
     var textFieldSize by remember { mutableStateOf(Size.Zero) }
 
-    Column{
+    val resId = Const.getResourceIdByEnglishMonth(selectedItem ?: "")
+    val selectedMonthTag = resId?.let { stringResource(id = it) }
+
+    Column {
         TextFieldComponent(
             modifier = modifier
                 .onGloballyPositioned { coordinates ->
                     textFieldSize = coordinates.size.toSize()
                 }, // - maybe wrong order of the modifier's functions -> width before positioned?!
-            value = selectedItem ?: "",
+            value = selectedMonthTag ?: "",
             onValueChange = { /* read-only! */ },
             labelText = labelText,
             trailingIcon = trailingIcon,
@@ -75,16 +77,13 @@ fun TextFieldWithDropDownMenu(
                 DropdownMenuItem(
                     onClick = {
                         onDismissMenu()
-                        onSelectedItemChange(month.value) // we have to pass a MoneySource, not id :(
+                        onSelectedItemChange(month.value)
                     },
                     text = {
                         Text(
                             text = stringResource(id = month.key),
                             fontSize = 18.sp,
-                            color = when {
-                                month.value == selectedItem -> AccentBlue
-                                else -> OnBackgroundColor
-                            }
+                            color = if (selectedItem == month.value) AccentBlue else OnBackgroundColor
                         )
                     }
                 )

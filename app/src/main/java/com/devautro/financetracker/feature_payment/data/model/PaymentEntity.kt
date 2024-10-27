@@ -3,7 +3,7 @@ package com.devautro.financetracker.feature_payment.data.model
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity
+@Entity(tableName = "payments_table")
 data class PaymentEntity(
     @PrimaryKey(autoGenerate = true) val id: Long? = null,
     val date: Long,

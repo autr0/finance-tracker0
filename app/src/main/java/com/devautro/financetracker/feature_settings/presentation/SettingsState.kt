@@ -7,5 +7,8 @@ import java.util.Locale
 data class SettingsState(
     val locale: String = Locale.getDefault().language,
     @DrawableRes val selectedLanguageImageId: Int = Const.flags.first { it.localeLanguage == locale }.imageResource,
-    val isLanguageMenuShown: Boolean = false
+    val isLanguageMenuShown: Boolean = false,
+    val showDeleteDialog: Boolean = false,
+    val isDeletePaymentsPicked: Boolean = false,
+    val isDeleteMoneySourcesPicked: Boolean = false
 )

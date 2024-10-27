@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.devautro.financetracker.feature_moneySource.data.repository.MoneySourceRepositoryImpl
 import com.devautro.financetracker.feature_moneySource.domain.repository.MoneySourceRepository
 import com.devautro.financetracker.feature_moneySource.domain.use_case.AddMoneySourceUseCase
+import com.devautro.financetracker.feature_moneySource.domain.use_case.ClearAllMoneySourcesUseCase
 import com.devautro.financetracker.feature_moneySource.domain.use_case.DeleteMoneySourceUseCase
 import com.devautro.financetracker.feature_moneySource.domain.use_case.EditMoneySourceUseCase
 import com.devautro.financetracker.feature_moneySource.domain.use_case.GetAllMoneySourcesUseCase
@@ -14,6 +15,7 @@ import com.devautro.financetracker.feature_payment.data.data_source.PaymentsData
 import com.devautro.financetracker.feature_payment.data.repository.PaymentRepositoryImpl
 import com.devautro.financetracker.feature_payment.domain.repository.PaymentRepository
 import com.devautro.financetracker.feature_payment.domain.use_case.AddPaymentUseCase
+import com.devautro.financetracker.feature_payment.domain.use_case.ClearAllPaymentsUseCase
 import com.devautro.financetracker.feature_payment.domain.use_case.DeletePaymentUseCase
 import com.devautro.financetracker.feature_payment.domain.use_case.EditPaymentUseCase
 import com.devautro.financetracker.feature_payment.domain.use_case.GetExpensesUseCase
@@ -61,7 +63,8 @@ object AppModule {
             getPaymentUseCase = GetPaymentUseCase(repository),
             addPaymentUseCase = AddPaymentUseCase(repository),
             deletePaymentUseCase = DeletePaymentUseCase(repository),
-            editPaymentUseCase = EditPaymentUseCase(repository)
+            editPaymentUseCase = EditPaymentUseCase(repository),
+            clearAllPaymentsUseCase = ClearAllPaymentsUseCase(repository)
         )
     }
 
@@ -73,7 +76,8 @@ object AppModule {
             getMoneySourceUseCase = GetMoneySourceUseCase(repository),
             addMoneySourceUseCase = AddMoneySourceUseCase(repository),
             editMoneySourceUseCase = EditMoneySourceUseCase(repository),
-            deleteMoneySourceUseCase = DeleteMoneySourceUseCase(repository)
+            deleteMoneySourceUseCase = DeleteMoneySourceUseCase(repository),
+            clearAllMoneySourcesUseCase = ClearAllMoneySourcesUseCase(repository)
         )
     }
 

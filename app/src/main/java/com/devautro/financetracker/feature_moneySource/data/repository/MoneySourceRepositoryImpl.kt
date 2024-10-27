@@ -37,4 +37,8 @@ class MoneySourceRepositoryImpl @Inject constructor(
         dao.deleteMoneySource(moneySourceEntity = moneySource.toMoneySourceEntity())
     }
 
+    override suspend fun deleteAllMoneySources() {
+        dao.deleteAllMoneySources()
+    }
+
 }
