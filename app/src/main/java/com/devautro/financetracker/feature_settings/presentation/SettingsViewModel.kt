@@ -1,7 +1,5 @@
 package com.devautro.financetracker.feature_settings.presentation
 
-import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.devautro.financetracker.R
@@ -16,8 +14,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,15 +27,15 @@ class SettingsViewModel @Inject constructor(
     private val settingsUseCases: SettingsUseCases
 ) : ViewModel() {
 
-    init {
-        getInitialTheme()
-    }
-
     private val _settingsState = MutableStateFlow(SettingsState())
     val settingsState: StateFlow<SettingsState> = _settingsState.asStateFlow()
 
     private val _sideEffects = MutableSharedFlow<SettingsSideEffects>()
     val sideEffects = _sideEffects.asSharedFlow()
+
+    init {
+        getInitialTheme()
+    }
 
     fun onEvent(event: SettingsEvent) {
         when (event) {
@@ -68,7 +68,6 @@ class SettingsViewModel @Inject constructor(
                 viewModelScope.launch(Dispatchers.IO) {
                     try {
                         settingsUseCases.changeCurrentThemeUseCase(isDarkTheme = event.isDarkTheme)
-                        Log.d("MyLog", "new isDarkThemeValue: ${event.isDarkTheme}")
                     } catch (e: Exception) {
                         e.printStackTrace()
                         return@launch
@@ -146,20 +145,16 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    private fun getInitialTheme() {
-        viewModelScope.launch {
-            try {
-                settingsUseCases.getCurrentThemeUseCase().collect { isDarkTheme ->
-                    _settingsState.update { state ->
-                        state.copy(
-                            isDarkTheme = isDarkTheme
-                        )
-                    }
-                    Log.d("MyLog", "init isDarkTheme: $isDarkTheme")
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+    /**
+     * Have to use 'runBlocking' to prevent display of theme with default value
+     * and after that blinking of theme switching with data from DataStore
+     */
+    private fun getInitialTheme() = runBlocking {
+        val isDark = settingsUseCases.getCurrentThemeUseCase().first()
+        _settingsState.update { state ->
+            state.copy(
+                isDarkTheme = isDark
+            )
         }
     }
 

@@ -1,7 +1,6 @@
 package com.devautro.financetracker.ui.theme
 
 import android.app.Activity
-import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -25,6 +24,7 @@ private val DarkColorScheme = darkColorScheme(
 
 )
 
+// Mock Light Theme -->
 private val LightColorScheme = lightColorScheme(
     primary = Color.Blue,
     onPrimary = OnBackgroundColor,
@@ -54,7 +54,6 @@ fun FinanceTrackerTheme(
     content: @Composable () -> Unit
 ) {
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
-    Log.d("MyLog", "theme composable: $colorScheme")
 
     val view = LocalView.current
     SideEffect {
