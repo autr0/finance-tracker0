@@ -1,6 +1,5 @@
 package com.devautro.financetracker.feature_settings.presentation.components
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,14 +29,12 @@ fun SettingsItem(
     bodyText: String,
     icon: ImageVector,
     contentDescription: String? = null,
-    switcher: @Composable (() -> Unit)? = null,
-    onCardClick: () -> Unit
+    switcher: @Composable (() -> Unit)? = null
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(bottom = 16.dp)
-            .clickable { onCardClick() },
+            .padding(bottom = 16.dp),
         shape = RoundedCornerShape(15.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primary
@@ -60,7 +57,7 @@ fun SettingsItem(
                 backgroundColor = MaterialTheme.colorScheme.secondary, // AccentBlue
                 icon = icon,
                 contentDescription = contentDescription,
-                tint = Color.Black,
+                tint = MaterialTheme.colorScheme.background,
                 isEnabled = false,
                 disabledTint = MaterialTheme.colorScheme.background
             )

@@ -22,6 +22,12 @@ import com.devautro.financetracker.feature_payment.domain.use_case.GetExpensesUs
 import com.devautro.financetracker.feature_payment.domain.use_case.GetIncomesUseCase
 import com.devautro.financetracker.feature_payment.domain.use_case.GetPaymentUseCase
 import com.devautro.financetracker.feature_payment.domain.use_case.PaymentUseCases
+import com.devautro.financetracker.feature_settings.data.data_source.SettingsPreferences
+import com.devautro.financetracker.feature_settings.data.repository.SettingsRepositoryImpl
+import com.devautro.financetracker.feature_settings.domain.repository.SettingsRepository
+import com.devautro.financetracker.feature_settings.domain.use_case.ChangeCurrentThemeUseCase
+import com.devautro.financetracker.feature_settings.domain.use_case.GetCurrentThemeUseCase
+import com.devautro.financetracker.feature_settings.domain.use_case.SettingsUseCases
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -81,4 +87,24 @@ object AppModule {
         )
     }
 
+    @Provides
+    @Singleton
+    fun provideSettingsPreferences(app: Application): SettingsPreferences {
+        return SettingsPreferences(app.applicationContext)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSettingsRepository(settingsPreferences: SettingsPreferences): SettingsRepository {
+        return SettingsRepositoryImpl(settingsPreferences)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSettingsUseCases(repository: SettingsRepository): SettingsUseCases {
+        return SettingsUseCases(
+            changeCurrentThemeUseCase = ChangeCurrentThemeUseCase(repository),
+            getCurrentThemeUseCase = GetCurrentThemeUseCase(repository)
+        )
+    }
 }

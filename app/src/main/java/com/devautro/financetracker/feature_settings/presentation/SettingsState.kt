@@ -10,5 +10,6 @@ data class SettingsState(
     val isLanguageMenuShown: Boolean = false,
     val showDeleteDialog: Boolean = false,
     val isDeletePaymentsPicked: Boolean = false,
-    val isDeleteMoneySourcesPicked: Boolean = false
+    val isDeleteMoneySourcesPicked: Boolean = false,
+    val isDarkTheme: Boolean = true
 )

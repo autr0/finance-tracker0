@@ -1,5 +1,6 @@
 package com.devautro.financetracker.feature_settings.presentation
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
@@ -59,9 +60,6 @@ fun SettingsMain(
 
     val snackbarHostState = remember { SnackbarHostState() }
 
-    val isDarkThemeChosen = remember {
-        mutableStateOf(false)
-    }
     val showCurrencyDialog = remember {
         mutableStateOf(false)
     }
@@ -70,7 +68,7 @@ fun SettingsMain(
 
     LaunchedEffect(key1 = true) {
         viewModel.sideEffects.collectLatest { effect ->
-            when(effect) {
+            when (effect) {
                 is SettingsSideEffects.ShowSnackbar -> {
                     snackbarHostState.showSnackbar(
                         message = effect.message.asString(context)
@@ -114,13 +112,13 @@ fun SettingsMain(
                             .fillMaxWidth()
                     ) {
                         SettingsItem(
+                            modifier = Modifier.clickable {
+                                viewModel.onEvent(SettingsEvent.ShowLanguageMenu)
+                            },
                             headerText = stringResource(id = R.string.language),
                             bodyText = stringResource(id = R.string.choose_language_text),
                             icon = Icons.Filled.GTranslate,
                             contentDescription = stringResource(id = R.string.icon_language_description),
-                            onCardClick = {
-                                viewModel.onEvent(SettingsEvent.ShowLanguageMenu)
-                            },
                             switcher = {
                                 Icon(
                                     modifier = Modifier
@@ -138,10 +136,12 @@ fun SettingsMain(
                             onDismissMenu = { viewModel.onEvent(SettingsEvent.DismissLanguageMenu) },
                             selectedItem = state.selectedLanguageImageId,
                             onSelectedItemIdChange = { flagItemId, locale ->
-                                viewModel.onEvent(SettingsEvent.NewLanguageSelected(
-                                    flagImage = flagItemId,
-                                    locale = locale
-                                ))
+                                viewModel.onEvent(
+                                    SettingsEvent.NewLanguageSelected(
+                                        flagImage = flagItemId,
+                                        locale = locale
+                                    )
+                                )
                             }
                         )
                     }
@@ -154,8 +154,10 @@ fun SettingsMain(
                         contentDescription = stringResource(id = R.string.icon_theme_description),
                         switcher = {
                             Switch(
-                                checked = true,
-                                onCheckedChange = {  },
+                                checked = state.isDarkTheme,
+                                onCheckedChange = { isDarkTheme ->
+                                    viewModel.onEvent(SettingsEvent.SwitchTheme(isDarkTheme))
+                                },
                                 colors = SwitchDefaults.colors(
                                     checkedThumbColor = MaterialTheme.colorScheme.onBackground,
                                     uncheckedThumbColor = MaterialTheme.colorScheme.primary,
@@ -163,26 +165,27 @@ fun SettingsMain(
                                     uncheckedTrackColor = CancelButton
                                 )
                             )
-                        },
-                        onCardClick = {  }
+                        }
                     )
                 }
                 item {
                     SettingsItem(
+                        modifier = Modifier.clickable {
+                            viewModel.onEvent(SettingsEvent.ShowDeleteDialog)
+                        },
                         headerText = stringResource(id = R.string.delete_settings),
                         bodyText = stringResource(id = R.string.delete_settings_body),
                         icon = Icons.Filled.Delete,
-                        contentDescription = stringResource(id = R.string.icon_delete_all_description),
-                        onCardClick = { viewModel.onEvent(SettingsEvent.ShowDeleteDialog) }
+                        contentDescription = stringResource(id = R.string.icon_delete_all_description)
                     )
                 }
                 item {
                     SettingsItem(
+                        modifier = Modifier.clickable { /* TODO -> showCurrencyList */ },
                         headerText = stringResource(id = R.string.currency),
                         bodyText = stringResource(id = R.string.currency_body),
                         icon = Icons.Filled.MonetizationOn,
-                        contentDescription = stringResource(id = R.string.icon_currency_description),
-                        onCardClick = {  }
+                        contentDescription = stringResource(id = R.string.icon_currency_description)
                     )
                 }
             }

@@ -62,10 +62,13 @@ import com.devautro.financetracker.feature_payment.presentation.home_screen.Home
 import com.devautro.financetracker.feature_payment.presentation.payments_type_list.expenses.ExpensesList
 import com.devautro.financetracker.feature_payment.presentation.payments_type_list.incomes.IncomesList
 import com.devautro.financetracker.feature_settings.presentation.SettingsMain
+import com.devautro.financetracker.feature_settings.presentation.SettingsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NavigationScreen() {
+fun NavigationScreen(
+    settingsViewModel: SettingsViewModel
+) {
     val barItems = listOf(
         TabBarItem(
             name = stringResource(id = R.string.payments_tab),
@@ -175,13 +178,6 @@ fun NavigationScreen() {
                 }
             }
 
-//            composable<AddBottomSheet> {
-//                AddPaymentBottomSheet(
-//                    sheetState = sheetState,
-//                    navigateBack = { navController.navigateUp() }
-//                )
-//            }
-
             composable<Incomes>(
                 enterTransition = {
                     fadeIn(
@@ -208,15 +204,6 @@ fun NavigationScreen() {
                     navigateBack = { navController.navigateUp() },
                     navBarPadding = bottomNavPadding
                 )
-
-//                if (showBottomSheet.value) {
-//                    AddPaymentBottomSheet(
-//                        sheetState = sheetState,
-//                        navigateBack = {
-//                            showBottomSheet.value = false
-//                        }
-//                    )
-//                }
             }
 
             composable<Expenses>(
@@ -245,15 +232,6 @@ fun NavigationScreen() {
                     navigateBack = { navController.navigateUp() },
                     navBarPadding = bottomNavPadding
                 )
-
-//                if (showBottomSheet.value) {
-//                    AddPaymentBottomSheet(
-//                        sheetState = sheetState,
-//                        navigateBack = {
-//                            showBottomSheet.value = false
-//                        }
-//                    )
-//                }
             }
 
             composable<Charts> {
@@ -359,15 +337,10 @@ fun NavigationScreen() {
             }
 
             composable<Settings> {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.background),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    SettingsMain(bottomPadding = bottomNavPadding)
-                }
+                SettingsMain(
+                    viewModel = settingsViewModel,
+                    bottomPadding = bottomNavPadding
+                )
             }
         }
     }

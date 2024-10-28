@@ -1,11 +1,14 @@
 package com.devautro.financetracker.feature_settings.presentation
 
+import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.devautro.financetracker.R
 import com.devautro.financetracker.core.util.UiText
 import com.devautro.financetracker.feature_moneySource.domain.use_case.MoneySourceUseCases
 import com.devautro.financetracker.feature_payment.domain.use_case.PaymentUseCases
+import com.devautro.financetracker.feature_settings.domain.use_case.SettingsUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -20,8 +23,13 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val paymentUseCases: PaymentUseCases,
-    private val moneySourceUseCases: MoneySourceUseCases
+    private val moneySourceUseCases: MoneySourceUseCases,
+    private val settingsUseCases: SettingsUseCases
 ) : ViewModel() {
+
+    init {
+        getInitialTheme()
+    }
 
     private val _settingsState = MutableStateFlow(SettingsState())
     val settingsState: StateFlow<SettingsState> = _settingsState.asStateFlow()
@@ -30,7 +38,7 @@ class SettingsViewModel @Inject constructor(
     val sideEffects = _sideEffects.asSharedFlow()
 
     fun onEvent(event: SettingsEvent) {
-        when(event) {
+        when (event) {
             is SettingsEvent.NewLanguageSelected -> {
                 _settingsState.update { state ->
                     state.copy(
@@ -39,6 +47,7 @@ class SettingsViewModel @Inject constructor(
                     )
                 }
             }
+
             is SettingsEvent.ShowLanguageMenu -> {
                 _settingsState.update { state ->
                     state.copy(
@@ -46,6 +55,7 @@ class SettingsViewModel @Inject constructor(
                     )
                 }
             }
+
             is SettingsEvent.DismissLanguageMenu -> {
                 _settingsState.update { state ->
                     state.copy(
@@ -53,16 +63,36 @@ class SettingsViewModel @Inject constructor(
                     )
                 }
             }
+
+            is SettingsEvent.SwitchTheme -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    try {
+                        settingsUseCases.changeCurrentThemeUseCase(isDarkTheme = event.isDarkTheme)
+                        Log.d("MyLog", "new isDarkThemeValue: ${event.isDarkTheme}")
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        return@launch
+                    }
+                }
+                _settingsState.update { state ->
+                    state.copy(
+                        isDarkTheme = event.isDarkTheme
+                    )
+                }
+            }
+
             is SettingsEvent.ShowDeleteDialog -> {
                 _settingsState.update { state ->
                     state.copy(showDeleteDialog = true)
                 }
             }
+
             is SettingsEvent.DismissDeleteDialog -> {
                 _settingsState.update { state ->
                     state.copy(showDeleteDialog = false)
                 }
             }
+
             is SettingsEvent.ApproveDeleteDialog -> {
 
                 viewModelScope.launch(Dispatchers.IO) {
@@ -70,9 +100,11 @@ class SettingsViewModel @Inject constructor(
                         try {
                             paymentUseCases.clearAllPaymentsUseCase()
                         } catch (e: Exception) {
-                            _sideEffects.emit(SettingsSideEffects.ShowSnackbar(
-                                message = UiText.StringResource((R.string.error_delete_all))
-                            ))
+                            _sideEffects.emit(
+                                SettingsSideEffects.ShowSnackbar(
+                                    message = UiText.StringResource((R.string.error_delete_all))
+                                )
+                            )
                         }
                     }
                 }
@@ -82,9 +114,11 @@ class SettingsViewModel @Inject constructor(
                         try {
                             moneySourceUseCases.clearAllMoneySourcesUseCase()
                         } catch (e: Exception) {
-                            _sideEffects.emit(SettingsSideEffects.ShowSnackbar(
-                                message = UiText.StringResource((R.string.error_delete_all))
-                            ))
+                            _sideEffects.emit(
+                                SettingsSideEffects.ShowSnackbar(
+                                    message = UiText.StringResource((R.string.error_delete_all))
+                                )
+                            )
                         }
                     }
                 }
@@ -93,6 +127,7 @@ class SettingsViewModel @Inject constructor(
                     state.copy(showDeleteDialog = false)
                 }
             }
+
             is SettingsEvent.ClickOnMoneySourcesCheckBox -> {
                 _settingsState.update { state ->
                     state.copy(
@@ -100,12 +135,30 @@ class SettingsViewModel @Inject constructor(
                     )
                 }
             }
+
             is SettingsEvent.ClickOnPaymentsCheckBox -> {
                 _settingsState.update { state ->
                     state.copy(
                         isDeletePaymentsPicked = !state.isDeletePaymentsPicked
                     )
                 }
+            }
+        }
+    }
+
+    private fun getInitialTheme() {
+        viewModelScope.launch {
+            try {
+                settingsUseCases.getCurrentThemeUseCase().collect { isDarkTheme ->
+                    _settingsState.update { state ->
+                        state.copy(
+                            isDarkTheme = isDarkTheme
+                        )
+                    }
+                    Log.d("MyLog", "init isDarkTheme: $isDarkTheme")
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }

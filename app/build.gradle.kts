@@ -84,7 +84,7 @@ dependencies {
     implementation(libs.coroutines.core)
     implementation(libs.coroutines.android)
 
-    //Dagger - Hilt
+    // Dagger - Hilt
     implementation(libs.dagger.hilt)
     ksp(libs.dagger.hilt.compiler)
 
@@ -95,9 +95,12 @@ dependencies {
     // Kotlin Extensions and Coroutines support for Room
     implementation(libs.room.support)
 
-    //Serialization
+    // Serialization
     implementation(libs.kotlinx.serialization.json)
 
     // AppCompat
     implementation(libs.appcompat)
+
+    // DataStore
+    implementation(libs.datastore)
 }

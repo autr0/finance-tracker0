@@ -14,4 +14,6 @@ sealed class SettingsEvent {
     data object ApproveDeleteDialog : SettingsEvent()
     data object ClickOnPaymentsCheckBox : SettingsEvent()
     data object ClickOnMoneySourcesCheckBox : SettingsEvent()
+    data class SwitchTheme(val isDarkTheme: Boolean) : SettingsEvent()
+//    data class WriteInitialTheme(val isDarkTheme: Boolean) : SettingsEvent()
 }
