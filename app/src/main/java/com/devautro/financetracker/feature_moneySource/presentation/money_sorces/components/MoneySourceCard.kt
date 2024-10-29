@@ -1,8 +1,6 @@
 package com.devautro.financetracker.feature_moneySource.presentation.money_sorces.components
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -28,13 +26,8 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.devautro.financetracker.core.presentation.components.ActionIcon
-import com.devautro.financetracker.core.util.Const
-import com.devautro.financetracker.feature_moneySource.domain.model.MoneySource
-import com.devautro.financetracker.ui.theme.AccentBlue
-import com.devautro.financetracker.ui.theme.FinanceTrackerTheme
 
 @Composable
 fun MoneySourceCard(
@@ -43,19 +36,14 @@ fun MoneySourceCard(
     cardAccentColor: Color,
     sourceName: String,
     index: Int,
-//    includedInTotal: Boolean,
     amount: String,
     onEditIconClick: () -> Unit
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(15.dp),
-//        border = BorderStroke(
-//            width = 2.dp,
-//            color = if (includedInTotal) AccentBlue else Color.Transparent
-//        ),
         colors = CardDefaults.cardColors(
-            contentColor = MaterialTheme.colorScheme.background,
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer, // background
             containerColor = cardPaleColor
         ),
         elevation = CardDefaults.cardElevation(
@@ -100,7 +88,7 @@ fun MoneySourceCard(
                 Text(
                     text = amount,
                     style = MaterialTheme.typography.headlineMedium,
-                    color = MaterialTheme.colorScheme.background,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer, // background
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -114,26 +102,9 @@ fun MoneySourceCard(
                 onClick = onEditIconClick,
                 backgroundColor = cardAccentColor,
                 icon = Icons.Filled.Edit,
-                tint = MaterialTheme.colorScheme.background
+                tint = MaterialTheme.colorScheme.onPrimaryContainer, // background
             )
         }
         Spacer(modifier = Modifier.height(20.dp))
     }
 }
-
-//@Preview
-//@Composable
-//fun CardPreview() {
-//    FinanceTrackerTheme {
-//        MoneySourceCard(
-//            cardPaleColor = Const.sourcePaleColors[1],
-//            cardAccentColor = Const.sourceAccentColors[1],
-//            sourceName = "Card #1",
-//            index = 2,
-//            includedInTotal = true,
-//            amount = "17894.89"
-//        ) {
-//
-//        }
-//    }
-//}

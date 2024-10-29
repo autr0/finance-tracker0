@@ -24,6 +24,7 @@ room = "2.6.1"
 serialization = "1.6.3"
 appcompat = "1.7.0"
 datastore = "1.1.1"
+splash = "1.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -68,6 +69,8 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 # data store
 datastore = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
+# splash
+splash-screen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splash" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

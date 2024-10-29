@@ -18,7 +18,6 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.devautro.financetracker.R
-import com.devautro.financetracker.ui.theme.AccentBlue
 
 @Composable
 fun TotalAmountCard(
@@ -32,11 +31,11 @@ fun TotalAmountCard(
             contentColor = MaterialTheme.colorScheme.onBackground
         ),
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 2.dp,
-            pressedElevation = 4.dp
+            defaultElevation = 4.dp,
+            pressedElevation = 8.dp
         ),
         shape = CircleShape,
-        border = BorderStroke(1.dp, AccentBlue)
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.secondary)
     ) {
         Row(
             modifier = Modifier.padding(20.dp),

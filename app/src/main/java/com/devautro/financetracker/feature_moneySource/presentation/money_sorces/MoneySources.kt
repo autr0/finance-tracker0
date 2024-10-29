@@ -56,7 +56,6 @@ import com.devautro.financetracker.feature_moneySource.presentation.money_sorces
 import com.devautro.financetracker.core.presentation.components.SwipeableItem
 import com.devautro.financetracker.feature_moneySource.presentation.money_sorces.components.SingleItemDeleteDialog
 import com.devautro.financetracker.feature_payment.util.formatDoubleToString
-import com.devautro.financetracker.ui.theme.AccentBlue
 import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -114,7 +113,7 @@ fun MoneySources(
                         onClick = {
                             viewModel.onEvent(MoneySourcesEvent.AddIconClick)
                         },
-                        backgroundColor = AccentBlue,
+                        backgroundColor = MaterialTheme.colorScheme.secondary,
                         icon = Icons.Filled.AddCircleOutline,
                         tint = MaterialTheme.colorScheme.background,
                         modifier = Modifier
@@ -132,7 +131,7 @@ fun MoneySources(
                         onClick = {
                             viewModel.onEvent(MoneySourcesEvent.FilterIncludedClick)
                         },
-                        backgroundColor = AccentBlue,
+                        backgroundColor = MaterialTheme.colorScheme.secondary,
                         icon = if (state.isIncludedOnlyFilter) Icons.Default.FilterAlt else Icons.Default.FilterAltOff,
                         tint = MaterialTheme.colorScheme.background
                     )
@@ -143,7 +142,7 @@ fun MoneySources(
                         onClick = {
                             viewModel.onEvent(MoneySourcesEvent.SwitcherIconClick)
                         },
-                        backgroundColor = AccentBlue,
+                        backgroundColor = MaterialTheme.colorScheme.secondary,
                         tint = MaterialTheme.colorScheme.background,
                         icon = if (state.isTableFormatData || isLandscape) {
                             Icons.Filled.SwitchLeft
@@ -231,7 +230,7 @@ fun MoneySources(
                                 backgroundColor = MaterialTheme.colorScheme.errorContainer,
                                 icon = Icons.Default.Delete,
                                 contentDescription = stringResource(id = R.string.delete_ms_description),
-                                tint = MaterialTheme.colorScheme.onBackground
+                                tint = MaterialTheme.colorScheme.onErrorContainer
                             )
                         },
                         onExpanded = {

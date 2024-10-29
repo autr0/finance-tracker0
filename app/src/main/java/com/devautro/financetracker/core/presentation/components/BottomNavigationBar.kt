@@ -1,6 +1,7 @@
 package com.devautro.financetracker.core.presentation.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -8,6 +9,8 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
@@ -15,7 +18,6 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.devautro.financetracker.core.presentation.TabBarItem
 import com.devautro.financetracker.core.presentation.util.AutoResizedText
-import com.devautro.financetracker.ui.theme.UnChosenTextColor
 
 @Composable
 fun BottomNavigationBar(
@@ -24,7 +26,8 @@ fun BottomNavigationBar(
     currentDestination: NavDestination?
 ) {
     NavigationBar(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(15.dp)),
+//        containerColor = MaterialTheme.colorScheme.primary
     ) {
         barItems.forEach { item ->
             NavigationBarItem(
@@ -58,9 +61,9 @@ fun BottomNavigationBar(
                 },
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = MaterialTheme.colorScheme.onBackground,
-                    unselectedIconColor = UnChosenTextColor,
+                    unselectedIconColor = MaterialTheme.colorScheme.onTertiary,
                     selectedTextColor = MaterialTheme.colorScheme.onBackground,
-                    unselectedTextColor = UnChosenTextColor,
+                    unselectedTextColor = MaterialTheme.colorScheme.onTertiary,
                     indicatorColor = MaterialTheme.colorScheme.primary
                 ),
                 label = {

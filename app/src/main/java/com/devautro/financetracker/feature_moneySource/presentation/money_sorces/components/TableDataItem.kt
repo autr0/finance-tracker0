@@ -73,7 +73,7 @@ fun TableDataItem(
         ) {
             Text(
                 text = (index + 1).toString(),
-                color = MaterialTheme.colorScheme.background
+                color = MaterialTheme.colorScheme.onPrimaryContainer // background
             )
         }
 //        VerticalDivider(
@@ -93,7 +93,7 @@ fun TableDataItem(
                 modifier = Modifier.fillMaxWidth(),
                 text = sourceName,
                 overflow = TextOverflow.Ellipsis,
-                color = MaterialTheme.colorScheme.background,
+                color = MaterialTheme.colorScheme.onPrimaryContainer, // background,
                 textAlign = TextAlign.Center
             )
         }
@@ -113,7 +113,7 @@ fun TableDataItem(
                 text = amount,
                 fontWeight = FontWeight.SemiBold,
                 overflow = TextOverflow.Ellipsis,
-                color = MaterialTheme.colorScheme.background
+                color = MaterialTheme.colorScheme.onPrimaryContainer // background
             )
         }
 //        VerticalDivider(
@@ -133,7 +133,7 @@ fun TableDataItem(
                 onClick = onEditClick,
                 backgroundColor = Color.Transparent,
                 icon = Icons.Default.Edit,
-                tint = MaterialTheme.colorScheme.background
+                tint = MaterialTheme.colorScheme.onPrimaryContainer // background
             )
         }
     }

@@ -30,8 +30,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.devautro.financetracker.R
 import com.devautro.financetracker.core.presentation.util.AutoResizedText
-import com.devautro.financetracker.ui.theme.AccentBlue
-import com.devautro.financetracker.ui.theme.OnAccentBlue
 
 @Composable
 fun InfoCard(
@@ -40,15 +38,14 @@ fun InfoCard(
     amount: String,
     color: Color
 ) {
-
     Card(
         modifier = modifier
             .fillMaxWidth()
             .padding(10.dp),
         shape = RoundedCornerShape(15.dp),
         colors = CardDefaults.cardColors(
-            containerColor = AccentBlue,
-            contentColor = OnAccentBlue
+            containerColor = MaterialTheme.colorScheme.secondary,
+            contentColor = MaterialTheme.colorScheme.onSecondary
         ),
         elevation = CardDefaults.elevatedCardElevation(
             defaultElevation = 2.dp

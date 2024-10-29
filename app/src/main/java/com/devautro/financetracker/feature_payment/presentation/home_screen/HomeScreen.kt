@@ -32,6 +32,7 @@ import com.devautro.financetracker.R
 import com.devautro.financetracker.core.presentation.components.TopTabsSorting
 import com.devautro.financetracker.core.util.Const
 import com.devautro.financetracker.feature_payment.presentation.home_screen.components.InfoCard
+import com.devautro.financetracker.ui.theme.BackgroundColor
 import com.devautro.financetracker.ui.theme.DarkGreenCircle
 import com.devautro.financetracker.ui.theme.DarkRedCircle
 import kotlinx.coroutines.flow.collectLatest
@@ -126,7 +127,7 @@ fun HomeScreen(
                     InfoCard(
                         text = stringResource(id = R.string.budget),
                         amount = state.budgetSum,
-                        color = MaterialTheme.colorScheme.background
+                        color = BackgroundColor
                     )
                 }
             }

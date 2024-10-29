@@ -6,14 +6,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.devautro.financetracker.core.util.Const
-import com.devautro.financetracker.ui.theme.AccentBlue
-import com.devautro.financetracker.ui.theme.OnBackgroundColor
-import com.devautro.financetracker.ui.theme.secondary
 
 @Composable
 fun MonthTagsDrawerMenu(
@@ -32,7 +30,7 @@ fun MonthTagsDrawerMenu(
         modifier = modifier
             .fillMaxWidth()
             .fillMaxHeight(0.3f)
-            .background(secondary)
+            .background(MaterialTheme.colorScheme.primary)
     ) {
         Const.months.forEach { month ->
 
@@ -44,7 +42,9 @@ fun MonthTagsDrawerMenu(
                 text = {
                     Text(
                         text = stringResource(id = month.key), // display month in corresponding language
-                        color = if (selectedItem == month.value) AccentBlue else OnBackgroundColor
+                        color = if (selectedItem == month.value) {
+                            MaterialTheme.colorScheme.secondary
+                        } else MaterialTheme.colorScheme.onBackground
                     )
                 }
             )

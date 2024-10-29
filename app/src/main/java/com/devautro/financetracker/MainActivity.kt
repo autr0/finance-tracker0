@@ -3,6 +3,7 @@ package com.devautro.financetracker
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.devautro.financetracker.core.presentation.navigation.NavigationScreen
@@ -12,11 +13,12 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
 //        enableEdgeToEdge()
         setContent {
+
             val vm = hiltViewModel<SettingsViewModel>()
             val state = vm.settingsState.collectAsStateWithLifecycle()
 

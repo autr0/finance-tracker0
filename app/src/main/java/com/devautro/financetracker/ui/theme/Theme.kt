@@ -17,23 +17,32 @@ private val DarkColorScheme = darkColorScheme(
     onPrimary = OnBackgroundColor,
     secondary = AccentBlue,
     onSecondary = OnAccentBlue,
+    tertiary = CancelButton,
+    onTertiary = UnChosenTextColor,
     background = BackgroundColor,
     onBackground = OnBackgroundColor,
     primaryContainer = SurfaceColor,
-    onPrimaryContainer = Color.Black
-
+    onPrimaryContainer = BackgroundColor,
+    errorContainer = DarkRedCircle,
+    onErrorContainer = OnBackgroundColor,
+    error = LightRed
 )
 
 // Mock Light Theme -->
 private val LightColorScheme = lightColorScheme(
-    primary = Color.Blue,
-    onPrimary = OnBackgroundColor,
-    secondary = Color.Yellow,
-    onSecondary = OnAccentBlue,
-    background = Color.White,
-    onBackground = Color.Black,
-    primaryContainer = Color.LightGray,
-    onPrimaryContainer = Color.Black
+    primary = LightSecondary,
+    onPrimary = LightOnBackground,
+    secondary = LightAccentBlue,
+    onSecondary = LightOnAccentBlue,
+    tertiary = LightCancelButton,
+    onTertiary = LightUnChosenTextColor,
+    background = LightBackground,
+    onBackground = LightOnBackground,
+    primaryContainer = LightSurfaceColor,
+    onPrimaryContainer = Color.Black,
+    errorContainer = DarkRedCircle,
+    onErrorContainer = OnBackgroundColor,
+    error = DarkRedCircle
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
@@ -58,7 +67,7 @@ fun FinanceTrackerTheme(
     val view = LocalView.current
     SideEffect {
         val window = (view.context as Activity).window
-        window.statusBarColor = DarkColorScheme.background.toArgb()
+        window.statusBarColor = colorScheme.background.toArgb()
         WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
     }
 

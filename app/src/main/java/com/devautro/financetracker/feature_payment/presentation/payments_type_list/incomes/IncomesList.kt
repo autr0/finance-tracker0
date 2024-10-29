@@ -240,7 +240,7 @@ fun IncomesList(
                                     )
                                 },
                                 backgroundColor = DarkestColor,
-                                tint = MaterialTheme.colorScheme.onBackground,
+                                tint = MaterialTheme.colorScheme.onErrorContainer,
                                 icon = Icons.Default.Edit,
                                 contentDescription = stringResource(id = R.string.icon_edit_payment_description),
                                 modifier = Modifier.clip(RoundedCornerShape(15.dp))
@@ -260,7 +260,7 @@ fun IncomesList(
                                     )
                                 },
                                 backgroundColor = MaterialTheme.colorScheme.errorContainer,
-                                tint = MaterialTheme.colorScheme.onBackground,
+                                tint = MaterialTheme.colorScheme.onErrorContainer,
                                 icon = Icons.Default.Delete,
                                 contentDescription = stringResource(id = R.string.icon_delete_payment_description),
                                 modifier = Modifier.clip(RoundedCornerShape(15.dp))

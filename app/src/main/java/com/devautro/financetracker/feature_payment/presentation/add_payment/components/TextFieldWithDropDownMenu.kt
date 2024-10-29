@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -30,9 +31,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import com.devautro.financetracker.core.util.Const
 import com.devautro.financetracker.feature_moneySource.domain.model.MoneySource
-import com.devautro.financetracker.ui.theme.AccentBlue
-import com.devautro.financetracker.ui.theme.BackgroundColor
-import com.devautro.financetracker.ui.theme.OnBackgroundColor
 
 @Composable
 fun TextFieldWithDropDownMenu(
@@ -71,7 +69,7 @@ fun TextFieldWithDropDownMenu(
             modifier = Modifier
                 .width(with(LocalDensity.current) { textFieldSize.width.toDp() })
                 .fillMaxHeight(0.3f)
-                .background(BackgroundColor)
+                .background(MaterialTheme.colorScheme.background)
         ) {
             Const.months.forEach { month ->
                 DropdownMenuItem(
@@ -83,7 +81,11 @@ fun TextFieldWithDropDownMenu(
                         Text(
                             text = stringResource(id = month.key),
                             fontSize = 18.sp,
-                            color = if (selectedItem == month.value) AccentBlue else OnBackgroundColor
+                            color = if (selectedItem == month.value) {
+                                MaterialTheme.colorScheme.secondary
+                            } else {
+                                MaterialTheme.colorScheme.onBackground
+                            }
                         )
                     }
                 )
@@ -122,10 +124,10 @@ fun TextFieldWithDropDownMenuMoneySource(
             leadingIcon = if(selectedItem != null) leadingIcon else null,
             readOnly = true,singleLine = true,
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = BackgroundColor,
-                unfocusedBorderColor = AccentBlue,
-                focusedLabelColor = AccentBlue,
-                unfocusedLabelColor = AccentBlue
+                focusedBorderColor = MaterialTheme.colorScheme.background,
+                unfocusedBorderColor = MaterialTheme.colorScheme.secondary,
+                focusedLabelColor = MaterialTheme.colorScheme.secondary,
+                unfocusedLabelColor = MaterialTheme.colorScheme.secondary
             ),
             supportingText = if (selectedItem == null) supportingText else null
         )
@@ -140,7 +142,7 @@ fun TextFieldWithDropDownMenuMoneySource(
                     if(itemsList.size < 5) Modifier.height(IntrinsicSize.Max)
                     else Modifier.fillMaxHeight(0.3f)
                 )
-                .background(BackgroundColor)
+                .background(MaterialTheme.colorScheme.background)
         ) {
             itemsList.forEach { item ->
                 DropdownMenuItem(
@@ -155,8 +157,8 @@ fun TextFieldWithDropDownMenuMoneySource(
                             text = item.name,
                             fontSize = 18.sp,
                             color = when {
-                                item == selectedItem -> BackgroundColor
-                                else -> OnBackgroundColor
+                                item == selectedItem -> MaterialTheme.colorScheme.background
+                                else -> MaterialTheme.colorScheme.onBackground
                             }
                         )
                     }

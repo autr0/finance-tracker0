@@ -103,4 +103,7 @@ dependencies {
 
     // DataStore
     implementation(libs.datastore)
+
+    // Splash screen
+    implementation(libs.splash.screen)
 }

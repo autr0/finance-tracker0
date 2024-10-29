@@ -61,6 +61,8 @@ import com.devautro.financetracker.feature_moneySource.presentation.add_edit_mon
 import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.AddEditSourceSideEffects
 import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.components.IncludeInTotalRow
 import com.devautro.financetracker.feature_payment.util.isConvertibleToDouble
+import com.devautro.financetracker.ui.theme.BackgroundColor
+import com.devautro.financetracker.ui.theme.secondary
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -141,7 +143,7 @@ fun EditMoneySource(
                     .padding(16.dp),
                 shape = RoundedCornerShape(15.dp),
                 colors = CardDefaults.cardColors(
-                    contentColor = MaterialTheme.colorScheme.background,
+                    contentColor = BackgroundColor,
                     containerColor = cardBackgroundAnimatable.value
                 ),
                 elevation = CardDefaults.cardElevation(
@@ -169,12 +171,12 @@ fun EditMoneySource(
                         ),
                         keyboardActions = KeyboardActions(),
                         colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedBorderColor = MaterialTheme.colorScheme.primary,
-                            focusedBorderColor = MaterialTheme.colorScheme.background,
-                            unfocusedLabelColor = MaterialTheme.colorScheme.background,
-                            focusedLabelColor = MaterialTheme.colorScheme.background,
-                            focusedTextColor = MaterialTheme.colorScheme.background,
-                            unfocusedTextColor = MaterialTheme.colorScheme.background
+                            unfocusedBorderColor = secondary,
+                            focusedBorderColor = BackgroundColor,
+                            unfocusedLabelColor = BackgroundColor,
+                            focusedLabelColor = BackgroundColor,
+                            focusedTextColor = BackgroundColor,
+                            unfocusedTextColor = BackgroundColor
                         )
                     )
                 }
@@ -200,12 +202,12 @@ fun EditMoneySource(
                         ),
                         keyboardActions = KeyboardActions(),
                         colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedBorderColor = MaterialTheme.colorScheme.primary,
-                            focusedBorderColor = MaterialTheme.colorScheme.background,
-                            unfocusedLabelColor = MaterialTheme.colorScheme.background,
-                            focusedLabelColor = MaterialTheme.colorScheme.background,
-                            focusedTextColor = MaterialTheme.colorScheme.background,
-                            unfocusedTextColor = MaterialTheme.colorScheme.background
+                            unfocusedBorderColor = secondary,
+                            focusedBorderColor = BackgroundColor,
+                            unfocusedLabelColor = BackgroundColor,
+                            focusedLabelColor = BackgroundColor,
+                            focusedTextColor = BackgroundColor,
+                            unfocusedTextColor = BackgroundColor
                         )
                     )
                 }
@@ -231,7 +233,7 @@ fun EditMoneySource(
                                     .border(
                                         width = 2.dp,
                                         color = if (state.paleColor == colorInt) {
-                                            MaterialTheme.colorScheme.background
+                                            BackgroundColor
                                         } else Color.Transparent,
                                         shape = CircleShape
                                     )

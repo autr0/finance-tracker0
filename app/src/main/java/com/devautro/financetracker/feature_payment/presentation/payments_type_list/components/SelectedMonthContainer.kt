@@ -14,8 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.devautro.financetracker.core.util.Const
-import com.devautro.financetracker.ui.theme.AccentBlue
-import com.devautro.financetracker.ui.theme.secondary
 
 @Composable
 fun SelectedMonthContainer(
@@ -28,9 +26,9 @@ fun SelectedMonthContainer(
     Card(
         modifier = modifier,
         shape = CircleShape,
-        border = BorderStroke(1.dp, AccentBlue),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.secondary),
         colors = CardDefaults.cardColors(
-            containerColor = secondary,
+            containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onBackground
         ),
         elevation = CardDefaults.cardElevation(
@@ -44,7 +42,7 @@ fun SelectedMonthContainer(
             Text(
                 text = month,
                 modifier = Modifier.padding(5.dp),
-                color = AccentBlue
+                color = MaterialTheme.colorScheme.secondary
             )
         }
     }

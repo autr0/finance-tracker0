@@ -112,8 +112,10 @@ fun NavigationScreen(
     }
 
     // FAB bottomSheetState ->
-    val showBottomSheet = rememberSaveable { mutableStateOf(false) } // to survive configuration changes
+    val showBottomSheet =
+        rememberSaveable { mutableStateOf(false) } // to survive configuration changes
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
 
     Scaffold(
         bottomBar = {
@@ -152,7 +154,6 @@ fun NavigationScreen(
         floatingActionButtonPosition = FabPosition.Center
     ) { bottomNavPadding ->
 
-        /* TODO -> App Navigation (new type-safe way?) */
         NavHost(
             navController = navController,
             startDestination = Home,
@@ -166,8 +167,6 @@ fun NavigationScreen(
                     navigateToExpenses = { navController.navigate(Expenses) }
                 )
 
-
-                /*TODO: -> not state but HOmeScreen viewModel? */
                 if (showBottomSheet.value) {
                     AddPaymentBottomSheet(
                         sheetState = sheetState,
@@ -338,10 +337,11 @@ fun NavigationScreen(
 
             composable<Settings> {
                 SettingsMain(
-                    viewModel = settingsViewModel,
+                        viewModel = settingsViewModel,
                     bottomPadding = bottomNavPadding
                 )
             }
         }
     }
+
 }

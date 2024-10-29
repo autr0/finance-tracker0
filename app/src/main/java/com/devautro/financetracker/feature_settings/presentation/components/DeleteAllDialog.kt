@@ -21,9 +21,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.sp
 import com.devautro.financetracker.R
-import com.devautro.financetracker.ui.theme.AccentBlue
-import com.devautro.financetracker.ui.theme.BackgroundColor
-import com.devautro.financetracker.ui.theme.CancelButton
 
 @Composable
 fun DeleteAllDialog(
@@ -48,7 +45,7 @@ fun DeleteAllDialog(
                     color = if (isEnabled) {
                         MaterialTheme.colorScheme.errorContainer
                     } else {
-                        CancelButton
+                        MaterialTheme.colorScheme.tertiary
                     }
                 )
             }
@@ -79,8 +76,8 @@ fun DeleteAllDialog(
                             onMsCheckedChange()
                         },
                         colors = CheckboxDefaults.colors(
-                            checkmarkColor = AccentBlue,
-                            checkedColor = BackgroundColor,
+                            checkmarkColor = MaterialTheme.colorScheme.secondary,
+                            checkedColor = MaterialTheme.colorScheme.background,
                             uncheckedColor = MaterialTheme.colorScheme.primary
                         )
                     )
@@ -110,8 +107,8 @@ fun DeleteAllDialog(
                             onPaymentsCheckedChange()
                         },
                         colors = CheckboxDefaults.colors(
-                            checkmarkColor = AccentBlue,
-                            checkedColor = BackgroundColor,
+                            checkmarkColor = MaterialTheme.colorScheme.secondary,
+                            checkedColor = MaterialTheme.colorScheme.background,
                             uncheckedColor = MaterialTheme.colorScheme.primary
                         )
                     )

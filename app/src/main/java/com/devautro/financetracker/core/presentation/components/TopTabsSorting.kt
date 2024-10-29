@@ -16,7 +16,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.devautro.financetracker.core.presentation.util.AutoResizedText
-import com.devautro.financetracker.ui.theme.UnChosenTextColor
 
 @Composable
 fun TopTabsSorting(
@@ -51,7 +50,7 @@ fun TopTabsSorting(
                     onSelectedTabClick(index)
                 },
                 selectedContentColor = MaterialTheme.colorScheme.primary,
-                unselectedContentColor = UnChosenTextColor
+                unselectedContentColor = MaterialTheme.colorScheme.onTertiary
             ) {
                 Box(
                     modifier = Modifier.height(64.dp),

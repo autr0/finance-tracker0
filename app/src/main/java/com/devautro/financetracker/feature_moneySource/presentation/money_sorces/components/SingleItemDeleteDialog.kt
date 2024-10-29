@@ -35,7 +35,7 @@ fun SingleItemDeleteDialog(
             modifier = Modifier
                 .width(IntrinsicSize.Max)
                 .height(IntrinsicSize.Min)
-                .padding(16.dp),
+                .padding(vertical = 16.dp, horizontal = 34.dp),
             shape = RoundedCornerShape(15.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.secondary,

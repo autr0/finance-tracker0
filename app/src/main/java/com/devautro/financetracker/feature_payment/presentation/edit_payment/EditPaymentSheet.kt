@@ -59,8 +59,6 @@ import com.devautro.financetracker.feature_payment.presentation.add_payment.comp
 import com.devautro.financetracker.feature_payment.presentation.add_payment.components.TextFieldWithDropDownMenuMoneySource
 import com.devautro.financetracker.feature_payment.util.convertMillisToDate
 import com.devautro.financetracker.feature_payment.util.isConvertibleToDouble
-import com.devautro.financetracker.ui.theme.AccentBlue
-import com.devautro.financetracker.ui.theme.BackgroundColor
 import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -102,7 +100,7 @@ fun EditPaymentSheet(
         onDismissRequest = navigateBack,
         sheetState = sheetState,
         modifier = Modifier.fillMaxSize(),
-        containerColor = BackgroundColor
+        containerColor = MaterialTheme.colorScheme.secondary
     ) {
 
         Scaffold(
@@ -127,7 +125,7 @@ fun EditPaymentSheet(
                             Icon(
                                 imageVector = Icons.Default.CalendarMonth,
                                 contentDescription = stringResource(id = R.string.date_icon_description),
-                                tint = AccentBlue
+                                tint = MaterialTheme.colorScheme.secondary
                             )
                         }
                     },
@@ -202,7 +200,7 @@ fun EditPaymentSheet(
                             Icon(
                                 imageVector = Icons.Default.Tag,
                                 contentDescription = stringResource(id = R.string.month_tag_icon_description),
-                                tint = AccentBlue
+                                tint = MaterialTheme.colorScheme.secondary
                             )
                         }
                     },
@@ -230,7 +228,7 @@ fun EditPaymentSheet(
                             Icon(
                                 imageVector = Icons.Default.AccountBalanceWallet,
                                 contentDescription = stringResource(id = R.string.ms_icon_def_description),
-                                tint = AccentBlue
+                                tint = MaterialTheme.colorScheme.secondary
                             )
                         }
                     },
@@ -241,7 +239,7 @@ fun EditPaymentSheet(
                             Icon(
                                 imageVector = Icons.Filled.Clear,
                                 contentDescription = stringResource(id = R.string.ms_icon_clean_description),
-                                tint = AccentBlue
+                                tint = MaterialTheme.colorScheme.secondary
                             )
                         }
                     },
@@ -263,7 +261,7 @@ fun EditPaymentSheet(
                         containerColor = Color.Transparent,
                         contentColor = MaterialTheme.colorScheme.onBackground
                     ),
-                    border = BorderStroke(1.dp, AccentBlue)
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.secondary)
                 ) {
                     Spacer(modifier = Modifier.height(20.dp))
                     Row(
@@ -281,8 +279,8 @@ fun EditPaymentSheet(
                                     viewModel.onEvent(EditPaymentEvent.CheckBoxSelected(isExpense = false))
                                 },
                                 colors = CheckboxDefaults.colors(
-                                    checkmarkColor = BackgroundColor,
-                                    checkedColor = AccentBlue
+                                    checkmarkColor = MaterialTheme.colorScheme.background,
+                                    checkedColor = MaterialTheme.colorScheme.secondary
                                 )
                             )
                             Text(text = stringResource(id = R.string.income_checkbox))
@@ -298,8 +296,8 @@ fun EditPaymentSheet(
                                     viewModel.onEvent(EditPaymentEvent.CheckBoxSelected(isExpense = true))
                                 },
                                 colors = CheckboxDefaults.colors(
-                                    checkmarkColor = BackgroundColor,
-                                    checkedColor = AccentBlue
+                                    checkmarkColor = MaterialTheme.colorScheme.background,
+                                    checkedColor = MaterialTheme.colorScheme.secondary
                                 )
                             )
                             Text(text = stringResource(id = R.string.expense_checkbox))
@@ -316,7 +314,7 @@ fun EditPaymentSheet(
                     isApproveEnabled = data.date != null && data.monthTag.isNotBlank() && data.amountNew != null &&
                             data.description.isNotBlank() && state.amountInString.isConvertibleToDouble()
                 )
-
+                Spacer(modifier = Modifier.height(20.dp))
                 if (state.isDatePickerVisible) {
                     DatePickerItem(
                         onDateSelected = { dateInMillis ->

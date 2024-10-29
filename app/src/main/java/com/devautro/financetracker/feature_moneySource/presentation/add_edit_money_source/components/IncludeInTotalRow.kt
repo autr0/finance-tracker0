@@ -18,7 +18,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.devautro.financetracker.R
 import com.devautro.financetracker.core.presentation.util.AutoResizedText
-import com.devautro.financetracker.ui.theme.CancelButton
 
 @Composable
 fun IncludeInTotalRow(
@@ -45,10 +44,10 @@ fun IncludeInTotalRow(
             checked = checkedValue,
             onCheckedChange = { onCheckedChange() },
             colors = SwitchDefaults.colors(
-                checkedThumbColor = MaterialTheme.colorScheme.onBackground,
+                checkedThumbColor = MaterialTheme.colorScheme.primaryContainer, // instead of onBackground
                 uncheckedThumbColor = MaterialTheme.colorScheme.primary,
                 checkedTrackColor = MaterialTheme.colorScheme.secondary,
-                uncheckedTrackColor = CancelButton
+                uncheckedTrackColor = MaterialTheme.colorScheme.tertiary
             )
         )
     }

@@ -16,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.devautro.financetracker.core.presentation.components.ActionIcon
@@ -32,9 +31,7 @@ fun SettingsItem(
     switcher: @Composable (() -> Unit)? = null
 ) {
     Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(bottom = 16.dp),
+        modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(15.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primary
@@ -82,4 +79,5 @@ fun SettingsItem(
             if (switcher != null) switcher()
         }
     }
+    Spacer(modifier = Modifier.height(16.dp))
 }
