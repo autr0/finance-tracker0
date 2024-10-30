@@ -58,7 +58,7 @@ import com.devautro.financetracker.feature_payment.presentation.payments_type_li
 import com.devautro.financetracker.feature_payment.presentation.payments_type_list.components.TotalAmountCard
 import com.devautro.financetracker.feature_payment.presentation.payments_type_list.components.YearPicker
 import com.devautro.financetracker.feature_payment.util.convertMillisToDate
-import com.devautro.financetracker.feature_payment.util.formatDoubleToString
+import com.devautro.financetracker.core.util.formatDoubleToString
 import com.devautro.financetracker.ui.theme.DarkestColor
 import com.devautro.financetracker.ui.theme.IncomeGreen
 import kotlinx.coroutines.flow.collectLatest
@@ -68,7 +68,8 @@ import kotlinx.coroutines.flow.collectLatest
 fun IncomesList(
     viewModel: IncomesViewModel = hiltViewModel(),
     navigateBack: () -> Unit,
-    navBarPadding: PaddingValues
+    navBarPadding: PaddingValues,
+    currencySign: String
 ) {
     val state by viewModel.paymentsState.collectAsStateWithLifecycle()
 
@@ -208,7 +209,7 @@ fun IncomesList(
         ) {
             TotalAmountCard(
                 modifier = Modifier.padding(horizontal = 20.dp),
-                amount = state.totalAmount
+                amount = "$currencySign${state.totalAmount}"
             )
             LazyColumn(
                 modifier = Modifier.weight(1f),
@@ -288,7 +289,10 @@ fun IncomesList(
 
                         PaymentTypeCard(
                             description = payment.description,
-                            amount = formatDoubleToString(payment.amountNew),
+                            amount = formatDoubleToString(
+                                value = payment.amountNew,
+                                sign = currencySign
+                            ),
                             monthTag = monthTag,
                             date = convertMillisToDate(payment.date),
                             color = IncomeGreen

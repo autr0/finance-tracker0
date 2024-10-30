@@ -43,7 +43,8 @@ fun HomeScreen(
     viewModel: HomeScreenViewModel = hiltViewModel(),
     bottomPadding: PaddingValues,
     navigateToIncomes: () -> Unit,
-    navigateToExpenses: () -> Unit
+    navigateToExpenses: () -> Unit,
+    currencySign: String
 ) {
     val state by viewModel.homeState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -109,7 +110,7 @@ fun HomeScreen(
                             viewModel.onEvent(HomeScreenEvent.IncomesClick)
                         },
                         text = stringResource(id = R.string.incomes),
-                        amount = state.incomesSum,
+                        amount = "$currencySign${state.incomesSum}",
                         color = DarkGreenCircle,
                     )
                 }
@@ -119,14 +120,14 @@ fun HomeScreen(
                             viewModel.onEvent(HomeScreenEvent.ExpensesClick)
                         },
                         text = stringResource(id = R.string.expenses),
-                        amount = state.expensesSum,
+                        amount = "$currencySign${state.expensesSum}",
                         color = DarkRedCircle
                     )
                 }
                 item {
                     InfoCard(
                         text = stringResource(id = R.string.budget),
-                        amount = state.budgetSum,
+                        amount = "$currencySign${state.budgetSum}",
                         color = BackgroundColor
                     )
                 }

@@ -35,6 +35,7 @@ class SettingsViewModel @Inject constructor(
 
     init {
         getInitialTheme()
+        getInitialCurrency()
     }
 
     fun onEvent(event: SettingsEvent) {
@@ -142,6 +143,37 @@ class SettingsViewModel @Inject constructor(
                     )
                 }
             }
+            is SettingsEvent.ShowCurrencyMenu -> {
+                _settingsState.update { state ->
+                    state.copy(
+                        isCurrenciesVisible = true
+                    )
+                }
+            }
+            is SettingsEvent.SelectedCurrency -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    try {
+                        settingsUseCases.changeCurrencyUseCase(newSign = event.sign)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        /*TODO: Show snackbar!*/
+                        return@launch
+                    }
+                }
+
+                _settingsState.update { state ->
+                    state.copy(
+                        selectedCurrency = event.sign
+                    )
+                }
+            }
+            is SettingsEvent.DismissCurrencyMenu -> {
+                _settingsState.update { state ->
+                    state.copy(
+                        isCurrenciesVisible = false
+                    )
+                }
+            }
         }
     }
 
@@ -155,6 +187,16 @@ class SettingsViewModel @Inject constructor(
             state.copy(
                 isDarkTheme = isDark
             )
+        }
+    }
+
+    private fun getInitialCurrency() {
+        viewModelScope.launch {
+            settingsUseCases.getChosenCurrencyUseCase().collect { currencySign ->
+                _settingsState.update { state ->
+                    state.copy(selectedCurrency = currencySign)
+                }
+            }
         }
     }
 

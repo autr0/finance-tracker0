@@ -8,4 +8,8 @@ interface SettingsRepository {
 
     suspend fun changeCurrentTheme(isDarkTheme: Boolean)
 
+    fun getChosenCurrency(): Flow<String>
+
+    suspend fun changeCurrency(sign: String)
+
 }

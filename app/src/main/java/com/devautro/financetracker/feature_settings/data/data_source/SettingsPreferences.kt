@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -23,6 +24,15 @@ class SettingsPreferences(private val context: Context) {
         return@map pref[booleanPreferencesKey(THEME_KEY)] ?: true
     }
 
+    suspend fun changeCurrency(sign: String) {
+        context.dataStore.edit { prefs ->
+            prefs[stringPreferencesKey(CURRENCY_KEY)] = sign
+        }
+    }
+
+    fun getChosenCurrency(): Flow<String> = context.dataStore.data.map { pref ->
+        return@map pref[stringPreferencesKey(CURRENCY_KEY)] ?: ""
+    }
 
     companion object {
         const val PREFS_NAME = "settings_preferences"

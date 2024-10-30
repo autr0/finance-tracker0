@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.devautro.financetracker.R
 import com.devautro.financetracker.core.util.UiText
 import com.devautro.financetracker.feature_payment.domain.use_case.PaymentUseCases
-import com.devautro.financetracker.feature_payment.util.formatDoubleToString
+import com.devautro.financetracker.core.util.formatDoubleToString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow

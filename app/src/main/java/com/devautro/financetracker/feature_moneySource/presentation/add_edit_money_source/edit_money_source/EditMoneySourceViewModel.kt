@@ -12,7 +12,6 @@ import com.devautro.financetracker.feature_moneySource.presentation.add_edit_mon
 import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.AddEditMoneySourceState
 import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.AddEditSourceSideEffects
 import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.mappers.toMoneySource
-import com.devautro.financetracker.feature_payment.util.formatStringToDouble
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

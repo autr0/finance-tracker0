@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -33,17 +34,25 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.devautro.financetracker.R
 import com.devautro.financetracker.feature_settings.presentation.components.DeleteAllDialog
+import com.devautro.financetracker.feature_settings.presentation.components.DropDownCurrency
 import com.devautro.financetracker.feature_settings.presentation.components.DropDownLanguageMenu
 import com.devautro.financetracker.feature_settings.presentation.components.SettingsItem
 import com.devautro.financetracker.ui.theme.CancelButton
@@ -55,14 +64,9 @@ fun SettingsMain(
     viewModel: SettingsViewModel = hiltViewModel(),
     bottomPadding: PaddingValues
 ) {
-
     val state by viewModel.settingsState.collectAsStateWithLifecycle()
 
     val snackbarHostState = remember { SnackbarHostState() }
-
-    val showCurrencyDialog = remember {
-        mutableStateOf(false)
-    }
 
     val context = LocalContext.current
 
@@ -76,6 +80,15 @@ fun SettingsMain(
                 }
             }
         }
+    }
+
+    val density = LocalDensity.current
+    var offsetX by remember {
+        mutableStateOf(0.dp)
+    }
+
+    var parentWidth by remember {
+        mutableIntStateOf(0)
     }
 
     Scaffold(
@@ -145,6 +158,7 @@ fun SettingsMain(
                             }
                         )
                     }
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
                 item {
                     SettingsItem(
@@ -167,6 +181,7 @@ fun SettingsMain(
                             )
                         }
                     )
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
                 item {
                     SettingsItem(
@@ -178,15 +193,56 @@ fun SettingsMain(
                         icon = Icons.Filled.Delete,
                         contentDescription = stringResource(id = R.string.icon_delete_all_description)
                     )
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
                 item {
-                    SettingsItem(
-                        modifier = Modifier.clickable { /* TODO -> showCurrencyList */ },
-                        headerText = stringResource(id = R.string.currency),
-                        bodyText = stringResource(id = R.string.currency_body),
-                        icon = Icons.Filled.MonetizationOn,
-                        contentDescription = stringResource(id = R.string.icon_currency_description)
-                    )
+                    Column(
+                        modifier = Modifier
+                            .height(IntrinsicSize.Min)
+                            .fillMaxWidth()
+                            .onPlaced {
+                                parentWidth = it.size.width
+                            }
+                    ) {
+                        SettingsItem(
+                            modifier = Modifier.clickable {
+                                viewModel.onEvent(SettingsEvent.ShowCurrencyMenu)
+                            },
+                            headerText = stringResource(id = R.string.currency),
+                            bodyText = stringResource(id = R.string.currency_body),
+                            icon = Icons.Filled.MonetizationOn,
+                            contentDescription = stringResource(id = R.string.icon_currency_description),
+                            switcher = {
+                                Text(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    textAlign = TextAlign.Center,
+                                    fontSize = 30.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    text = state.selectedCurrency
+                                )
+                                DropDownCurrency(
+                                    modifier = Modifier.onPlaced {
+                                        val popUpWidthPx =
+                                            parentWidth  - it.size.width
+
+                                        offsetX = with(density) {
+                                            popUpWidthPx.toDp()
+                                        }
+
+                                    },
+                                    isExpanded = state.isCurrenciesVisible,
+                                    onDismissMenu = { viewModel.onEvent(SettingsEvent.DismissCurrencyMenu) },
+                                    selectedItem = state.selectedCurrency,
+                                    onSelectedItemIdChange = { sign ->
+                                        viewModel.onEvent(SettingsEvent.SelectedCurrency(sign))
+                                    },
+                                    offsetX = DpOffset(offsetX, 0.dp)
+                                )
+                            }
+                        )
+
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
             }
 

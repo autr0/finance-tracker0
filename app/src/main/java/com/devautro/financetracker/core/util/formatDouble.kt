@@ -1,8 +1,8 @@
-package com.devautro.financetracker.feature_payment.util
+package com.devautro.financetracker.core.util
 
 import java.util.Locale
 
-fun formatDoubleToString(value: Double): String {
+fun formatDoubleToString(value: Double, sign: String = ""): String {
     val stringValue = String.format(Locale.US, "%.2f", value)
 
     val (integerPart, decimalPart) = stringValue.split(".")
@@ -10,7 +10,7 @@ fun formatDoubleToString(value: Double): String {
     val modifiedIntegerPart = integerPart.reversed().chunked(3).joinToString(" ").reversed()
 
     return if (decimalPart.isNotEmpty()) {
-        "$modifiedIntegerPart.$decimalPart"
+        "$sign$modifiedIntegerPart.$decimalPart"
     } else {
         modifiedIntegerPart
     }

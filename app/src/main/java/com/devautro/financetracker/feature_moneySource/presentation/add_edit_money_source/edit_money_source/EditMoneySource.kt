@@ -61,7 +61,7 @@ import com.devautro.financetracker.core.util.Const
 import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.AddEditMoneySourceEvent
 import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.AddEditSourceSideEffects
 import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.components.IncludeInTotalRow
-import com.devautro.financetracker.feature_payment.util.isConvertibleToDouble
+import com.devautro.financetracker.core.util.isConvertibleToDouble
 import com.devautro.financetracker.ui.theme.BackgroundColor
 import com.devautro.financetracker.ui.theme.secondary
 import kotlinx.coroutines.flow.collectLatest

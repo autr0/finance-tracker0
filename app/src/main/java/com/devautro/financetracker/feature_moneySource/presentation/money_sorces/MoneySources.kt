@@ -55,7 +55,7 @@ import com.devautro.financetracker.feature_moneySource.presentation.money_sorces
 import com.devautro.financetracker.feature_moneySource.presentation.money_sorces.components.TableDataItem
 import com.devautro.financetracker.core.presentation.components.SwipeableItem
 import com.devautro.financetracker.feature_moneySource.presentation.money_sorces.components.SingleItemDeleteDialog
-import com.devautro.financetracker.feature_payment.util.formatDoubleToString
+import com.devautro.financetracker.core.util.formatDoubleToString
 import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -64,7 +64,8 @@ fun MoneySources(
     viewModel: MoneySourcesViewModel = hiltViewModel(),
     bottomNavPadding: PaddingValues,
     navigateToAddScreen: () -> Unit,
-    navigateToEditScreen: (Long, Int) -> Unit
+    navigateToEditScreen: (Long, Int) -> Unit,
+    currencySign: String
 ) {
     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
 
@@ -189,7 +190,7 @@ fun MoneySources(
                             .fillMaxWidth()
                             .height(48.dp)
                             .padding(start = 20.dp, end = 10.dp),
-                        text = state.totalAmount,
+                        text = "$currencySign${state.totalAmount}",
                         textAlign = TextAlign.Center,
                         fontSize = 25.sp,
                         fontWeight = FontWeight.Bold,
@@ -254,7 +255,10 @@ fun MoneySources(
                             TableDataItem(
                                 index = index,
                                 sourceName = moneySourceItem.name,
-                                amount = formatDoubleToString(moneySourceItem.amount),
+                                amount = formatDoubleToString(
+                                    value = moneySourceItem.amount,
+                                    sign = currencySign
+                                ),
                                 onEditClick = {
                                     viewModel.onEvent(
                                         MoneySourcesEvent.EditIconClick(
@@ -274,7 +278,10 @@ fun MoneySources(
                                 cardAccentColor = Color(moneySourceItem.accentColor),
                                 index = index,
                                 sourceName = moneySourceItem.name,
-                                amount = formatDoubleToString(moneySourceItem.amount),
+                                amount = formatDoubleToString(
+                                    value = moneySourceItem.amount,
+                                    sign = currencySign
+                                ),
                                 onEditIconClick = {
                                     viewModel.onEvent(
                                         MoneySourcesEvent.EditIconClick(

@@ -2,8 +2,8 @@ package com.devautro.financetracker.feature_moneySource.presentation.add_edit_mo
 
 import com.devautro.financetracker.feature_moneySource.domain.model.MoneySource
 import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.AddEditMoneySourceState
-import com.devautro.financetracker.feature_payment.util.formatDoubleToString
-import com.devautro.financetracker.feature_payment.util.formatStringToDouble
+import com.devautro.financetracker.core.util.formatDoubleToString
+import com.devautro.financetracker.core.util.formatStringToDouble
 
 fun AddEditMoneySourceState.toMoneySource(): MoneySource {
     return MoneySource(

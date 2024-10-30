@@ -58,7 +58,7 @@ import com.devautro.financetracker.feature_payment.presentation.add_payment.comp
 import com.devautro.financetracker.feature_payment.presentation.add_payment.components.TextFieldWithDropDownMenu
 import com.devautro.financetracker.feature_payment.presentation.add_payment.components.TextFieldWithDropDownMenuMoneySource
 import com.devautro.financetracker.feature_payment.util.convertMillisToDate
-import com.devautro.financetracker.feature_payment.util.isConvertibleToDouble
+import com.devautro.financetracker.core.util.isConvertibleToDouble
 import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)

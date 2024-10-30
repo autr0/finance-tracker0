@@ -23,7 +23,10 @@ class MainActivity : AppCompatActivity() {
             val state = vm.settingsState.collectAsStateWithLifecycle()
 
             FinanceTrackerTheme(darkTheme = state.value.isDarkTheme) {
-                NavigationScreen(vm)
+                NavigationScreen(
+                    settingsViewModel = vm,
+                    currencySign = state.value.selectedCurrency
+                )
             }
         }
     }

@@ -15,4 +15,7 @@ sealed class SettingsEvent {
     data object ClickOnPaymentsCheckBox : SettingsEvent()
     data object ClickOnMoneySourcesCheckBox : SettingsEvent()
     data class SwitchTheme(val isDarkTheme: Boolean) : SettingsEvent()
+    data object ShowCurrencyMenu : SettingsEvent()
+    data class SelectedCurrency(val sign: String) : SettingsEvent()
+    data object DismissCurrencyMenu : SettingsEvent()
 }

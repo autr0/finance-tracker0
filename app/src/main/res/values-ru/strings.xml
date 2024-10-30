@@ -156,4 +156,28 @@
 
     <string name="error_delete_all">Не удалось удалить :(</string>
 
+    <!-- Currency signs -->
+    <string name="none">Ничего</string>
+    <string name="colon">\u20A1</string>
+    <string name="dollar">\u0024</string>
+    <string name="dram">\u058F</string>
+    <string name="euro">\u20AC</string>
+    <string name="frank">\u20A3</string>
+    <string name="guarani">\u20B2</string>
+    <string name="grivna">\u20B4</string>
+    <string name="lari">\u20BE</string>
+    <string name="lira">\u20BA</string>
+    <string name="manat">\u20BC</string>
+    <string name="naira">\u20A6</string>
+    <string name="peso">\u20B1</string>
+    <string name="pound">\u00A3</string>
+    <string name="ruble">\u20BD</string>
+    <string name="rupee">\u20B9</string>
+    <string name="shekel">\u20AA</string>
+    <string name="som">\u20C0</string>
+    <string name="tenge">\u20B8</string>
+    <string name="tugrik">\u20AE</string>
+    <string name="won">\u20A9</string>
+    <string name="yen">\u00A5</string>
+
 </resources>

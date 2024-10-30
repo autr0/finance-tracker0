@@ -13,7 +13,7 @@ import com.devautro.financetracker.feature_payment.presentation.payments_type_li
 import com.devautro.financetracker.feature_payment.presentation.payments_type_list.PaymentsListEvent
 import com.devautro.financetracker.feature_payment.presentation.payments_type_list.PaymentsListSideEffects
 import com.devautro.financetracker.feature_payment.presentation.payments_type_list.PaymentsListState
-import com.devautro.financetracker.feature_payment.util.formatDoubleToString
+import com.devautro.financetracker.core.util.formatDoubleToString
 import com.devautro.financetracker.feature_payment.util.getYearOfTheDate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

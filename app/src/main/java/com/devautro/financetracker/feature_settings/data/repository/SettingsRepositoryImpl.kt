@@ -16,4 +16,12 @@ class SettingsRepositoryImpl @Inject constructor(
     override suspend fun changeCurrentTheme(isDarkTheme: Boolean) {
         settingsPreferences.changeCurrentTheme(isDarkTheme = isDarkTheme)
     }
+
+    override fun getChosenCurrency(): Flow<String> {
+        return settingsPreferences.getChosenCurrency()
+    }
+
+    override suspend fun changeCurrency(sign: String) {
+        settingsPreferences.changeCurrency(sign = sign)
+    }
 }

@@ -67,7 +67,8 @@ import com.devautro.financetracker.feature_settings.presentation.SettingsViewMod
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavigationScreen(
-    settingsViewModel: SettingsViewModel
+    settingsViewModel: SettingsViewModel,
+    currencySign: String = ""
 ) {
     val barItems = listOf(
         TabBarItem(
@@ -164,7 +165,8 @@ fun NavigationScreen(
                 HomeScreen(
                     bottomPadding = bottomNavPadding,
                     navigateToIncomes = { navController.navigate(Incomes) },
-                    navigateToExpenses = { navController.navigate(Expenses) }
+                    navigateToExpenses = { navController.navigate(Expenses) },
+                    currencySign = currencySign
                 )
 
                 if (showBottomSheet.value) {
@@ -201,7 +203,8 @@ fun NavigationScreen(
             ) {
                 IncomesList(
                     navigateBack = { navController.navigateUp() },
-                    navBarPadding = bottomNavPadding
+                    navBarPadding = bottomNavPadding,
+                    currencySign = currencySign
                 )
             }
 
@@ -229,7 +232,8 @@ fun NavigationScreen(
             ) {
                 ExpensesList(
                     navigateBack = { navController.navigateUp() },
-                    navBarPadding = bottomNavPadding
+                    navBarPadding = bottomNavPadding,
+                    currencySign = currencySign
                 )
             }
 
@@ -267,7 +271,8 @@ fun NavigationScreen(
                                 paleColor = color
                             )
                         )
-                    }
+                    },
+                    currencySign = currencySign
                 )
 
                 if (showBottomSheet.value) {

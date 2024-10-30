@@ -6,12 +6,12 @@ import androidx.lifecycle.viewModelScope
 import com.devautro.financetracker.R
 import com.devautro.financetracker.core.util.Const
 import com.devautro.financetracker.core.util.UiText
+import com.devautro.financetracker.core.util.formatStringToDouble
 import com.devautro.financetracker.feature_moneySource.domain.model.MoneySource
 import com.devautro.financetracker.feature_moneySource.domain.use_case.MoneySourceUseCases
 import com.devautro.financetracker.feature_payment.domain.model.InvalidPaymentException
 import com.devautro.financetracker.feature_payment.domain.model.Payment
 import com.devautro.financetracker.feature_payment.domain.use_case.PaymentUseCases
-import com.devautro.financetracker.feature_payment.util.formatStringToDouble
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -93,13 +93,13 @@ class AddPaymentViewModel @Inject constructor(
             }
 
             is AddPaymentEvent.EnteredAmount -> {
-//                try {
-//                    _paymentData.update { payment ->
-//                        payment.copy(
-//                            amountNew = formatStringToDouble(event.amount)
-//                        )
-//                    }
-//                } catch (e: NumberFormatException) {
+                try {
+                    _paymentData.update { payment ->
+                        payment.copy(
+                            amountNew = formatStringToDouble(event.amount)
+                        )
+                    }
+                } catch (e: NumberFormatException) {
 //                    viewModelScope.launch {
 //                        e.printStackTrace()
 //
@@ -109,7 +109,8 @@ class AddPaymentViewModel @Inject constructor(
 //                            )
 //                        )
 //                    }
-//                }
+                }
+
                 _paymentState.update { state ->
                     state.copy(
                         amountInString = event.amount

@@ -25,7 +25,9 @@ import com.devautro.financetracker.feature_payment.domain.use_case.PaymentUseCas
 import com.devautro.financetracker.feature_settings.data.data_source.SettingsPreferences
 import com.devautro.financetracker.feature_settings.data.repository.SettingsRepositoryImpl
 import com.devautro.financetracker.feature_settings.domain.repository.SettingsRepository
+import com.devautro.financetracker.feature_settings.domain.use_case.ChangeCurrencyUseCase
 import com.devautro.financetracker.feature_settings.domain.use_case.ChangeCurrentThemeUseCase
+import com.devautro.financetracker.feature_settings.domain.use_case.GetChosenCurrencyUseCase
 import com.devautro.financetracker.feature_settings.domain.use_case.GetCurrentThemeUseCase
 import com.devautro.financetracker.feature_settings.domain.use_case.SettingsUseCases
 import dagger.Module
@@ -104,7 +106,9 @@ object AppModule {
     fun provideSettingsUseCases(repository: SettingsRepository): SettingsUseCases {
         return SettingsUseCases(
             changeCurrentThemeUseCase = ChangeCurrentThemeUseCase(repository),
-            getCurrentThemeUseCase = GetCurrentThemeUseCase(repository)
+            getCurrentThemeUseCase = GetCurrentThemeUseCase(repository),
+            changeCurrencyUseCase = ChangeCurrencyUseCase(repository),
+            getChosenCurrencyUseCase = GetChosenCurrencyUseCase(repository)
         )
     }
 }

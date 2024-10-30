@@ -79,5 +79,4 @@ fun SettingsItem(
             if (switcher != null) switcher()
         }
     }
-    Spacer(modifier = Modifier.height(16.dp))
 }
