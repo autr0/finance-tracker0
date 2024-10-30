@@ -9,7 +9,6 @@ import com.devautro.financetracker.feature_moneySource.presentation.add_edit_mon
 import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.AddEditMoneySourceEvent
 import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.AddEditMoneySourceState
 import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.mappers.toMoneySource
-import com.devautro.financetracker.feature_payment.util.formatStringToDouble
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -51,19 +50,20 @@ class AddMoneySourceViewModel @Inject constructor(
             }
 
             is AddEditMoneySourceEvent.SourceAmountChanged -> {
-                try {
-                    formatStringToDouble(event.amount)
-                } catch (e: NumberFormatException) {
-                    viewModelScope.launch {
-                        e.printStackTrace()
-
-                        _sideEffects.emit(
-                            AddEditSourceSideEffects.Showsnackbar(
-                                message = UiText.StringResource(id = R.string.error_input_amount)
-                            )
-                        )
-                    }
-                }
+                // Too annoying -->
+//                try {
+//                    formatStringToDouble(event.amount)
+//                } catch (e: NumberFormatException) {
+//                    viewModelScope.launch {
+//                        e.printStackTrace()
+//
+//                        _sideEffects.emit(
+//                            AddEditSourceSideEffects.Showsnackbar(
+//                                message = UiText.StringResource(id = R.string.error_input_amount)
+//                            )
+//                        )
+//                    }
+//                }
 
                 _addMoneySourceState.update { state ->
                     state.copy(

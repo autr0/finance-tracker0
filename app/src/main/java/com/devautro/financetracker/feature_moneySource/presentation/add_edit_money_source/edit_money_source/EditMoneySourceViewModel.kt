@@ -66,19 +66,19 @@ class EditMoneySourceViewModel @Inject constructor(
             }
 
             is AddEditMoneySourceEvent.SourceAmountChanged -> {
-                try {
-                    formatStringToDouble(event.amount)
-                } catch (e: NumberFormatException) {
-                    viewModelScope.launch {
-                        e.printStackTrace()
-
-                        _sideEffects.emit(
-                            AddEditSourceSideEffects.Showsnackbar(
-                                message = UiText.StringResource(id = R.string.error_input_amount)
-                            )
-                        )
-                    }
-                }
+//                try {
+//                    formatStringToDouble(event.amount)
+//                } catch (e: NumberFormatException) {
+//                    viewModelScope.launch {
+//                        e.printStackTrace()
+//
+//                        _sideEffects.emit(
+//                            AddEditSourceSideEffects.Showsnackbar(
+//                                message = UiText.StringResource(id = R.string.error_input_amount)
+//                            )
+//                        )
+//                    }
+//                }
 
                 _editMoneySourceState.update { state ->
                     state.copy(

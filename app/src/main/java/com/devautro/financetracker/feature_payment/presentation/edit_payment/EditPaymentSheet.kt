@@ -130,13 +130,15 @@ fun EditPaymentSheet(
                         }
                     },
                     readOnly = true,
-                    supportingText = {
-                        Text(
-                            text = stringResource(id = R.string.date_supporting_text),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.error
-                        )
-                    }
+                    supportingText = if (data.date == null) {
+                        {
+                            Text(
+                                text = stringResource(id = R.string.date_supporting_text),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.error
+                            )
+                        }
+                    } else null
                 )
                 TextFieldComponent(
                     value = data.description,
@@ -151,13 +153,15 @@ fun EditPaymentSheet(
                             amountFieldFocusRequester.requestFocus()
                         }
                     ),
-                    supportingText = {
-                        Text(
-                            text = stringResource(id = R.string.description_supporting_text),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.error
-                        )
-                    }
+                    supportingText = if (data.description.isBlank() || data.description.isEmpty()) {
+                        {
+                            Text(
+                                text = stringResource(id = R.string.description_supporting_text),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.error
+                            )
+                        }
+                    } else null
                 )
                 TextFieldComponent(
                     modifier = Modifier.focusRequester(amountFieldFocusRequester),
@@ -175,13 +179,15 @@ fun EditPaymentSheet(
                             monthTagFieldFocusRequester.requestFocus()
                         }
                     ),
-                    supportingText = {
-                        Text(
-                            text = stringResource(id = R.string.amount_supporting_text_0),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.error
-                        )
-                    }
+                    supportingText = if (!state.amountInString.isConvertibleToDouble()) {
+                        {
+                            Text(
+                                text = stringResource(id = R.string.amount_supporting_text_1),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.error
+                            )
+                        }
+                    } else null
                 )
 
                 TextFieldWithDropDownMenu(

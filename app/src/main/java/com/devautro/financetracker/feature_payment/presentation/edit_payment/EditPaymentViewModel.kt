@@ -113,23 +113,23 @@ class EditPaymentViewModel @Inject constructor(
             }
 
             is EditPaymentEvent.EnteredAmount -> {
-                try {
-                    _paymentData.update { payment ->
-                        payment.copy(
-                            amountNew = formatStringToDouble(event.amount)
-                        )
-                    }
-                } catch (e: NumberFormatException) {
-                    viewModelScope.launch {
-                        e.printStackTrace()
-
-                        _sideEffects.emit(
-                            EditPaymentSideEffects.ShowSnackbar(
-                                message = UiText.StringResource(R.string.error_input_amount)
-                            )
-                        )
-                    }
-                }
+//                try {
+//                    _paymentData.update { payment ->
+//                        payment.copy(
+//                            amountNew = formatStringToDouble(event.amount)
+//                        )
+//                    }
+//                } catch (e: NumberFormatException) {
+//                    viewModelScope.launch {
+//                        e.printStackTrace()
+//
+//                        _sideEffects.emit(
+//                            EditPaymentSideEffects.ShowSnackbar(
+//                                message = UiText.StringResource(R.string.error_input_amount)
+//                            )
+//                        )
+//                    }
+//                }
                 _paymentState.update { state ->
                     state.copy(
                         amountInString = event.amount

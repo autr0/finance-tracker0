@@ -59,7 +59,7 @@ fun TextFieldWithDropDownMenu(
             labelText = labelText,
             trailingIcon = trailingIcon,
             readOnly = true,
-            supportingText = supportingText
+            supportingText = if (selectedMonthTag == null) supportingText else null
         )
 
         DropdownMenu(

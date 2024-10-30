@@ -91,6 +91,7 @@
 
     <string name="amount_label">Сумма</string>
     <string name="amount_supporting_text_0">Введите сумму!</string>
+    <string name="amount_supporting_text_1">Шаблон: 100.99 (максимум 2 цифры после точки)</string>
 
     <string name="month_tag_label">Тэг Месяца</string>
     <string name="month_tag_icon_description">иконка тэга месяца</string>

@@ -52,6 +52,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.devautro.financetracker.R
@@ -217,43 +218,53 @@ fun EditMoneySource(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth(0.7f),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Const.sourcePaleColors.forEachIndexed { index, color ->
-                            val colorInt = color.toArgb()
-                            Box(
-                                modifier = Modifier
-                                    .size(48.dp)
-                                    .shadow(15.dp, CircleShape)
-                                    .clip(CircleShape)
-                                    .background(color)
-                                    .border(
-                                        width = 2.dp,
-                                        color = if (state.paleColor == colorInt) {
-                                            BackgroundColor
-                                        } else Color.Transparent,
-                                        shape = CircleShape
-                                    )
-                                    .clickable {
-                                        scope.launch {
-                                            cardBackgroundAnimatable.animateTo(
-                                                targetValue = color,
-                                                animationSpec = tween(
-                                                    durationMillis = 500
+                    if (!state.amount.isConvertibleToDouble()) {
+                        Text(
+                            modifier = Modifier.fillMaxWidth(0.7f),
+                            text = stringResource(id = R.string.amount_supporting_text_1),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.errorContainer,
+                            fontSize = 14.sp
+                        )
+                    } else {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth(0.7f),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Const.sourcePaleColors.forEachIndexed { index, color ->
+                                val colorInt = color.toArgb()
+                                Box(
+                                    modifier = Modifier
+                                        .size(48.dp)
+                                        .shadow(15.dp, CircleShape)
+                                        .clip(CircleShape)
+                                        .background(color)
+                                        .border(
+                                            width = 2.dp,
+                                            color = if (state.paleColor == colorInt) {
+                                                BackgroundColor
+                                            } else Color.Transparent,
+                                            shape = CircleShape
+                                        )
+                                        .clickable {
+                                            scope.launch {
+                                                cardBackgroundAnimatable.animateTo(
+                                                    targetValue = color,
+                                                    animationSpec = tween(
+                                                        durationMillis = 500
+                                                    )
+                                                )
+                                            }
+                                            viewModel.onEvent(
+                                                AddEditMoneySourceEvent.NewColorPicked(
+                                                    paleColor = colorInt,
+                                                    accentColor = Const.sourceAccentColors[index].toArgb()
                                                 )
                                             )
                                         }
-                                        viewModel.onEvent(
-                                            AddEditMoneySourceEvent.NewColorPicked(
-                                                paleColor = colorInt,
-                                                accentColor = Const.sourceAccentColors[index].toArgb()
-                                            )
-                                        )
-                                    }
-                            )
+                                )
+                            }
                         }
                     }
                 }

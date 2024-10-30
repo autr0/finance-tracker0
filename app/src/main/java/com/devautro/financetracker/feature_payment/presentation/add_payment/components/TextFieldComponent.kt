@@ -42,6 +42,6 @@ fun TextFieldComponent(
             focusedLabelColor = MaterialTheme.colorScheme.secondary,
             unfocusedLabelColor = MaterialTheme.colorScheme.secondary
         ),
-        supportingText = if (value.isBlank() || value.isEmpty()) supportingText else null
+        supportingText = supportingText
     )
 }

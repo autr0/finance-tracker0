@@ -88,6 +88,7 @@
 
     <string name="amount_label">Amount</string>
     <string name="amount_supporting_text_0">Enter the amount!</string>
+    <string name="amount_supporting_text_1">Pattern: 100.99 (max 2 digits after point)</string>
 
     <string name="month_tag_label">Month Tag</string>
     <string name="month_tag_icon_description">month tag icon</string>

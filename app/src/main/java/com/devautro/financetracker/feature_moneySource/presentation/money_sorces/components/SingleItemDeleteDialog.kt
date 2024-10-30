@@ -35,7 +35,7 @@ fun SingleItemDeleteDialog(
             modifier = Modifier
                 .width(IntrinsicSize.Max)
                 .height(IntrinsicSize.Min)
-                .padding(vertical = 16.dp, horizontal = 34.dp),
+                .padding(vertical = 16.dp),
             shape = RoundedCornerShape(15.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.secondary,
@@ -47,7 +47,7 @@ fun SingleItemDeleteDialog(
         ) {
             Spacer(modifier = Modifier.height(20.dp))
             Text(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 text = buildAnnotatedString {
                     append(stringResource(id = R.string.one_time_dialog_1))
                     withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
@@ -60,7 +60,7 @@ fun SingleItemDeleteDialog(
             )
             Spacer(modifier = Modifier.height(10.dp))
             Text(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 text = buildAnnotatedString {
                     append(stringResource(id = R.string.one_time_dialog_4))
                     withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
