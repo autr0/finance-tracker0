@@ -14,10 +14,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel
@@ -177,22 +175,36 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    /**
-     * Have to use 'runBlocking' to prevent display of theme with default value
-     * and after that blinking of theme switching with data from DataStore
-     */
-    private fun getInitialTheme() = runBlocking {
-        val isDark = settingsUseCases.getCurrentThemeUseCase().first()
-        _settingsState.update { state ->
-            state.copy(
-                isDarkTheme = isDark,
-                isLoading = false
-            )
+//    /**
+//     * Have to use 'runBlocking' to prevent display of theme with default value
+//     * and after that blinking of theme switching with data from DataStore
+//     */
+//    private fun getInitialTheme() = runBlocking {
+//        val isDark = settingsUseCases.getCurrentThemeUseCase().first()
+//        _settingsState.update { state ->
+//            state.copy(
+//                isDarkTheme = isDark,
+//                isLoading = false
+//            )
+//        }
+//    }
+
+    // Instead of `runBlocking` - longer SplashScreen
+    private fun getInitialTheme() {
+        viewModelScope.launch(Dispatchers.IO) {
+            settingsUseCases.getCurrentThemeUseCase().collect { isDark ->
+                _settingsState.update { state ->
+                    state.copy(
+                        isDarkTheme = isDark,
+                        isLoading = false
+                    )
+                }
+            }
         }
     }
 
     private fun getInitialCurrency() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             settingsUseCases.getChosenCurrencyUseCase().collect { currencySign ->
                 _settingsState.update { state ->
                     state.copy(selectedCurrency = currencySign)

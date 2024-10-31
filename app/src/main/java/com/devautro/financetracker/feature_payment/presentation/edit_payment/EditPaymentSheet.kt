@@ -100,7 +100,7 @@ fun EditPaymentSheet(
         onDismissRequest = navigateBack,
         sheetState = sheetState,
         modifier = Modifier.fillMaxSize(),
-        containerColor = MaterialTheme.colorScheme.secondary
+        containerColor = MaterialTheme.colorScheme.background
     ) {
 
         Scaffold(

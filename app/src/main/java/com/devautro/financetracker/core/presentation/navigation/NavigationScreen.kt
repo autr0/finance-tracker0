@@ -45,6 +45,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -58,6 +59,7 @@ import com.devautro.financetracker.feature_moneySource.presentation.add_edit_mon
 import com.devautro.financetracker.feature_moneySource.presentation.add_edit_money_source.edit_money_source.EditMoneySource
 import com.devautro.financetracker.feature_moneySource.presentation.money_sorces.MoneySources
 import com.devautro.financetracker.feature_payment.presentation.add_payment.AddPaymentBottomSheet
+import com.devautro.financetracker.feature_payment.presentation.add_payment.AddPaymentViewModel
 import com.devautro.financetracker.feature_payment.presentation.home_screen.HomeScreen
 import com.devautro.financetracker.feature_payment.presentation.payments_type_list.expenses.ExpensesList
 import com.devautro.financetracker.feature_payment.presentation.payments_type_list.incomes.IncomesList
@@ -117,6 +119,7 @@ fun NavigationScreen(
         rememberSaveable { mutableStateOf(false) } // to survive configuration changes
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
+    val addPaymentViewModel = hiltViewModel<AddPaymentViewModel>()
 
     Scaffold(
         bottomBar = {
@@ -171,6 +174,7 @@ fun NavigationScreen(
 
                 if (showBottomSheet.value) {
                     AddPaymentBottomSheet(
+                        viewModel = addPaymentViewModel,
                         sheetState = sheetState,
                         navigateBack = {
                             showBottomSheet.value = false
@@ -250,6 +254,7 @@ fun NavigationScreen(
 
                 if (showBottomSheet.value) {
                     AddPaymentBottomSheet(
+                        viewModel = addPaymentViewModel,
                         sheetState = sheetState,
                         navigateBack = {
                             showBottomSheet.value = false
@@ -277,6 +282,7 @@ fun NavigationScreen(
 
                 if (showBottomSheet.value) {
                     AddPaymentBottomSheet(
+                        viewModel = addPaymentViewModel,
                         sheetState = sheetState,
                         navigateBack = {
                             showBottomSheet.value = false
