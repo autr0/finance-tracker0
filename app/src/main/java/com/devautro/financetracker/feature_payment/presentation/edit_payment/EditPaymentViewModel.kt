@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -72,7 +73,7 @@ class EditPaymentViewModel @Inject constructor(
 
                 _paymentState.update { state ->
                     state.copy(
-                        amountInString = event.initialPayment.amountNew.toString(),
+                        amountInString = String.format(Locale.US, "%.2f", event.initialPayment.amountNew),
                         selectedMoneySource = _paymentState.value.moneySourceList.find {
                             it.id == event.initialPayment.sourceId
                         }

@@ -14,15 +14,13 @@ val SurfaceColor = Color(0xFFFEF7FF)
 val CancelButton = Color(0xFF606578)
 
 
-//val LightBackground = Color(0xFFEEF6FF)
-val LightBackground = Color(0xFFD3DAFF)
+val LightBackground = Color(0xFFEEF6FF)
 val LightOnBackground = Color(0xFF121630)
 val LightUnChosenTextColor = Color(0xFF7292B3)
 val LightAccentBlue = Color(0xFF585DF9)
 val LightOnAccentBlue = LightBackground
 val LightSurfaceColor = Color(0xFFE2EFFF)
-//val LightSecondary = Color(0xFFD3E7FF)
-val LightSecondary = Color(0xFFEEF6FF)
+val LightSecondary = Color(0xFFD7DDFF)
 val LightCancelButton = Color(0xFFC1C6DB)
 
 val IncomeGreen = Color(0xFF268F1D) // 68% == AE

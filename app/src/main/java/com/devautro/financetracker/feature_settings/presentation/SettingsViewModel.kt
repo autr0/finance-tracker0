@@ -185,7 +185,8 @@ class SettingsViewModel @Inject constructor(
         val isDark = settingsUseCases.getCurrentThemeUseCase().first()
         _settingsState.update { state ->
             state.copy(
-                isDarkTheme = isDark
+                isDarkTheme = isDark,
+                isLoading = false
             )
         }
     }

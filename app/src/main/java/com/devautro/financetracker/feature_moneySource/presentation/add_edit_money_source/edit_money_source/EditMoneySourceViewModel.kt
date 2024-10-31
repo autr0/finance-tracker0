@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -130,7 +131,7 @@ class EditMoneySourceViewModel @Inject constructor(
                 _editMoneySourceState.update { state ->
                     state.copy(
                         name = moneyS.name,
-                        amount = moneyS.amount.toString(),
+                        amount = String.format(Locale.US, "%.2f", moneyS.amount),
                         paleColor = moneyS.paleColor,
                         accentColor = moneyS.accentColor,
                         includedInTotal = moneyS.includeInTotal
