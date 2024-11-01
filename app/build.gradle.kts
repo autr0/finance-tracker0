@@ -106,4 +106,7 @@ dependencies {
 
     // Splash screen
     implementation(libs.splash.screen)
+
+    // Charts
+    implementation(libs.y.charts)
 }

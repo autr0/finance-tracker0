@@ -65,6 +65,7 @@ import com.devautro.financetracker.feature_payment.presentation.payments_type_li
 import com.devautro.financetracker.feature_payment.presentation.payments_type_list.incomes.IncomesList
 import com.devautro.financetracker.feature_settings.presentation.SettingsMain
 import com.devautro.financetracker.feature_settings.presentation.SettingsViewModel
+import com.devautro.financetracker.feature_statistics.presentation.StatisticsScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -242,15 +243,17 @@ fun NavigationScreen(
             }
 
             composable<Charts> {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.background),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(text = stringResource(id = R.string.announce_text))
-                }
+//                Column(
+//                    modifier = Modifier
+//                        .fillMaxSize()
+//                        .background(MaterialTheme.colorScheme.background),
+//                    verticalArrangement = Arrangement.Center,
+//                    horizontalAlignment = Alignment.CenterHorizontally
+//                ) {
+//                    Text(text = stringResource(id = R.string.announce_text))
+//                }
+
+                StatisticsScreen(bottomPaddingValues = bottomNavPadding, currency = currencySign)
 
                 if (showBottomSheet.value) {
                     AddPaymentBottomSheet(

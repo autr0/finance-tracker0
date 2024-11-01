@@ -25,6 +25,7 @@ serialization = "1.6.3"
 appcompat = "1.7.0"
 datastore = "1.1.1"
 splash = "1.0.1"
+charts = "2.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -71,6 +72,8 @@ appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "a
 datastore = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
 # splash
 splash-screen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splash" }
+#charts
+y-charts = { group = "co.yml", name = "ycharts", version.ref = "charts" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -24,7 +24,8 @@ private val DarkColorScheme = darkColorScheme(
     onPrimaryContainer = BackgroundColor,
     errorContainer = DarkRedCircle,
     onErrorContainer = OnBackgroundColor,
-    error = LightRed
+    error = LightRed,
+    surface = Color.Transparent
 )
 
 // Mock Light Theme -->
@@ -41,7 +42,8 @@ private val LightColorScheme = lightColorScheme(
     onPrimaryContainer = Color.Black,
     errorContainer = DarkRedCircle,
     onErrorContainer = OnBackgroundColor,
-    error = DarkRedCircle
+    error = DarkRedCircle,
+    surface = Color.Transparent
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
