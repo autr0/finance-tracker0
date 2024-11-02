@@ -177,5 +177,12 @@
     <string name="tugrik">\u20AE</string>
     <string name="won">\u20A9</string>
     <string name="yen">\u00A5</string>
+    
+<!-- Chart screen  -->
+    <string name="chart_top_bar">Charts</string>
+    <string name="incomes_big">INCOMES</string>
+    <string name="expenses_big">EXPENSES</string>
+    <string name="sum">sum:</string>
+
 
 </resources>

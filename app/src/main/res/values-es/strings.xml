@@ -180,4 +180,10 @@
     <string name="won">\u20A9</string>
     <string name="yen">\u00A5</string>
 
+    <!-- Chart screen  -->
+    <string name="chart_top_bar">Gráficos</string>
+    <string name="incomes_big">INGRESOS</string>
+    <string name="expenses_big">GASTOS</string>
+    <string name="sum">suma:</string>
+
 </resources>

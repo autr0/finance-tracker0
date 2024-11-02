@@ -180,4 +180,10 @@
     <string name="won">\u20A9</string>
     <string name="yen">\u00A5</string>
 
+    <!-- Chart screen  -->
+    <string name="chart_top_bar">Графики</string>
+    <string name="incomes_big">ДОХОДЫ</string>
+    <string name="expenses_big">РАСХОДЫ</string>
+    <string name="sum">сумма:</string>
+
 </resources>
