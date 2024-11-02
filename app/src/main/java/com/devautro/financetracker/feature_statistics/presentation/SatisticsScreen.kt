@@ -22,11 +22,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -36,6 +38,7 @@ import com.devautro.financetracker.core.presentation.components.TopTabsSorting
 import com.devautro.financetracker.core.util.Const
 import com.devautro.financetracker.feature_statistics.presentation.components.Chart
 import com.devautro.financetracker.feature_statistics.presentation.components.ChartDescription
+import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,6 +51,19 @@ fun StatisticsScreen(
 
     val snackbarHostState = remember { SnackbarHostState() }
 
+    val context = LocalContext.current
+
+    LaunchedEffect(key1 = true) {
+        vm.sideEffects.collectLatest { effect ->
+            when(effect) {
+                is ChartsSideEffects.ShowSnackbar -> {
+                    snackbarHostState.showSnackbar(
+                        message = effect.message.asString(context)
+                    )
+                }
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -99,12 +115,17 @@ fun StatisticsScreen(
                 Chart(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .fillMaxHeight()
+                        .fillMaxHeight(),
+                    groupedBars = state.groupBarList,
+                    maxAmount = state.maxAmount
                 )
             }
-            ChartDescription(incomesSum = "${currency}1200.00", expensesSum = "${currency}3500.99")
+            ChartDescription(
+                incomesSum = "${currency}${state.incomesSum}",
+                expensesSum = "${currency}${state.expensesSum}"
+            )
 
-            Spacer(modifier = Modifier.weight(0.2f))
+            Spacer(modifier = Modifier.height(20.dp))
         }
 
     }

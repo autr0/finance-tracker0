@@ -6,9 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import co.yml.charts.axis.AxisData
-import co.yml.charts.common.model.Point
 import co.yml.charts.ui.barchart.GroupBarChart
-import co.yml.charts.ui.barchart.models.BarData
 import co.yml.charts.ui.barchart.models.BarPlotData
 import co.yml.charts.ui.barchart.models.BarStyle
 import co.yml.charts.ui.barchart.models.GroupBar
@@ -16,69 +14,17 @@ import co.yml.charts.ui.barchart.models.GroupBarChartData
 import co.yml.charts.ui.barchart.models.GroupSeparatorConfig
 import co.yml.charts.ui.barchart.models.SelectionHighlightData
 import com.devautro.financetracker.R
+import com.devautro.financetracker.feature_statistics.util.formatNumber
 import com.devautro.financetracker.ui.theme.DarkestColor
 import com.devautro.financetracker.ui.theme.ExpenseRed
 import com.devautro.financetracker.ui.theme.IncomeGreen
 
 @Composable
 fun Chart(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    groupedBars: List<GroupBar>,
+    maxAmount: Double
 ) {
-    val groupedBars = listOf(
-        GroupBar(
-            barList = listOf(
-                BarData(
-                    point = Point(0f, 40f),
-                    color = IncomeGreen,
-//                    gradientColorList = listOf(Color.Transparent, IncomeGreen, DarkGreenCircle),
-//                    label = "First"
-                ),
-                BarData(
-                    point = Point(0f, 66f),
-                    color = ExpenseRed,
-//                    gradientColorList = listOf(Color.Transparent, ExpenseRed, DarkRedCircle),
-//                    label = "First"
-                )
-            ),
-            label = "First"
-        ),
-        GroupBar(
-            barList = listOf(
-                BarData(
-                    point = Point(1f, 20f),
-                    color = IncomeGreen,
-//                    gradientColorList = listOf(Color.Transparent, IncomeGreen, DarkGreenCircle),
-//                    label = "Second"
-                ),
-                BarData(
-                    point = Point(1f, 100f),
-                    color = ExpenseRed,
-//                    gradientColorList = listOf(Color.Transparent, ExpenseRed, DarkRedCircle),
-//                    label = "Second"
-                )
-            ),
-            label = "Second"
-        ),
-        GroupBar(
-            barList = listOf(
-                BarData(
-                    point = Point(2f, 90f),
-                    color = IncomeGreen,
-//                    gradientColorList = listOf(Color.Transparent, IncomeGreen, DarkGreenCircle),
-//                    label = "Third"
-                ),
-                BarData(
-                    point = Point(2f, 10f),
-                    color = ExpenseRed,
-//                    gradientColorList = listOf(Color.Transparent, ExpenseRed, DarkRedCircle),
-//                    label = "Third"
-                )
-            ),
-            label = "Third"
-        ),
-    )
-
-
     val xAxisData = AxisData.Builder()
         .startDrawPadding(42.dp) // check it out
         .axisStepSize(50.dp)
@@ -96,8 +42,8 @@ fun Chart(
         .steps(4)
         .backgroundColor(MaterialTheme.colorScheme.primaryContainer)
         .labelData { i ->
-            val yScale = 100 / 4
-            (i * yScale).toString()
+            val yScale = maxAmount / 4
+            formatNumber(i * yScale)
         }
         .labelAndAxisLinePadding(20.dp)
         .axisLabelColor(DarkestColor)
@@ -111,9 +57,10 @@ fun Chart(
         barColorPaletteList = listOf(IncomeGreen, ExpenseRed),
         barStyle = BarStyle(
             isGradientEnabled = true,
+            paddingBetweenBars = 42.dp,
             selectionHighlightData = SelectionHighlightData(
                 groupBarPopUpLabel = { _, y ->
-                    val amount = y.toDouble()
+                    val amount = formatNumber(y.toDouble())
                     "$sum $amount"
                 }
             )

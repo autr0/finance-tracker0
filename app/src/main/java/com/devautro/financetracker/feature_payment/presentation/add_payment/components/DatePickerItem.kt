@@ -35,7 +35,9 @@ fun DatePickerItem(
                 Text(text = stringResource(id = R.string.cancel), color = MaterialTheme.colorScheme.secondary)
             }
         },
-
+        colors = DatePickerDefaults.colors(
+            containerColor = MaterialTheme.colorScheme.background
+        )
         ) {
         DatePicker(
             state = datePickerState,
