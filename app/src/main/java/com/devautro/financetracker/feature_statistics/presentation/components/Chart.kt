@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import co.yml.charts.axis.AxisData
 import co.yml.charts.ui.barchart.GroupBarChart
 import co.yml.charts.ui.barchart.models.BarPlotData
@@ -32,6 +33,7 @@ fun Chart(
         .steps(groupedBars.size - 1)
         .labelData { i -> groupedBars[i].label }
         .labelAndAxisLinePadding(10.dp)
+        .axisLabelFontSize(12.sp)
         .axisLabelColor(DarkestColor)
         .axisLineColor(DarkestColor)
         .shouldDrawAxisLineTillEnd(true) // ???
@@ -45,7 +47,8 @@ fun Chart(
             val yScale = maxAmount / 4
             formatNumber(i * yScale)
         }
-        .labelAndAxisLinePadding(20.dp)
+        .labelAndAxisLinePadding(42.dp)
+        .axisLabelFontSize(12.sp)
         .axisLabelColor(DarkestColor)
         .axisLineColor(DarkestColor)
         .build()

@@ -59,8 +59,8 @@ import com.devautro.financetracker.feature_payment.presentation.payments_type_li
 import com.devautro.financetracker.feature_payment.presentation.payments_type_list.components.YearPicker
 import com.devautro.financetracker.feature_payment.util.convertMillisToDate
 import com.devautro.financetracker.core.util.formatDoubleToString
+import com.devautro.financetracker.ui.theme.DarkRedCircle
 import com.devautro.financetracker.ui.theme.DarkestColor
-import com.devautro.financetracker.ui.theme.ExpenseRed
 import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -295,7 +295,7 @@ fun ExpensesList(
                             ),
                             monthTag = monthTag,
                             date = convertMillisToDate(payment.date),
-                            color = ExpenseRed
+                            color = DarkRedCircle
                         )
                     }
                 }

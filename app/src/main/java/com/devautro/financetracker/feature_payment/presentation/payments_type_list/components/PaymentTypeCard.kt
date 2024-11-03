@@ -1,5 +1,6 @@
 package com.devautro.financetracker.feature_payment.presentation.payments_type_list.components
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,7 +35,7 @@ fun PaymentTypeCard(
         modifier = modifier,
         colors = CardDefaults.cardColors(
             containerColor = color,
-            contentColor = MaterialTheme.colorScheme.background
+            contentColor = MaterialTheme.colorScheme.primaryContainer
         ),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 2.dp,

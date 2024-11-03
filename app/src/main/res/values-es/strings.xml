@@ -174,7 +174,7 @@
     <string name="ruble">\u20BD</string>
     <string name="rupee">\u20B9</string>
     <string name="shekel">\u20AA</string>
-    <string name="som">\u20C0</string>
+<!--    <string name="som">\u20C0</string>-->
     <string name="tenge">\u20B8</string>
     <string name="tugrik">\u20AE</string>
     <string name="won">\u20A9</string>
@@ -185,5 +185,6 @@
     <string name="incomes_big">INGRESOS</string>
     <string name="expenses_big">GASTOS</string>
     <string name="sum">suma:</string>
+    <string name="no_data">¡Sin datos!</string>
 
 </resources>

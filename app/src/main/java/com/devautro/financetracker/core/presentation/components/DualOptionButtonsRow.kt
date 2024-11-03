@@ -3,8 +3,10 @@ package com.devautro.financetracker.core.presentation.components
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -30,9 +32,7 @@ fun DualOptionButtonsRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Button(
-            modifier = Modifier
-                .weight(0.5f)
-                .padding(horizontal = 20.dp),
+            modifier = Modifier.weight(0.5f),
             onClick = {
                 onDismiss()
             },
@@ -44,10 +44,9 @@ fun DualOptionButtonsRow(
         ) {
             Text(text = dismissText)
         }
+        Spacer(modifier = Modifier.width(10.dp))
         Button(
-            modifier = Modifier
-                .weight(0.5f)
-                .padding(horizontal = 15.dp),
+            modifier = Modifier.weight(0.5f),
             enabled = isApproveEnabled,
             onClick = {
                 onApprove()

@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.devautro.financetracker.core.util.Const
 
 @Composable
@@ -42,6 +43,7 @@ fun SelectedMonthContainer(
             Text(
                 text = month,
                 modifier = Modifier.padding(5.dp),
+                fontSize = 12.sp,
                 color = MaterialTheme.colorScheme.secondary
             )
         }

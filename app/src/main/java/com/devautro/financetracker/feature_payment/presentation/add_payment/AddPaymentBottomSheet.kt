@@ -311,6 +311,7 @@ fun AddPaymentBottomSheet(
                     Spacer(modifier = Modifier.height(20.dp))
                 }
                 Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.height(20.dp))
                 DualOptionButtonsRow(
                     dismissText = stringResource(id = R.string.cancel),
                     approveText = stringResource(id = R.string.add),

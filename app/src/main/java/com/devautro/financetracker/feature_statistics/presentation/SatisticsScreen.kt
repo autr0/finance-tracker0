@@ -1,5 +1,6 @@
 package com.devautro.financetracker.feature_statistics.presentation
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -30,14 +31,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import co.yml.charts.ui.barchart.models.GroupBar
 import com.devautro.financetracker.R
 import com.devautro.financetracker.core.presentation.components.TopTabsSorting
 import com.devautro.financetracker.core.util.Const
 import com.devautro.financetracker.feature_statistics.presentation.components.Chart
 import com.devautro.financetracker.feature_statistics.presentation.components.ChartDescription
+import com.devautro.financetracker.ui.theme.DarkestColor
 import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -112,13 +117,28 @@ fun StatisticsScreen(
                     defaultElevation = 4.dp
                 )
             ) {
-                Chart(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(),
-                    groupedBars = state.groupBarList,
-                    maxAmount = state.maxAmount
-                )
+                if (state.groupBarList.isNotEmpty()) {
+                    Chart(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight(),
+                        groupedBars = translateBarListLabels(barList = state.groupBarList),
+                        maxAmount = state.maxAmount
+                    )
+                } else {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            text = stringResource(id = R.string.no_data),
+                            textAlign = TextAlign.Center,
+                            color = DarkestColor,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
             }
             ChartDescription(
                 incomesSum = "${currency}${state.incomesSum}",
@@ -128,5 +148,23 @@ fun StatisticsScreen(
             Spacer(modifier = Modifier.height(20.dp))
         }
 
+    }
+}
+
+@Composable
+private fun translateBarListLabels(barList: List<GroupBar>): List<GroupBar> {
+    return if (barList.any { bar -> bar.label.contains(" ") }) {
+        barList.map { bar ->
+            val (month, year) = bar.label.split(" ")
+            val resId = Const.months.entries.find { it.value == month }?.key
+            val newLabel = resId?.let { "${stringResource(id = resId)} $year" } ?: bar.label
+
+            GroupBar(
+                label = newLabel,
+                barList = bar.barList
+            )
+        }
+    } else {
+        barList
     }
 }

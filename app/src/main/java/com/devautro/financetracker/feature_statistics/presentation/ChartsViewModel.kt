@@ -46,20 +46,22 @@ class ChartsViewModel @Inject constructor(
     }
 
     fun onEvent(event: ChartsEvent) {
-        when(event) {
+        when (event) {
             is ChartsEvent.PeriodTabClick -> {
                 _chartsState.update { state ->
                     state.copy(
                         selectedPeriodIndex = event.index
                     )
                 }
-                when(event.index) {
+                when (event.index) {
                     0 -> {
                         getFilteredDataByWeek()
                     }
+
                     1 -> {
                         getFilteredDataByMonth()
                     }
+
                     2 -> {
                         getAllData()
                     }
@@ -75,24 +77,33 @@ class ChartsViewModel @Inject constructor(
                     paymentUseCases.getIncomesUseCase(),
                     paymentUseCases.getExpensesUseCase()
                 ) { incomes, expenses ->
-                    val monthIncomesMap = incomes.filter {
+                    val monthIncomes = incomes.filter {
                         val oneWeekAgo = LocalDate.now().minus(1, ChronoUnit.WEEKS)
                         val oneWeekAgoMillis = oneWeekAgo.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
                         it.date!! > oneWeekAgoMillis
-                    }.groupBy { convertMillisToDate(it.date!!) }
+                    }
+
+                    val monthExpenses = expenses.filter {
+                        val oneWeekAgo = LocalDate.now().minus(1, ChronoUnit.WEEKS)
+                        val oneWeekAgoMillis = oneWeekAgo.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                        it.date!! > oneWeekAgoMillis
+                    }
+
+                    val monthIncomesMap = monthIncomes
+                        .groupBy { convertMillisToDate(it.date!!) }
                         .map { it.key to it.value.sumOf { payment -> payment.amountNew!! } }.toMap()
 
-
-                    val monthExpensesMap = expenses.filter {
-                        val oneWeekAgo = LocalDate.now().minus(1, ChronoUnit.WEEKS)
-                        val oneWeekAgoMillis = oneWeekAgo.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
-                        it.date!! > oneWeekAgoMillis
-                    }.groupBy { convertMillisToDate(it.date!!) }
+                    val monthExpensesMap = monthExpenses
+                        .groupBy { convertMillisToDate(it.date!!) }
                         .map { it.key to it.value.sumOf { payment -> payment.amountNew!! } }.toMap()
 
                     monthIncomesMap to monthExpensesMap
-
                 }.collect { (monthIncomes, monthExpenses) ->
+                    if (monthIncomes.values.isEmpty() && monthExpenses.values.isEmpty()) {
+                        resetChartsState()
+                        return@collect
+                    }
+
                     val incomesSum = monthIncomes.values.sum()
                     val expensesSum = monthExpenses.values.sum()
                     val max = (monthIncomes.values + monthExpenses.values).max()
@@ -129,6 +140,7 @@ class ChartsViewModel @Inject constructor(
 
                     _chartsState.update { state ->
                         state.copy(
+                            selectedPeriodIndex = 0,
                             incomesSum = formatDoubleToString(incomesSum),
                             expensesSum = formatDoubleToString(expensesSum),
                             maxAmount = max,
@@ -152,7 +164,9 @@ class ChartsViewModel @Inject constructor(
                 ) { incomes, expenses ->
                     val monthIncomesMap = incomes.filter {
                         val oneMonthAgo = LocalDate.now().minus(1, ChronoUnit.MONTHS)
-                        val oneMonthAgoMillis = oneMonthAgo.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                        val oneMonthAgoMillis =
+                            oneMonthAgo.atStartOfDay(ZoneId.systemDefault()).toInstant()
+                                .toEpochMilli()
                         it.date!! > oneMonthAgoMillis
                     }.groupBy { convertMillisToDate(it.date!!) }
                         .map { it.key to it.value.sumOf { payment -> payment.amountNew!! } }.toMap()
@@ -160,7 +174,9 @@ class ChartsViewModel @Inject constructor(
 
                     val monthExpensesMap = expenses.filter {
                         val oneMonthAgo = LocalDate.now().minus(1, ChronoUnit.MONTHS)
-                        val oneMonthAgoMillis = oneMonthAgo.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                        val oneMonthAgoMillis =
+                            oneMonthAgo.atStartOfDay(ZoneId.systemDefault()).toInstant()
+                                .toEpochMilli()
                         it.date!! > oneMonthAgoMillis
                     }.groupBy { convertMillisToDate(it.date!!) }
                         .map { it.key to it.value.sumOf { payment -> payment.amountNew!! } }.toMap()
@@ -168,6 +184,11 @@ class ChartsViewModel @Inject constructor(
                     monthIncomesMap to monthExpensesMap
 
                 }.collect { (monthIncomes, monthExpenses) ->
+                    if (monthIncomes.values.isEmpty() && monthExpenses.values.isEmpty()) {
+                        resetChartsState()
+                        return@collect
+                    }
+
                     val incomesSum = monthIncomes.values.sum()
                     val expensesSum = monthExpenses.values.sum()
                     val max = (monthIncomes.values + monthExpenses.values).max()
@@ -204,6 +225,7 @@ class ChartsViewModel @Inject constructor(
 
                     _chartsState.update { state ->
                         state.copy(
+                            selectedPeriodIndex = 1,
                             incomesSum = formatDoubleToString(incomesSum),
                             expensesSum = formatDoubleToString(expensesSum),
                             maxAmount = max,
@@ -242,6 +264,11 @@ class ChartsViewModel @Inject constructor(
 
                     incomesSumOfMonthAndYear to expensesSumOfMonthAndYear
                 }.collect { (incomesMap, expensesMap) ->
+                    if (incomesMap.values.isEmpty() && expensesMap.values.isEmpty()) {
+                        resetChartsState()
+                        return@collect
+                    }
+
                     val incomesSum = incomesMap.values.sum()
                     val expensesSum = expensesMap.values.sum()
                     val max = (incomesMap.values + expensesMap.values).max()
@@ -260,26 +287,27 @@ class ChartsViewModel @Inject constructor(
                             convertMonthYearToMillis(pair.first)
                         }
                         .mapIndexed { index, value ->
-                        val amount = value.second
-                        val x = index.toFloat()
+                            val amount = value.second
+                            val x = index.toFloat()
 
-                        GroupBar(
-                            label = value.first,
-                            barList = listOf(
-                                BarData(
-                                    point = Point(x = x, y = amount.first?.toFloat() ?: 0f),
-                                    color = IncomeGreen
-                                ),
-                                BarData(
-                                    point = Point(x = x, y = amount.second?.toFloat() ?: 0f),
-                                    color = ExpenseRed
+                            GroupBar(
+                                label = value.first,
+                                barList = listOf(
+                                    BarData(
+                                        point = Point(x = x, y = amount.first?.toFloat() ?: 0f),
+                                        color = IncomeGreen
+                                    ),
+                                    BarData(
+                                        point = Point(x = x, y = amount.second?.toFloat() ?: 0f),
+                                        color = ExpenseRed
+                                    )
                                 )
                             )
-                        )
-                    }
+                        }
 
                     _chartsState.update { state ->
                         state.copy(
+                            selectedPeriodIndex = 2,
                             incomesSum = formatDoubleToString(incomesSum),
                             expensesSum = formatDoubleToString(expensesSum),
                             groupBarList = groupedBarList,
@@ -302,6 +330,17 @@ class ChartsViewModel @Inject constructor(
                 message = UiText.StringResource(R.string.error_get_payments_data)
             )
         )
+    }
+
+    private fun resetChartsState() {
+        _chartsState.update { state ->
+            state.copy(
+                maxAmount = 100.0,
+                groupBarList = emptyList(),
+                incomesSum = "",
+                expensesSum = ""
+            )
+        }
     }
 
 }

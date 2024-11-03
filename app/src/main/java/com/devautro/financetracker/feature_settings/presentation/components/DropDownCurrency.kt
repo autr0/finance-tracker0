@@ -54,7 +54,7 @@ fun DropDownCurrency(
             stringResource(id = R.string.ruble),
             stringResource(id = R.string.rupee),
             stringResource(id = R.string.shekel),
-            stringResource(id = R.string.som),
+//            stringResource(id = R.string.som),
             stringResource(id = R.string.tenge),
             stringResource(id = R.string.tugrik),
             stringResource(id = R.string.won),

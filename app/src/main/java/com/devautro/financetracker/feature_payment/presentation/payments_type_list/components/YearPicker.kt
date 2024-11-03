@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.devautro.financetracker.core.presentation.components.ActionIcon
 
 @Composable
@@ -46,7 +47,6 @@ fun YearPicker(
             tint = MaterialTheme.colorScheme.onBackground,
             isEnabled = yearIndex > 0
         )
-
         Text(
             modifier = Modifier
                 .height(IntrinsicSize.Min)
@@ -54,6 +54,7 @@ fun YearPicker(
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onBackground,
             fontWeight = FontWeight.SemiBold,
+            fontSize = 12.sp,
             text = if (yearIndex >= 0) yearsList[yearIndex].toString() else ""
         )
         ActionIcon(
