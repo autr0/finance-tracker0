@@ -9,6 +9,8 @@ import com.devautro.financetracker.R
 import com.devautro.financetracker.core.util.UiText
 import com.devautro.financetracker.core.util.formatDoubleToString
 import com.devautro.financetracker.feature_payment.domain.use_case.PaymentUseCases
+import com.devautro.financetracker.feature_payment.util.convertDateToMillis
+import com.devautro.financetracker.feature_payment.util.convertMillisToDate
 import com.devautro.financetracker.feature_statistics.util.convertMillisToMonthYear
 import com.devautro.financetracker.feature_statistics.util.convertMonthYearToMillis
 import com.devautro.financetracker.ui.theme.ExpenseRed
@@ -23,6 +25,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
 @HiltViewModel
@@ -49,12 +54,166 @@ class ChartsViewModel @Inject constructor(
                     )
                 }
                 when(event.index) {
-                    0 -> {}
-                    1 -> {}
+                    0 -> {
+                        getFilteredDataByWeek()
+                    }
+                    1 -> {
+                        getFilteredDataByMonth()
+                    }
                     2 -> {
                         getAllData()
                     }
                 }
+            }
+        }
+    }
+
+    private fun getFilteredDataByWeek() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                combine(
+                    paymentUseCases.getIncomesUseCase(),
+                    paymentUseCases.getExpensesUseCase()
+                ) { incomes, expenses ->
+                    val monthIncomesMap = incomes.filter {
+                        val oneWeekAgo = LocalDate.now().minus(1, ChronoUnit.WEEKS)
+                        val oneWeekAgoMillis = oneWeekAgo.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                        it.date!! > oneWeekAgoMillis
+                    }.groupBy { convertMillisToDate(it.date!!) }
+                        .map { it.key to it.value.sumOf { payment -> payment.amountNew!! } }.toMap()
+
+
+                    val monthExpensesMap = expenses.filter {
+                        val oneWeekAgo = LocalDate.now().minus(1, ChronoUnit.WEEKS)
+                        val oneWeekAgoMillis = oneWeekAgo.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                        it.date!! > oneWeekAgoMillis
+                    }.groupBy { convertMillisToDate(it.date!!) }
+                        .map { it.key to it.value.sumOf { payment -> payment.amountNew!! } }.toMap()
+
+                    monthIncomesMap to monthExpensesMap
+
+                }.collect { (monthIncomes, monthExpenses) ->
+                    val incomesSum = monthIncomes.values.sum()
+                    val expensesSum = monthExpenses.values.sum()
+                    val max = (monthIncomes.values + monthExpenses.values).max()
+
+                    val allKeys = (monthIncomes.keys + monthExpenses.keys).distinct()
+
+                    val combinedMap = allKeys.associateWith { key ->
+                        val incomes = monthIncomes[key]
+                        val expenses = monthExpenses[key]
+                        Pair(incomes, expenses)
+                    }
+
+                    val groupedBarList = combinedMap.toList()
+                        .sortedBy { pair ->
+                            convertDateToMillis(pair.first)
+                        }.mapIndexed { index, value ->
+                            val amount = value.second
+                            val x = index.toFloat()
+
+                            GroupBar(
+                                label = value.first,
+                                barList = listOf(
+                                    BarData(
+                                        point = Point(x = x, y = amount.first?.toFloat() ?: 0f),
+                                        color = IncomeGreen
+                                    ),
+                                    BarData(
+                                        point = Point(x = x, y = amount.second?.toFloat() ?: 0f),
+                                        color = ExpenseRed
+                                    )
+                                )
+                            )
+                        }
+
+                    _chartsState.update { state ->
+                        state.copy(
+                            incomesSum = formatDoubleToString(incomesSum),
+                            expensesSum = formatDoubleToString(expensesSum),
+                            maxAmount = max,
+                            groupBarList = groupedBarList
+                        )
+                    }
+
+                }
+            } catch (e: Exception) {
+                handleError(e)
+            }
+        }
+    }
+
+    private fun getFilteredDataByMonth() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                combine(
+                    paymentUseCases.getIncomesUseCase(),
+                    paymentUseCases.getExpensesUseCase()
+                ) { incomes, expenses ->
+                    val monthIncomesMap = incomes.filter {
+                        val oneMonthAgo = LocalDate.now().minus(1, ChronoUnit.MONTHS)
+                        val oneMonthAgoMillis = oneMonthAgo.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                        it.date!! > oneMonthAgoMillis
+                    }.groupBy { convertMillisToDate(it.date!!) }
+                        .map { it.key to it.value.sumOf { payment -> payment.amountNew!! } }.toMap()
+
+
+                    val monthExpensesMap = expenses.filter {
+                        val oneMonthAgo = LocalDate.now().minus(1, ChronoUnit.MONTHS)
+                        val oneMonthAgoMillis = oneMonthAgo.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                        it.date!! > oneMonthAgoMillis
+                    }.groupBy { convertMillisToDate(it.date!!) }
+                        .map { it.key to it.value.sumOf { payment -> payment.amountNew!! } }.toMap()
+
+                    monthIncomesMap to monthExpensesMap
+
+                }.collect { (monthIncomes, monthExpenses) ->
+                    val incomesSum = monthIncomes.values.sum()
+                    val expensesSum = monthExpenses.values.sum()
+                    val max = (monthIncomes.values + monthExpenses.values).max()
+
+                    val allKeys = (monthIncomes.keys + monthExpenses.keys).distinct()
+
+                    val combinedMap = allKeys.associateWith { key ->
+                        val incomes = monthIncomes[key]
+                        val expenses = monthExpenses[key]
+                        Pair(incomes, expenses)
+                    }
+
+                    val groupedBarList = combinedMap.toList()
+                        .sortedBy { pair ->
+                            convertDateToMillis(pair.first)
+                        }.mapIndexed { index, value ->
+                            val amount = value.second
+                            val x = index.toFloat()
+
+                            GroupBar(
+                                label = value.first,
+                                barList = listOf(
+                                    BarData(
+                                        point = Point(x = x, y = amount.first?.toFloat() ?: 0f),
+                                        color = IncomeGreen
+                                    ),
+                                    BarData(
+                                        point = Point(x = x, y = amount.second?.toFloat() ?: 0f),
+                                        color = ExpenseRed
+                                    )
+                                )
+                            )
+                        }
+
+                    _chartsState.update { state ->
+                        state.copy(
+                            incomesSum = formatDoubleToString(incomesSum),
+                            expensesSum = formatDoubleToString(expensesSum),
+                            maxAmount = max,
+                            groupBarList = groupedBarList
+                        )
+                    }
+
+                }
+            } catch (e: Exception) {
+                handleError(e)
             }
         }
     }
@@ -103,7 +262,6 @@ class ChartsViewModel @Inject constructor(
                         .mapIndexed { index, value ->
                         val amount = value.second
                         val x = index.toFloat()
-
 
                         GroupBar(
                             label = value.first,
