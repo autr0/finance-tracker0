@@ -62,7 +62,7 @@
 
     <!-- Money Sources -->
     <string name="delete_text">Удалить</string>
-    <string name="delete_dialog_text_1">Вы уверенны, что хотите</string>
+    <string name="delete_dialog_text_1">Вы уверены, что хотите</string>
     <string name="delete_dialog_text_2">\u0020удалить\u0020</string>
     <string name="delete_dialog_text_3">эти данные? Вы</string>
     <string name="delete_dialog_text_4">\u0020не\u0020</string>
@@ -79,7 +79,7 @@
     <string name="total_included">Только включенный баланс:</string>
     <string name="total_money">Всего денег:</string>
     <string name="delete_ms_description">удалить источник денег</string>
-    <string name="error_delete_ms">Could not delete Money Source :(</string>
+    <string name="error_delete_ms">Не удалось удалить Источник Денег :(</string>
 
     <!-- Add payment bottom sheet -->
     <string name="date_label">Дата</string>
@@ -155,6 +155,7 @@
     <string name="delete_mss2">Источники Денег</string>
 
     <string name="error_delete_all">Не удалось удалить :(</string>
+    <string name="error_currency_picked">Не получилось выбрать :(</string>
 
     <!-- Currency signs -->
     <string name="none">Ничего</string>

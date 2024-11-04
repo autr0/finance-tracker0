@@ -155,6 +155,7 @@
     <string name="delete_mss2">Fuentes de Dinero</string>
 
     <string name="error_delete_all">No se pudo eliminar :(</string>
+    <string name="error_currency_picked">No se pudo seleccionar :(</string>
 
     <!-- Currency signs -->
     <string name="none">Nada</string>

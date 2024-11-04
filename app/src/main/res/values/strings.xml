@@ -153,6 +153,7 @@
     <string name="delete_mss2">Money Sources</string>
 
     <string name="error_delete_all">Could not delete :(</string>
+    <string name="error_currency_picked">Could not picked :(</string>
 
 <!-- Currency signs -->
     <string name="none">None</string>

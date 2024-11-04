@@ -41,7 +41,7 @@ fun InfoCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(10.dp),
+            .padding(horizontal = 10.dp).padding(top = 10.dp),
         shape = RoundedCornerShape(15.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.secondary,
@@ -51,7 +51,7 @@ fun InfoCard(
             defaultElevation = 2.dp
         )
     ) {
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(15.dp))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -85,6 +85,6 @@ fun InfoCard(
                 }
             }
         }
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(15.dp))
     }
 }

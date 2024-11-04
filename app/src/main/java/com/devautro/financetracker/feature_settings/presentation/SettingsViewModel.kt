@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.devautro.financetracker.R
 import com.devautro.financetracker.core.util.UiText
+import com.devautro.financetracker.feature_moneySource.domain.model.MoneySource
 import com.devautro.financetracker.feature_moneySource.domain.use_case.MoneySourceUseCases
 import com.devautro.financetracker.feature_payment.domain.use_case.PaymentUseCases
 import com.devautro.financetracker.feature_settings.domain.use_case.SettingsUseCases
@@ -14,6 +15,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -96,6 +99,9 @@ class SettingsViewModel @Inject constructor(
                 viewModelScope.launch(Dispatchers.IO) {
                     if (_settingsState.value.isDeletePaymentsPicked) {
                         try {
+                            if (!_settingsState.value.isDeleteMoneySourcesPicked) {
+                                updateAllMoneySourcesAmount()
+                            }
                             paymentUseCases.clearAllPaymentsUseCase()
                         } catch (e: Exception) {
                             _sideEffects.emit(
@@ -141,6 +147,7 @@ class SettingsViewModel @Inject constructor(
                     )
                 }
             }
+
             is SettingsEvent.ShowCurrencyMenu -> {
                 _settingsState.update { state ->
                     state.copy(
@@ -148,13 +155,19 @@ class SettingsViewModel @Inject constructor(
                     )
                 }
             }
+
             is SettingsEvent.SelectedCurrency -> {
                 viewModelScope.launch(Dispatchers.IO) {
                     try {
                         settingsUseCases.changeCurrencyUseCase(newSign = event.sign)
+
                     } catch (e: Exception) {
                         e.printStackTrace()
-                        /*TODO: Show snackbar!*/
+                        _sideEffects.emit(
+                            SettingsSideEffects.ShowSnackbar(
+                                message = UiText.StringResource(R.string.error_currency_picked)
+                            )
+                        )
                         return@launch
                     }
                 }
@@ -165,6 +178,7 @@ class SettingsViewModel @Inject constructor(
                     )
                 }
             }
+
             is SettingsEvent.DismissCurrencyMenu -> {
                 _settingsState.update { state ->
                     state.copy(
@@ -211,6 +225,54 @@ class SettingsViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private suspend fun updateAllMoneySourcesAmount() {
+        val (idSumMap, moneySources) = combine(
+            paymentUseCases.getIncomesUseCase(),
+            paymentUseCases.getExpensesUseCase(),
+            moneySourceUseCases.getAllMoneySourcesUseCase()
+        ) { incomes, expenses, moneySources ->
+            val groupedIncomes = incomes.filter { it.sourceId != null }
+                .groupBy { payment -> payment.sourceId }
+                .mapNotNull { it.key to it.value.sumOf { payment -> payment.amountNew!! } }.toMap()
+
+            val groupedExpenses = expenses.filter { it.sourceId != null }
+                .groupBy { payment -> payment.sourceId }
+                .mapNotNull { it.key to it.value.sumOf { payment -> payment.amountNew!! } }.toMap()
+
+            val allKeys = (groupedIncomes.keys + groupedExpenses.keys).distinct()
+            val combinedMap = allKeys.associateWith { key ->
+                val incomesSum = groupedIncomes[key] ?: 0.0
+                val expensesSum = groupedExpenses[key] ?: 0.0
+                incomesSum - expensesSum
+            }
+            combinedMap to moneySources
+        }.first()
+        val moneySourceMap = moneySources.associateBy { it.id }
+
+        idSumMap.entries.forEach { (sourceId, deletedAmount) ->
+            val moneySource = moneySourceMap[sourceId]
+
+            updateMoneySourceAmountOfDeletedItems(
+                deletedAmount = deletedAmount,
+                moneySource = moneySource
+            )
+        }
+    }
+
+    private suspend fun updateMoneySourceAmountOfDeletedItems(
+        deletedAmount: Double?,
+        moneySource: MoneySource?
+    ) {
+        if (moneySource == null || deletedAmount == null) return
+
+        moneySourceUseCases.editMoneySourceUseCase(
+            moneySource = moneySource.copy(
+                amount = moneySource.amount - deletedAmount
+            )
+        )
+
     }
 
 }

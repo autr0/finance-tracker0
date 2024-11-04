@@ -26,8 +26,8 @@ fun BottomNavigationBar(
     currentDestination: NavDestination?
 ) {
     NavigationBar(
-        modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(15.dp)),
-//        containerColor = MaterialTheme.colorScheme.primary
+        modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(15.dp, 15.dp, 0.dp, 0.dp)),
+        containerColor = MaterialTheme.colorScheme.primary
     ) {
         barItems.forEach { item ->
             NavigationBarItem(
@@ -64,7 +64,7 @@ fun BottomNavigationBar(
                     unselectedIconColor = MaterialTheme.colorScheme.onTertiary,
                     selectedTextColor = MaterialTheme.colorScheme.onBackground,
                     unselectedTextColor = MaterialTheme.colorScheme.onTertiary,
-                    indicatorColor = MaterialTheme.colorScheme.primary
+                    indicatorColor = MaterialTheme.colorScheme.background
                 ),
                 label = {
                     AutoResizedText(text = item.name)
