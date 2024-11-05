@@ -91,7 +91,7 @@
 
     <string name="amount_label">Сумма</string>
     <string name="amount_supporting_text_0">Введите сумму!</string>
-    <string name="amount_supporting_text_1">Шаблон: 100.99 (максимум 2 цифры после точки)</string>
+    <string name="amount_supporting_text_1">Шаблон: 100.99</string>
 
     <string name="month_tag_label">Тэг Месяца</string>
     <string name="month_tag_icon_description">иконка тэга месяца</string>
@@ -100,7 +100,7 @@
     <string name="money_source_label">Источник денег</string>
     <string name="ms_icon_def_description">иконка источника денег</string>
     <string name="ms_icon_clean_description">иконка очистки источника денег</string>
-    <string name="ms_supporting_text">Вы можете выбрать источник денег здесь</string>
+    <string name="ms_supporting_text">Выберите источник денег здесь</string>
 
     <string name="income_checkbox">Доход</string>
     <string name="expense_checkbox">Расход</string>

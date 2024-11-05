@@ -5,7 +5,7 @@ import kotlin.math.floor
 import kotlin.math.log10
 import kotlin.math.pow
 
-fun formatNumber(number: Double): String {
+fun formatNumber(number: Double, currency: String = ""): String {
     val suffix = charArrayOf(' ', 'k', 'M', 'B', 'T', 'P', 'E')
     val value = floor(log10(number)).toInt()
     val base = value / 3
@@ -16,5 +16,5 @@ fun formatNumber(number: Double): String {
     } else {
         DecimalFormat("#,##0").format(number)
     }
-    return result
+    return "$currency$result"
 }

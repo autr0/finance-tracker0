@@ -88,7 +88,7 @@
 
     <string name="amount_label">Amount</string>
     <string name="amount_supporting_text_0">Enter the amount!</string>
-    <string name="amount_supporting_text_1">Pattern: 100.99 (max 2 digits after point)</string>
+    <string name="amount_supporting_text_1">Pattern: 100.99</string>
 
     <string name="month_tag_label">Month Tag</string>
     <string name="month_tag_icon_description">month tag icon</string>
@@ -97,7 +97,7 @@
     <string name="money_source_label">Money source</string>
     <string name="ms_icon_def_description">money source icon</string>
     <string name="ms_icon_clean_description">money source clear icon</string>
-    <string name="ms_supporting_text">You can add your Money Source here</string>
+    <string name="ms_supporting_text">Choose your Money Source here</string>
 
     <string name="income_checkbox">Income</string>
     <string name="expense_checkbox">Expense</string>

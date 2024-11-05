@@ -56,6 +56,7 @@ import com.devautro.financetracker.feature_moneySource.presentation.money_sorces
 import com.devautro.financetracker.core.presentation.components.SwipeableItem
 import com.devautro.financetracker.feature_moneySource.presentation.money_sorces.components.SingleItemDeleteDialog
 import com.devautro.financetracker.core.util.formatDoubleToString
+import com.devautro.financetracker.feature_statistics.util.formatNumber
 import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -252,13 +253,19 @@ fun MoneySources(
                         }
                     ) {
                         if (state.isTableFormatData || isLandscape) {
+                            val amount = if (moneySourceItem.amount.toString().length > 7) {
+                                formatNumber(moneySourceItem.amount, currencySign)
+                            } else {
+                                formatDoubleToString(
+                                    value = moneySourceItem.amount,
+                                    sign = currencySign
+                                )
+                            }
+
                             TableDataItem(
                                 index = index,
                                 sourceName = moneySourceItem.name,
-                                amount = formatDoubleToString(
-                                    value = moneySourceItem.amount,
-                                    sign = currencySign
-                                ),
+                                amount = amount,
                                 onEditClick = {
                                     viewModel.onEvent(
                                         MoneySourcesEvent.EditIconClick(

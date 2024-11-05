@@ -91,7 +91,7 @@
 
     <string name="amount_label">Cantidad</string>
     <string name="amount_supporting_text_0">¡Introduzca la cantidad!</string>
-    <string name="amount_supporting_text_1">Patrón: 100.99 (máximo 2 dígitos después del punto)</string>
+    <string name="amount_supporting_text_1">Patrón: 100.99</string>
 
     <string name="month_tag_label">Mes</string>
     <string name="month_tag_icon_description">mes tag icono</string>
@@ -100,7 +100,7 @@
     <string name="money_source_label">Fuente de Dinero</string>
     <string name="ms_icon_def_description">fuente de dinero icono</string>
     <string name="ms_icon_clean_description">fuente de dinero limpiar icono</string>
-    <string name="ms_supporting_text">Puede agregar su fuente de dinero aquí</string>
+    <string name="ms_supporting_text">Agrege la fuente de dinero aquí</string>
 
     <string name="income_checkbox">Ingreso</string>
     <string name="expense_checkbox">Gasto</string>
